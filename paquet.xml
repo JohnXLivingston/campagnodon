@@ -1,0 +1,19 @@
+<paquet 
+  prefix="campagnodon"
+  categorie="communication"
+  version="0.0.1"
+  etat="test"
+  compatibilite="[3.2.0;4.0.*]"
+  logo=""
+  schema="0.3"
+  documentation="https://code.globenet.org/attacfr/campagnodon"
+>
+ 
+  <nom>Campagnodon</nom>
+ 
+  <auteur>John Livingston</auteur>
+  <licence>AGPLv3</licence>
+ 
+  <necessite nom="bank" compatibilite="[5.0.3;]"/>
+ 
+</paquet>
