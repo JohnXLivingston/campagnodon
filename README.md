@@ -11,6 +11,8 @@ Dans le cas d'[Attac France](https://france.attac.org), ces données sont stock�
 
 Pour l'instant, le code est lié aux API spécifiques développées coté CiviCRM pour les besoins d'Attac. Mais on peut tout à fait imaginer connecter cela à d'autres types d'API.
 
+Pour la liste des versions disponibles, merci de vous référer au [CHANGELOG](CHANGELOG.md).
+
 ## Licence
 
 Ce projet est sous licence [AGPLv3 licence](LICENSE).
