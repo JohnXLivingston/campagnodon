@@ -1,0 +1,33 @@
+[(#SET{defaut_tri,#ARRAY{
+	id_campagnodon_campagne,1,
+	titre,1,
+}})]<B_liste_campagnodon_campagnes>
+#ANCRE_PAGINATION
+<div class="liste-objets campagnodon_campagnes">
+<table class="spip liste">
+	<thead>
+		<tr class="first_row">
+			<th class="id" scope="col">[(#TRI{id_campagnodon_campagne,<:info_numero_abbreviation:>,ajax})]</th>
+			<th class="titre" scope="col">[(#TRI{titre,<:campagnodon:label_titre_campagne:>,ajax})]</th>
+			<th class="" scope="col"><:campagnodon:label_origine_campagne:></th>
+      <th class="" scope="col"><:campagnodon:label_id_origine_campagne:></th>
+      <th class="" scope="col"><:campagnodon:label_statut:></th>
+		</tr>
+	</thead>
+	<tbody>
+	<BOUCLE_liste_campagnodon_campagnes(CAMPAGNODON_CAMPAGNES){id_mot?}{id_auteur?}{where?}{recherche?}{tri #ENV{par,id_campagnodon_campagne},#GET{defaut_tri}}{pagination #ENV{nb,10}}>
+		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
+			<td class="id">#ID_CAMPAGNODON_CAMPAGNE</td>
+			<td class="titre principale">#TITRE</td>
+      <td>#ORIGINE</td>
+      <td>#ID_ORIGINE</td>
+      <td>#STATUT</td>
+		</tr>
+	</BOUCLE_liste_campagnodon_campagnes>
+	</tbody>
+</table>
+[<nav class="pagination">(#PAGINATION{prive})</nav>]
+</div>
+</B_liste_campagnodon_campagnes>[
+<div class="liste-objets campagnodon_campagnes caption-wrap"><strong class="caption">(#ENV*{sinon,''})</strong></div>
+]<//B_liste_campagnodon_campagnes>

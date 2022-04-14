@@ -4,8 +4,9 @@
   version="0.0.1"
   etat="test"
   compatibilite="[3.2.0;4.0.*]"
-  logo=""
+  logo="campagnodon.svg"
   documentation="https://code.globenet.org/attacfr/campagnodon"
+  schema="0.0.1"
 >
  
   <nom>Campagnodon</nom>
@@ -14,5 +15,15 @@
   <licence>AGPLv3</licence>
  
   <necessite nom="bank" compatibilite="[5.0.3;]"/>
+
+  <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
+  <pipeline nom="declarer_tables_objets_sql" inclure="base/campagnodon.php"/>
+  <pipeline nom="taches_generales_cron" inclure="campagnodon_pipelines.php" />
+
+  <menu
+    nom="campagnodon_campagnes"
+    titre="campagnodon:titre_campagnes"
+    parent="menu_activite"
+  />
  
 </paquet>
