@@ -4,5 +4,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'titre_campagnes' => 'Campagnes',
   'label_titre_campagne' => 'Titre de la campagne',
   'label_origine_campagne' => 'Origine',
-  'label_id_origine_campagne' => 'ID distant'
+  'label_id_origine_campagne' => 'ID distant',
+  'label_statut' => 'Statut'
 );
