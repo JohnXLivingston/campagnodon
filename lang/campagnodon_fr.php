@@ -5,5 +5,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_titre_campagne' => 'Titre de la campagne',
   'label_origine_campagne' => 'Origine',
   'label_id_origine_campagne' => 'ID distant',
-  'label_statut' => 'Statut'
+  'label_statut' => 'Statut',
+  'campagne_invalide' => 'Erreur: campagne introuvable'
 );

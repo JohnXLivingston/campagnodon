@@ -1,5 +1,9 @@
-<div class="campagnodon">
-	<div class="ajax">
-		<INCLURE{fond=modeles/formulaire,class=campagnodon,args=#LISTE{don}} />
+<BOUCLE_campagne(CAMPAGNODON_CAMPAGNES){id_origine=#ENV{id}}{origine=#ENV{origine}}{statut=publie}>
+	<div class="campagnodon">
+		<div class="ajax">
+			<INCLURE{fond=modeles/formulaire,class=campagnodon,args=#LISTE{#ENV{type},#ID_CAMPAGNODON_CAMPAGNE}} />
+		</div>
 	</div>
-</div>
+</BOUCLE_campagne>
+	<:campagnodon:campagne_invalide:>
+<//BOUCLE_campagne>

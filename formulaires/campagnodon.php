@@ -10,7 +10,14 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     spip_log("Type de Campagnodon inconnu: ".$type, "campagnodon"._LOG_ERREUR);
     return false;
   }
-  $title = 'Je passe à l’Attac !';
+
+  $campagne = get_campagne_ouverte($id_campagne);
+  if (empty($campagne)) {
+    spip_log("Campagne introuvable: ".$id_campagne, "campagnodon"._LOG_ERREUR);
+    return false;
+  }
+
+  $title = $campagne['titre'];
   
   $amounts = [
     '13' => '13 € (moins de 450 € de revenus mensuels)',
@@ -44,6 +51,11 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   $erreurs = [];
   
   $obligatoires = [];
+
+  $campagne = get_campagne_ouverte($id_campagne);
+  if (empty($campagne)) {
+    $erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
+  }
   
   // $obligatoires = ['email', 'amount', 'first_name', 'last_name', 'address', 'postal_code', 'city'];
   $obligatoires = ['email', 'amount', 'first_name', 'last_name'];
@@ -66,6 +78,16 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
   if (!defined('_CAMPAGNODON_CIVICRM_API_OPTIONS')) {
     spip_log("CiviCRM Non configuré, constante _CAMPAGNODON_CIVICRM_API_OPTIONS manquante.", "campagnodon"._LOG_ERREUR);
     return ['message_erreur' => _T("campagnodon:erreur_sauvegarde")];
+  }
+
+  $campagne = get_campagne_ouverte($id_campagne);
+  if (empty($campagne)) {
+    spip_log('Campagne invalide au moment de l\'enregistrement', "campagnodon"._LOG_ERREUR);
+    return ['message_erreur' => _T("campagnodon:campagne_invalide")];
+  }
+  if ($campagne['origine'] !== 'civicrm') {
+    spip_log('La campagne n\'a pas CiviCRM pour origine.', "campagnodon"._LOG_ERREUR);
+    return ['message_erreur' => _T("campagnodon:campagne_invalide")];
   }
 
   $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
@@ -114,7 +136,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     'postal_code' => _request('postal_code'),
     'city' => _request('city'),
     'amount' => _request('amount'),
-    'campaing_id' => $id_campagne,
+    'campaign_id' => $campagne['id_origine'],
     // 'payment_method' => 'transfer' // FIXME: use the correct value
   ]);
 
@@ -152,6 +174,15 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     'redirect' => generer_url_public('payer-acte', "id_transaction=$id_transaction&transaction_hash=$hash", false, false),
     'editable' => false,
   ];
+}
+
+/**
+ * Cette fonction retourne la campagne si elle est bien valide.
+ */
+function get_campagne_ouverte($id_campagne) {
+  $where = 'id_campagnodon_campagne='.sql_quote(intval($id_campagne));
+  $where.= " AND statut='publie'";
+  return sql_fetsel('*', 'spip_campagnodon_campagnes', $where);
 }
 
 /**
