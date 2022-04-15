@@ -21,7 +21,7 @@ function campagnodon_upgrade($nom_meta_base_version, $version_cible) {
   $maj = [];
 
 	$maj['create'] = [
-		['maj_tables',	['spip_campagnodon_campagnes']]
+		['maj_tables',	['spip_campagnodon_transactions', 'spip_campagnodon_campagnes']]
 	];
 
   include_spip('base/upgrade');
@@ -30,6 +30,7 @@ function campagnodon_upgrade($nom_meta_base_version, $version_cible) {
 
 function campagnodon_vider_tables($nom_meta_base_version) {
 
+	sql_drop_table('spip_campagnodon_transactions');
 	sql_drop_table('spip_campagnodon_campagnes');
 
 	effacer_meta($nom_meta_base_version);

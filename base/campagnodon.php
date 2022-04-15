@@ -23,6 +23,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  *     Déclarations d'interface pour le compilateur
  */
 function campagnodon_declarer_tables_interfaces($interfaces) {
+  $interfaces['table_des_tables']['campagnodon_transactions'] = 'campagnodon_transactions';
   $interfaces['table_des_tables']['campagnodon_campagnes'] = 'campagnodon_campagnes';
   return $interfaces;
 }
@@ -37,6 +38,29 @@ function campagnodon_declarer_tables_interfaces($interfaces) {
  *     Description complétée des tables
  */
 function campagnodon_declarer_tables_objets_sql($tables) {
+  $tables['spip_campagnodon_transactions'] = [
+    'principale' => 'oui',
+    'page' => false,
+    'type' => 'campagnodon_transactions',
+    'date' => 'date_transaction',
+    'field' => [
+      'id_campagnodon_transaction' => 'bigint(21) NOT NULL',
+      'id_transaction' => 'bigint(21) DEFAULT NULL',
+      'date_transaction' => 'datetime NOT NULL DEFAULT NOW()',
+      'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
+      'type_distant' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Valeurs possibles: «civicrm».''
+      'id_contact_distant' => 'bigint(21) DEFAULT NULL', // L'id du contact dans le système distant
+      'id_don_distant' => 'bigint(21) DEFAULT NULL', // L'id du don dans le système distant le cas échéant
+      'id_adhesion_distant' => 'bigint(21) DEFAULT NULL', // L'id de l'adhésion dans le système distant le cas échéant
+      'maj' => 'TIMESTAMP'
+    ],
+    'key' => [
+      'PRIMARY KEY' => 'id_campagnodon_transaction',
+      'UNIQUE id_transaction' => 'id_transaction'
+    ],
+    'champs_editables' => [],
+    'rechercher_champs' => [],
+  ];
   $tables['spip_campagnodon_campagnes'] = [
     'principale' => 'oui',
     'page' => false,
