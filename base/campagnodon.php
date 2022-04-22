@@ -45,7 +45,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
     'date' => 'date_transaction',
     'field' => [
       'id_campagnodon_transaction' => 'bigint(21) NOT NULL',
-      'id_transaction' => 'bigint(21) DEFAULT NULL',
+      'id_transaction' => 'bigint(21) DEFAULT NULL', // Id de la transaction SPIP Bank
       'date_transaction' => 'datetime NOT NULL DEFAULT NOW()',
       'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
       'type_distant' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Valeurs possibles: «civicrm».''

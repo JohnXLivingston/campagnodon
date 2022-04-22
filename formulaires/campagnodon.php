@@ -50,7 +50,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     'email' => '',
     'first_name' => '',
     'last_name' => '',
-    'address' => '',
+    'street_address' => '',
     'postal_code' => '',
     'city' => '',
     // 'country' => 'FR', FIXME: only France?
@@ -69,7 +69,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     $erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
   }
   
-  // $obligatoires = ['email', 'amount', 'first_name', 'last_name', 'address', 'postal_code', 'city'];
+  // $obligatoires = ['email', 'amount', 'first_name', 'last_name', 'street_address', 'postal_code', 'city'];
   $obligatoires = ['email', 'amount', 'first_name', 'last_name'];
   
   foreach($obligatoires as $obligatoire) {
@@ -141,7 +141,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       'first_name' => _request('first_name'),
       'last_name' => _request('last_name'),
       'email' => _request('email'),
-      'address' => _request('address'),
+      'street_address' => _request('street_address'),
       'postal_code' => _request('postal_code'),
       'city' => _request('city'),
       'amount' => _request('amount'),

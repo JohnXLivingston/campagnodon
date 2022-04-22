@@ -42,10 +42,10 @@
 
             <div class="row-fluid">
               <div class="span6">
-                [(#SET{erreurs, #ENV**{erreurs}|table_valeur{address}})]
-                <div class="editer editer_address obligatoire [(#GET{erreurs}|oui)erreur]">
-                  <label for="champ_address"><:attac_civicrm:label_address:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                  <textarea required="required" name="address" class="text" id="champ_address">#ENV*{address}</textarea>
+                [(#SET{erreurs, #ENV**{erreurs}|table_valeur{street_address}})]
+                <div class="editer editer_street_address obligatoire [(#GET{erreurs}|oui)erreur]">
+                  <label for="champ_street_address"><:attac_civicrm:label_street_address:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+                  <textarea required="required" name="street_address" class="text" id="champ_street_address">#ENV*{street_address}</textarea>
                 </div>
               </div>
             </div>

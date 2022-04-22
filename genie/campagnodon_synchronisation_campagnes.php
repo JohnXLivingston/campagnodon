@@ -30,7 +30,7 @@ function genie_campagnodon_synchronisation_campagnes_dist() {
   // spip_log('Résultat CiviCRM->Campaign->get: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
 
   if (!$result) {
-    spip_log("Erreur CiviCRM->Campaign->get " . $civi_api->errorMsg(), "campagnodon"._LOG_ERREUR);
+    spip_log("Erreur CiviCRM->Campaign->get: " . $civi_api->errorMsg(), "campagnodon"._LOG_ERREUR);
     return 1;
   }
 

@@ -20,6 +20,7 @@
   <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
   <pipeline nom="declarer_tables_objets_sql" inclure="base/campagnodon.php"/>
   <pipeline nom="taches_generales_cron" inclure="campagnodon_pipelines.php" />
+  <pipeline nom="bank_dsp2_renseigner_facturation" inclure="campagnodon_pipelines.php"/>
 
   <menu
     nom="campagnodon_campagnes"
