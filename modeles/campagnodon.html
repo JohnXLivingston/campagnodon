@@ -1,3 +1,5 @@
+[<link rel="stylesheet" href="(#CSS{css/campagnodon.css})" type="text/css" />]
+<B_campagne>
 <BOUCLE_campagne(CAMPAGNODON_CAMPAGNES){id_origine=#ENV{id}}{origine=#ENV{origine}}{statut=publie}>
 	<div class="campagnodon">
 		<div class="ajax">
@@ -5,5 +7,6 @@
 		</div>
 	</div>
 </BOUCLE_campagne>
+</B_campagne>
 	<:campagnodon:campagne_invalide:>
-<//BOUCLE_campagne>
+<//B_campagne>

@@ -1,0 +1,154 @@
+.formulaire_campagnodon {
+  .editer_amount {
+    display: flex;
+    flex-direction: row;
+
+    input[type=radio] {
+      // On ne met pas les boutons invisibles pour permettre une navigation au clavier
+      opacity: 0;
+      position: fixed;
+      width: 0;
+    }
+
+    input[type=radio] + span {
+      // Le style du libellé
+      padding: 0.7em;
+      margin-right: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      border:#7f7f7f 1px solid;
+    }
+
+    input[type=radio]:hover + span {
+      background-color: #DA1E48;
+      color: white;
+      border:#DA1E48 1px solid;
+    }
+
+    input[type=radio]:checked + span {
+      background: #DA1E48;
+      border:#DA1E48 1px solid;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-shadow: 0 0 3px rgba(0,0,0,.5);
+      color: white;
+    }
+  }
+
+  .campagnodon_groupe_champs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    &>* {
+      flex-grow: 1;
+    }
+
+    .campagnodon_petit_champ {
+      flex-grow: 0;
+      flex-shrink: 1;
+    }
+  }
+}
+
+/*
+
+.choix-type-don {
+  display:inline-flex;
+}
+
+.choix-type-don input.radio {
+  visibility:hidden;
+  display: none;
+}
+
+div.choix.btnradio{
+  display: inline-flex;
+}
+
+.choix-type-don .libre input{
+  border-radius: 5px;
+  font-weight: 700;
+}
+
+.choix-type-don .libre:after {
+  content: "€";
+  color: black;
+  font-weight: 700;
+  vertical-align: text-bottom;
+}
+
+.choix-type-don .libre input:not(:placeholder-shown) {
+  text-shadow: 0 0 3px rgba(0,0,0,.5);
+  color: white;
+  background: #DA1E48;
+  font-size: 1.2em;
+  border:#DA1E48 1px solid;
+}
+
+.choix-type-don .btnradio label {
+  padding: 0.7em;
+  margin-right: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  border:#7f7f7f 1px solid;
+}
+
+.choix-type-don .btnradio label:hover {
+  background-color: #DA1E48;
+  color: white;
+  border:#DA1E48 1px solid;
+}
+
+.choix-type-don .btnradio input:checked + label {
+  background: #DA1E48 url(/plugins/souscription/img/circle-check.png) center no-repeat !important;
+  border:#DA1E48 1px solid;
+  font-size: 1.2em;
+  text-shadow: 0 0 3px rgba(0,0,0,.5);
+  color: white;
+}
+
+// Label descriptif du block de don // adhésion
+// FIXME
+
+div.editer.editer_montant.obligatoire label {
+color:black;
+}
+
+.editer_abo_montant > label:nth-child(1), .editer_montant > label:nth-child(1) {
+  font-size:19px;
+  margin-bottom: 8px;
+}
+
+@media only screen and (max-width: 551px) {
+    .formulaire_spip {
+        padding-left: 0px;
+        padding-right: 0px;
+        border: 0;
+    } 
+}
+
+@media (min-width:768px) and (max-width:979px) {
+    .aside {
+        padding: 0 0 0 15px;
+        width: auto;
+    }
+    .content {
+        width: 93%;
+    }
+}
+
+@media (max-width: 767px) {
+        .droite {
+        border-top: 0;
+        background: 0;
+        //border-top: 1px dotted #000;
+        //background: #fff;
+        padding: 0 0 0 15px;
+        margin: 15px 0 0;
+        }
+}
+(END)
+
+*/

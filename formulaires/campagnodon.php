@@ -29,31 +29,33 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     return false;
   }
 
-  $title = $campagne['titre'];
+  $titre = $campagne['titre'];
+  $mode_debug = defined('_CAMPAGNODON_DEBUG_FORM') && _CAMPAGNODON_DEBUG_FORM === true ? true : false;
   
-  $amounts = [
-    '13' => '13 € (moins de 450 € de revenus mensuels)',
-    '21' => '21 € (entre 450 € et 900 € de revenus mensuels)',
-    '35' => '35 € (entre 900 € et 1200 € de revenus mensuels)',
-    '48' => '48 € (entre 1200 € et 1600 € de revenus mensuels)',
-    '65' => '65 € (entre 1600 € et 2300 € de revenus mensuels)',
-    '84' => '84 € (entre 2300 € et 3000 € de revenus mensuels)',
-    '120' => '120 € (entre 3000 € et 4000 € de revenus mensuels)',
-    '160' => '160 € (plus de 4000 € de revenus mensuels)',
+  $montants = [
+    '13' => '13 €',
+    '21' => '21 €',
+    '35' => '35 €',
+    '48' => '48 €',
+    '65' => '65 €',
+    '84' => '84 €',
+    '120' => '120 €',
+    '160' => '160 €',
   ];
   
   $values = [
     /* Éléments statiques */
-    'form_title' => $title,
-    'amounts' => $amounts,
-    'amount' => '',
+    'titre_formulaire' => $titre,
+    'mode_debug' => $mode_debug,
+    'montants' => $montants,
+    'montant' => '',
     'email' => '',
-    'first_name' => '',
-    'last_name' => '',
-    'street_address' => '',
-    'postal_code' => '',
-    'city' => '',
-    // 'country' => 'FR', FIXME: only France?
+    'prenom' => '',
+    'nom' => '',
+    'adresse' => '',
+    'code_postall' => '',
+    'ville' => '',
+    // 'pays' => 'FR', FIXME: only France?
   ];
   
   return $values;
@@ -70,7 +72,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   }
   
   // $obligatoires = ['email', 'amount', 'first_name', 'last_name', 'street_address', 'postal_code', 'city'];
-  $obligatoires = ['email', 'amount', 'first_name', 'last_name'];
+  $obligatoires = ['email', 'montant', 'prenom', 'nom'];
   
   foreach($obligatoires as $obligatoire) {
     if(!_request($obligatoire)) {
@@ -138,13 +140,14 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     $civi_api = new civicrm_api3(_CAMPAGNODON_CIVICRM_API_OPTIONS);
 
     $result = $civi_api->Attac->create_member([
-      'first_name' => _request('first_name'),
-      'last_name' => _request('last_name'),
+      'first_name' => _request('prenom'),
+      'last_name' => _request('nom'),
       'email' => _request('email'),
-      'street_address' => _request('street_address'),
-      'postal_code' => _request('postal_code'),
-      'city' => _request('city'),
-      'amount' => _request('amount'),
+      'street_address' => _request('adresse'),
+      'postal_code' => _request('code_postal'),
+      'city' => _request('ville'),
+      'amount' => _request('montant'),
+      // TODO: pays ?
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant
       // 'payment_method' => 'transfer' // FIXME: use the correct value

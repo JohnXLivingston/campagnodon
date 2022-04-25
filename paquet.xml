@@ -16,6 +16,7 @@
  
   <necessite nom="bank" compatibilite="[5.0.3;]"/>
   <necessite nom="spip_bonux" compatibilite="[3.8.3;]"/>
+  <necessite nom="scssphp" compatibilite="[1.4.5;[" />
 
   <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
   <pipeline nom="declarer_tables_objets_sql" inclure="base/campagnodon.php"/>
