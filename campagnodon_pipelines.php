@@ -23,6 +23,11 @@ function campagnodon_taches_generales_cron($taches_generales) {
 	return $taches_generales;
 }
 
+/**
+ * Renseigner les infos nominatives/adresses liees a une demande de paiement
+ * @param $flux
+ * @return mixed
+ */
 function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 	if ($flux['args']['parrain'] !== 'campagnodon') {
 		// Ça ne concerne pas notre plugin.
@@ -68,3 +73,51 @@ function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 	spip_log('Pipeline bank_dsp2_renseigner_facturation: Impossible de trouver les informations à fournir.', 'campagnodon'._LOG_ERREUR);
 	return $flux;
 }
+
+function sync_bank_result($flux) {
+	if ($flux['args']['row']['parrain'] !== 'campagnodon') {
+		// Ça ne concerne pas notre plugin.
+		return;
+	}
+	spip_log('Pipeline bank_dsp2_renseigner_facturation: je dois marquer une ligne comme «à synchroniser».', 'campagnodon'._LOG_DEBUG);
+	// TODO: faire la fonction
+	spip_log('Not Implemented Yet', 'campagnodon'._LOG_ERREUR);
+}
+
+/**
+ * Synchronisation après reglement
+ *
+ * @pipeline trig_bank_notifier_reglement
+ * @param  array $flux Données du pipeline
+ * @return array       Données du pipeline
+ */
+function campagnodon_trig_bank_notifier_reglement($flux) {
+	sync_bank_result($flux);
+}
+
+
+/**
+ * Synchronisation quand paiement en attente
+ *
+ * @pipeline trig_bank_notifier_reglement
+ * @param  array $flux Données du pipeline
+ * @return array       Données du pipeline
+ */
+function campagnodon_trig_bank_reglement_en_attente($flux) {
+	sync_bank_result($flux);
+}
+
+
+/**
+ * Synchronisation après échec de paiement
+ *
+ * @pipeline trig_bank_notifier_reglement
+ * @param  array $flux Données du pipeline
+ * @return array       Données du pipeline
+ */
+function campagnodon_trig_bank_reglement_en_echec($flux) {
+	sync_bank_result($flux);
+}
+
+
+// TODO: gérer le pipeline bank_traiter_remboursement ?
