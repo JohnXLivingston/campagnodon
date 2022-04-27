@@ -11,12 +11,12 @@
         <fieldset>
           <legend><span><:campagnodon_form:je_donne:></span></legend>
           <div>
-            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{amount}})]
-            <div class="editer editer_amount [(#GET{erreurs}|oui)erreur]">
+            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
+            <div class="editer editer_montant [(#GET{erreurs}|oui)erreur]">
               <BOUCLE_montants(POUR){tableau #ENV{montants}}>
                 #SET{val,#CLE}
                 <label>
-                  <input type="radio" name="amount" class="radio" id="amount_#GET{val}" value="#GET{val}"[(#ENV{amount}|=={#GET{val}}|oui)checked="checked"] />
+                  <input type="radio" name="montant" class="radio" id="montant_#GET{val}" value="#GET{val}"[(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
                   <span>#VALEUR</span>
                 </label>
             </BOUCLE_montants>
@@ -45,6 +45,12 @@
                 <label for="champ_nom">Nom de famille<span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
                 <input type="text" name="nom" class="text" value="#ENV*{nom}" id="champ_nom" [(#ENV{authentifie}|=={oui}|oui) readonly="readonly"] />
               </div>
+            </div>
+
+            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
+            <div class="editer editer_recu_fiscal obligatoire [(#GET{erreurs}|oui)erreur]">
+              <label for="champ_recu_fiscal"><:campagnodon_form:label_recu_fiscal:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+              <input type="checkbox" name="recu_fiscal" class="checkbox" value="1" #ENV*{recu_fiscal}" id="champ_recu_fiscal" [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]/>
             </div>
 
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adresse}})]
@@ -76,3 +82,8 @@
     </form>
   </BOUCLE_editable>
 </div>
+<script type="text/javascript">
+  (function ($) {
+    campagnodon_formulaire('.formulaire_#FORM');
+  })(window.jQuery);
+</script>

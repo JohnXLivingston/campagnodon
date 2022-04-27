@@ -50,10 +50,11 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     'montants' => $montants,
     'montant' => '',
     'email' => '',
+    'recu_fiscal' => '',
     'prenom' => '',
     'nom' => '',
     'adresse' => '',
-    'code_postall' => '',
+    'code_postal' => '',
     'ville' => '',
     // 'pays' => 'FR', FIXME: only France?
   ];
@@ -71,8 +72,10 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     $erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
   }
   
-  // $obligatoires = ['email', 'amount', 'first_name', 'last_name', 'street_address', 'postal_code', 'city'];
   $obligatoires = ['email', 'montant', 'prenom', 'nom'];
+  if (_request('recu_fiscal') == '1') {
+    array_push($obligatoires,'adresse', 'code_postal', 'ville');
+  }
   
   foreach($obligatoires as $obligatoire) {
     if(!_request($obligatoire)) {
@@ -139,19 +142,26 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     include_spip('inc/civicrm/class.api');
     $civi_api = new civicrm_api3(_CAMPAGNODON_CIVICRM_API_OPTIONS);
 
-    $result = $civi_api->Attac->create_member([
+    $params = array(
       'first_name' => _request('prenom'),
       'last_name' => _request('nom'),
       'email' => _request('email'),
-      'street_address' => _request('adresse'),
-      'postal_code' => _request('code_postal'),
-      'city' => _request('ville'),
       'amount' => _request('montant'),
-      // TODO: pays ?
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant
       // 'payment_method' => 'transfer' // FIXME: use the correct value
-    ]);
+      // TODO: recu fiscal
+    );
+    if (_request('recu_fiscal') == '1') {
+      $params = array_merge($params, array(
+        'street_address' => _request('adresse'),
+        'postal_code' => _request('code_postal'),
+        'city' => _request('ville'),
+        // TODO: pays ?
+      ));
+    }
+
+    $result = $civi_api->Attac->create_member($params);
 
     // spip_log('Résultat CiviCRM: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
 

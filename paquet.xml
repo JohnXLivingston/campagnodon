@@ -21,6 +21,7 @@
   <necessite nom="spipr_dist" compatibilite="[0.4.17;0.4.*]" />
   <necessite nom="zcore" compatibilite="[2.8.9;2.8.*]" />
   
+  <pipeline nom="jquery_plugins" inclure="campagnodon_front_pipeline.php"/>
   <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
   <pipeline nom="declarer_tables_objets_sql" inclure="base/campagnodon.php"/>
   <pipeline nom="taches_generales_cron" inclure="campagnodon_pipelines.php" />
