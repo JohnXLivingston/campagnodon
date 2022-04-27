@@ -14,10 +14,13 @@
   <auteur>John Livingston</auteur>
   <licence>AGPLv3</licence>
  
-  <necessite nom="bank" compatibilite="[5.0.3;]"/>
-  <necessite nom="spip_bonux" compatibilite="[3.8.3;]"/>
-  <necessite nom="scssphp" compatibilite="[1.4.5;[" />
-
+  <necessite nom="bank" compatibilite="[4.7.0;)"/>
+  <necessite nom="spip_bonux" compatibilite="[3.8.0;)"/>
+  <!-- Les dépendances ci-dessous sont là pour avoir la même mise en forme que sur le site d'Attac. -->
+  <!-- Ce sont des versions datées des plugins, il faudra un jour les mettre à jour -->
+  <necessite nom="spipr_dist" compatibilite="[0.4.17;0.4.*]" />
+  <necessite nom="zcore" compatibilite="[2.8.9;2.8.*]" />
+  
   <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
   <pipeline nom="declarer_tables_objets_sql" inclure="base/campagnodon.php"/>
   <pipeline nom="taches_generales_cron" inclure="campagnodon_pipelines.php" />
