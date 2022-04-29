@@ -53,23 +53,25 @@
               <input type="checkbox" name="recu_fiscal" class="checkbox" value="1" #ENV*{recu_fiscal}" id="champ_recu_fiscal" [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]/>
             </div>
 
-            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adresse}})]
-            <div class="editer editer_adresse obligatoire [(#GET{erreurs}|oui)erreur]">
-              <label for="champ_adresse"><:campagnodon_form:label_adresse:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-              <textarea name="adresse" class="text" id="champ_adresse">#ENV*{adresse}</textarea>
-            </div>
-
-            <div class="campagnodon_groupe_champs">
-              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{code_postal}})]
-              <div class="campagnodon_petit_champ editer editer_code_postal obligatoire [(#GET{erreurs}|oui)erreur]">
-                <label for="champ_code_postal"><:campagnodon_form:label_code_postal:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                <input type="text"  name="code_postal" class="text" value="#ENV*{code_postal}" id="champ_code_postal"/>
+            <div si_recu_fiscal="">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adresse}})]
+              <div class="editer editer_adresse obligatoire [(#GET{erreurs}|oui)erreur]">
+                <label for="champ_adresse"><:campagnodon_form:label_adresse:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+                <textarea name="adresse" class="text" id="champ_adresse">#ENV*{adresse}</textarea>
               </div>
 
-              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{ville}})]
-              <div class="editer editer_ville obligatoire [(#GET{erreurs}|oui)erreur]">
-                <label for="champ_ville"><:campagnodon_form:label_ville:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                <input type="text" required="required"  name="ville" class="text" value="#ENV*{ville}" id="champ_ville"/>
+              <div class="campagnodon_groupe_champs">
+                [(#SET{erreurs, #ENV**{erreurs}|table_valeur{code_postal}})]
+                <div class="campagnodon_petit_champ editer editer_code_postal obligatoire [(#GET{erreurs}|oui)erreur]">
+                  <label for="champ_code_postal"><:campagnodon_form:label_code_postal:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+                  <input type="text"  name="code_postal" class="text" value="#ENV*{code_postal}" id="champ_code_postal"/>
+                </div>
+
+                [(#SET{erreurs, #ENV**{erreurs}|table_valeur{ville}})]
+                <div class="editer editer_ville obligatoire [(#GET{erreurs}|oui)erreur]">
+                  <label for="champ_ville"><:campagnodon_form:label_ville:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+                  <input type="text" required="required"  name="ville" class="text" value="#ENV*{ville}" id="champ_ville"/>
+                </div>
               </div>
             </div>
           </div>
