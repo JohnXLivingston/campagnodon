@@ -8,6 +8,9 @@ function campagnodon_formulaire(formSelector) {
 
   $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form));
   campagnodon_formulaire_recu_fiscal($form, true);
+
+  $form.on('click', 'input[type=radio][name=montant]', () => campagnodon_formulaire_recu_fiscal_explication($form));
+  campagnodon_formulaire_recu_fiscal_explication($form);
 }
 
 /**
@@ -35,5 +38,20 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
     $form.find('[si_recu_fiscal]').hide();
     // On enlève les attributs required des champs concernés.
     $form.find('[si_recu_fiscal] input[recu_fiscal_obligatoire]').removeAttr('required');
+  }
+}
+
+function campagnodon_formulaire_recu_fiscal_explication($form) {
+  const $montant = $form.find('input[type=radio][name=montant]:checked');
+  const explication = $form.find('[recu_fiscal_explication]');
+  if ($montant.length) {
+    let text = explication.attr('recu_fiscal_explication');
+    const montant = parseInt($montant.attr('value'));
+    text = text.replace(/_MONTANT_/g, montant);
+    text = text.replace(/_COUT_/g, Math.round(montant * .34));
+    explication.text(text);
+    explication.show();
+  } else {
+    explication.hide();
   }
 }

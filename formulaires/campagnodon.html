@@ -69,6 +69,9 @@
         </div>
 
         <div si_recu_fiscal="">
+          <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
+          </p>
+
           <div class="row-fluid">
             <div class="form-group span12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adresse}})]
