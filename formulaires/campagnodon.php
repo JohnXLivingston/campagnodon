@@ -14,6 +14,23 @@ class CampagnodonException extends Exception {
   }
 }
 
+function liste_montants_campagne() {
+  // TODO: pouvoir récupérer les montants depuis les paramètres du formulaire.
+  return [
+    'propositions' => [
+      '13' => '13 €',
+      '21' => '21 €',
+      '35' => '35 €',
+      '48' => '48 €',
+      '65' => '65 €',
+      '84' => '84 €',
+      '120' => '120 €',
+      '160' => '160 €',
+    ],
+    'libre' => false
+  ];
+}
+
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
@@ -29,20 +46,11 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     return false;
   }
 
-  $montants = [
-    '13' => '13 €',
-    '21' => '21 €',
-    '35' => '35 €',
-    '48' => '48 €',
-    '65' => '65 €',
-    '84' => '84 €',
-    '120' => '120 €',
-    '160' => '160 €',
-  ];
+  $montants = liste_montants_campagne();
   
   $values = [
     /* Éléments statiques */
-    'montants' => $montants,
+    'montants_propositions' => $montants['propositions'],
     'montant' => '',
     'email' => '',
     'recu_fiscal' => '',
@@ -66,10 +74,12 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   if (empty($campagne)) {
     $erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
   }
+
+  $montants = liste_montants_campagne();
   
-  $obligatoires = ['email', 'montant', 'prenom', 'nom'];
+  $obligatoires = ['email']; // Pas besoin de 'montant', il sera testé plus loin
   if (_request('recu_fiscal') == '1') {
-    array_push($obligatoires,'adresse', 'code_postal', 'ville');
+    array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville');
   }
   
   foreach($obligatoires as $obligatoire) {
@@ -77,7 +87,17 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
       $erreurs[$obligatoire] = _T('info_obligatoire');
     }
   }
-  
+
+  $montant = _request('montant');
+  if (!preg_match('/^\d+$/', $montant) || intval($montant) <= 0) {
+    $erreurs['montant'] = _T('info_obligatoire');
+  }
+  // TODO: implémenter le montant libre (et fixer une borne ?)
+  if (!array_key_exists($montant, $montants['propositions'])) {
+    $erreurs['montant'] = _T('info_obligatoire');
+  }
+
+  // TODO: ajouter les tests manquants sur les données (code postal, champs divers, etc...)
   return $erreurs;
 }
 

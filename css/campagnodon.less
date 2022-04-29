@@ -1,43 +1,55 @@
 .formulaire_campagnodon {
   .editer_montant {
-    display: flex;
-    flex-direction: row;
-
-    input[type=radio] {
-      // On ne met pas les boutons invisibles pour permettre une navigation au clavier
-      opacity: 0;
-      position: fixed;
-      width: 0;
+    .erreur_message {
+      margin-bottom: 10px;
     }
 
-    input[type=radio] + span {
-      // Le style du libellé
-      padding: 0.7em;
-      margin-right: 5px;
-      border-radius: 5px;
-      cursor: pointer;
-      border:#7f7f7f 1px solid;
-    }
+    .campagnodon_radio {
+      display: flex;
+      flex-direction: row;
 
-    input[type=radio]:hover + span {
-      background-color: #DA1E48;
-      color: white;
-      border:#DA1E48 1px solid;
-    }
+      input[type=radio] {
+        // On ne met pas les boutons invisibles pour permettre une navigation au clavier
+        opacity: 0;
+        position: fixed;
+        width: 0;
+      }
 
-    input[type=radio]:checked + span {
-      background: #DA1E48;
-      border:#DA1E48 1px solid;
-      font-size: 1.2em;
-      font-weight: bold;
-      text-shadow: 0 0 3px rgba(0,0,0,.5);
-      color: white;
+      input[type=radio] + span {
+        // Le style du libellé
+        padding: 0.7em;
+        margin-right: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        border:#7f7f7f 1px solid;
+      }
+
+      input[type=radio]:hover + span {
+        background-color: #DA1E48;
+        color: white;
+        border:#DA1E48 1px solid;
+      }
+
+      input[type=radio]:checked + span {
+        background: #DA1E48;
+        border:#DA1E48 1px solid;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-shadow: 0 0 3px rgba(0,0,0,.5);
+        color: white;
+      }
     }
   }
 
   .obligatoire {
     label:after {
       content: ' *';
+    }
+
+    .campagnodon_radio {
+      label:after {
+        content: ''
+      }
     }
   }
 }
