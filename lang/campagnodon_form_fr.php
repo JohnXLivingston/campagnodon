@@ -8,5 +8,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_adresse' => 'Adresse',
   'label_code_postal' => 'Code postal',
   'label_ville' => 'Ville',
-  'valider' => 'Je valide et je procède au don'
+  'label_recu_fiscal' => 'Je souhaite recevoir un reçu fiscal',
+  'valider' => 'Je valide et je procède au don',
+  'champ_obligatoire' => 'Champs obligatoires'
 );

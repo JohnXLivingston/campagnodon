@@ -29,8 +29,6 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     return false;
   }
 
-  $titre = $campagne['titre'];
-  
   $montants = [
     '13' => '13 €',
     '21' => '21 €',
@@ -44,7 +42,6 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
   
   $values = [
     /* Éléments statiques */
-    'titre_formulaire' => $titre,
     'montants' => $montants,
     'montant' => '',
     'email' => '',

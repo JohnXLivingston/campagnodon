@@ -1,16 +1,15 @@
-<h2 class="spip">#ENV{titre_formulaire}</h2>
 <div class="formulaire_spip formulaire_#FORM">
   [<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
   [<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
   <BOUCLE_editable(CONDITION){si #ENV{editable}}>
     <form name="formulaire_#FORM" action="#ENV{action}" method="post">
-      <div>
-        #ACTION_FORMULAIRE{#ENV{action}}
+      #ACTION_FORMULAIRE{#ENV{action}}
 
-        <fieldset>
-          <legend><span><:campagnodon_form:je_donne:></span></legend>
-          <div>
+      <fieldset>
+        <legend><span><:campagnodon_form:je_donne:></span></legend>
+        <div class="row-fluid">
+          <div class="form-group span12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
             <div class="editer editer_montant [(#GET{erreurs}|oui)erreur]">
               <BOUCLE_montants(POUR){tableau #ENV{montants}}>
@@ -19,64 +18,92 @@
                   <input type="radio" name="montant" class="radio" id="montant_#GET{val}" value="#GET{val}"[(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
                   <span>#VALEUR</span>
                 </label>
-            </BOUCLE_montants>
+              </BOUCLE_montants>
+            </div>
           </div>
-        </fieldset>
+        </div>
+      </fieldset>
 
-        <fieldset>
-          <legend><span><:campagnodon_form:coordonnees:></span></legend>
+      <fieldset>
+        <legend><span><:campagnodon_form:coordonnees:></span></legend>
 
-          <div>
+        <div class="row-fluid">
+          <div class="form-group span12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{email}})]
             <div class="editer editer_email obligatoire [(#GET{erreurs}|oui)erreur]">
-              <label for="champ_email"><:campagnodon_form:label_email:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+              <label for="champ_email"><:campagnodon_form:label_email:></label>
+              [<span class='erreur_message'>(#GET{erreurs})</span>]
               <input type="email" name="email" class="text" value="#ENV*{email}" id="champ_email" required="required"/>
             </div>
+          </div>
+        </div>
 
-            <div class="campagnodon_groupe_champs">
-              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{prenom}})]
-              <div class="editer editer_prenom obligatoire [(#GET{erreurs}|oui)erreur]">
-                <label for="champ_prenom"><:campagnodon_form:label_prenom:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                <input type="text" name="prenom" class="text" value="#ENV*{prenom}" id="champ_prenom" [(#ENV{authentifie}|=={oui}|oui) readonly="readonly"] />
-              </div>
-  
-              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{nom}})]
-              <div class="editer editer_nom obligatoire [(#GET{erreurs}|oui)erreur]">
-                <label for="champ_nom">Nom de famille<span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                <input type="text" name="nom" class="text" value="#ENV*{nom}" id="champ_nom" [(#ENV{authentifie}|=={oui}|oui) readonly="readonly"] />
-              </div>
+        <div class="row-fluid">
+          <div class="form-group span6">
+            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{prenom}})]
+            <div class="editer editer_prenom obligatoire [(#GET{erreurs}|oui)erreur]">
+              <label for="champ_prenom"><:campagnodon_form:label_prenom:></label>
+              [<span class='erreur_message'>(#GET{erreurs})</span>]
+              <input type="text" name="prenom" class="text" value="#ENV*{prenom}" id="champ_prenom" [(#ENV{authentifie}|=={oui}|oui) readonly="readonly"] />
             </div>
+          </div>
+          <div class="form-group span6">
+            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{nom}})]
+            <div class="editer editer_nom obligatoire [(#GET{erreurs}|oui)erreur]">
+              <label for="champ_nom">Nom de famille</label>
+              [<span class='erreur_message'>(#GET{erreurs})</span>]
+              <input type="text" name="nom" class="text" value="#ENV*{nom}" id="champ_nom" [(#ENV{authentifie}|=={oui}|oui) readonly="readonly"] />
+            </div>
+          </div>
+        </div>
 
+        <div class="row-fluid">
+          <div class="form-group span12 choix">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
-            <div class="editer editer_recu_fiscal obligatoire [(#GET{erreurs}|oui)erreur]">
-              <label for="champ_recu_fiscal"><:campagnodon_form:label_recu_fiscal:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+            <div class="editer editer_recu_fiscal [(#GET{erreurs}|oui)erreur]">
               <input type="checkbox" name="recu_fiscal" class="checkbox" value="1" #ENV*{recu_fiscal}" id="champ_recu_fiscal" [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]/>
+              <label for="champ_recu_fiscal"><:campagnodon_form:label_recu_fiscal:></label>
+              [<span class='erreur_message'>(#GET{erreurs})</span>]
             </div>
+          </div>
+        </div>
 
-            <div si_recu_fiscal="">
+        <div si_recu_fiscal="">
+          <div class="row-fluid">
+            <div class="form-group span12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adresse}})]
               <div class="editer editer_adresse obligatoire [(#GET{erreurs}|oui)erreur]">
-                <label for="champ_adresse"><:campagnodon_form:label_adresse:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
+                <label for="champ_adresse"><:campagnodon_form:label_adresse:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
                 <textarea name="adresse" class="text" id="champ_adresse">#ENV*{adresse}</textarea>
-              </div>
-
-              <div class="campagnodon_groupe_champs">
-                [(#SET{erreurs, #ENV**{erreurs}|table_valeur{code_postal}})]
-                <div class="campagnodon_petit_champ editer editer_code_postal obligatoire [(#GET{erreurs}|oui)erreur]">
-                  <label for="champ_code_postal"><:campagnodon_form:label_code_postal:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                  <input type="text"  name="code_postal" class="text" value="#ENV*{code_postal}" id="champ_code_postal"/>
-                </div>
-
-                [(#SET{erreurs, #ENV**{erreurs}|table_valeur{ville}})]
-                <div class="editer editer_ville obligatoire [(#GET{erreurs}|oui)erreur]">
-                  <label for="champ_ville"><:campagnodon_form:label_ville:><span class="obligatoire"><:info_obligatoire_02:></span>[<span class='erreur_message'>(#GET{erreurs})</span>]</label>
-                  <input type="text" required="required"  name="ville" class="text" value="#ENV*{ville}" id="champ_ville"/>
-                </div>
               </div>
             </div>
           </div>
-        </fieldset>
-      </div>
+
+          <div class="row-fluid">
+            <div class="form-group span3">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{code_postal}})]
+              <div class="editer editer_code_postal obligatoire [(#GET{erreurs}|oui)erreur]">
+                <label for="champ_code_postal"><:campagnodon_form:label_code_postal:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <input type="text"  name="code_postal" class="text" value="#ENV*{code_postal}" id="champ_code_postal"/>
+              </div>
+            </div>
+            <div class="form-group span9">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{ville}})]
+              <div class="editer editer_ville obligatoire [(#GET{erreurs}|oui)erreur]">
+                <label for="champ_ville"><:campagnodon_form:label_ville:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <input type="text" required="required"  name="ville" class="text" value="#ENV*{ville}" id="champ_ville"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <p class="explication">
+        *: <:campagnodon_form:champ_obligatoire:>
+      </p>
 
       <p class="boutons">
         <input type="submit" class="submit" value="<:campagnodon_form:valider:>" />
