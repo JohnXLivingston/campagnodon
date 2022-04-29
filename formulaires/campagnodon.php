@@ -30,7 +30,6 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
   }
 
   $titre = $campagne['titre'];
-  $mode_debug = defined('_CAMPAGNODON_DEBUG_FORM') && _CAMPAGNODON_DEBUG_FORM === true ? true : false;
   
   $montants = [
     '13' => '13 €',
@@ -46,7 +45,6 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
   $values = [
     /* Éléments statiques */
     'titre_formulaire' => $titre,
-    'mode_debug' => $mode_debug,
     'montants' => $montants,
     'montant' => '',
     'email' => '',

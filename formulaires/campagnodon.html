@@ -4,7 +4,7 @@
   [<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
   <BOUCLE_editable(CONDITION){si #ENV{editable}}>
-    <form name="formulaire_#FORM" action="#ENV{action}" method="post" [(#ENV{mode_debug}|oui)novalidate]>
+    <form name="formulaire_#FORM" action="#ENV{action}" method="post">
       <div>
         #ACTION_FORMULAIRE{#ENV{action}}
 
