@@ -87,11 +87,11 @@ function sync_bank_result($flux) {
 /**
  * Synchronisation après reglement
  *
- * @pipeline trig_bank_notifier_reglement
+ * @pipeline bank_traiter_reglement
  * @param  array $flux Données du pipeline
  * @return array       Données du pipeline
  */
-function campagnodon_trig_bank_notifier_reglement($flux) {
+function campagnodon_bank_traiter_reglement($flux) {
 	sync_bank_result($flux);
 }
 
@@ -99,7 +99,7 @@ function campagnodon_trig_bank_notifier_reglement($flux) {
 /**
  * Synchronisation quand paiement en attente
  *
- * @pipeline trig_bank_notifier_reglement
+ * @pipeline trig_bank_reglement_en_attente
  * @param  array $flux Données du pipeline
  * @return array       Données du pipeline
  */
@@ -111,7 +111,7 @@ function campagnodon_trig_bank_reglement_en_attente($flux) {
 /**
  * Synchronisation après échec de paiement
  *
- * @pipeline trig_bank_notifier_reglement
+ * @pipeline trig_bank_reglement_en_echec
  * @param  array $flux Données du pipeline
  * @return array       Données du pipeline
  */
