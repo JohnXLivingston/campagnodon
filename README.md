@@ -25,6 +25,7 @@ Pour configurer la connexion avec CiviCRM, ajouter dans le fichier
 * une constante `_CAMPAGNODON_MODE` avec pour valeur `civicrm`,
 * une variable `_CAMPAGNODON_CIVICRM_API_OPTIONS` contenant les arguments à donner au constructeur de [civicrm_api3](inc/civicrm/class.api.php),
 * une variable `_CAMPAGNODON_CIVICRM_PREFIX` qui contient le prefix a utiliser pour les ID de transactions créés dans CiviCRM. Cela permet de différencier les différentes plateformes de développement/test/production.
+* une variable **optionnelle** `_CAMPAGNODON_PAYS_DEFAULT` avec le code ISO du pays à renseigner par défaut pour l'adresses des contacts. Si non fourni, le champs sera vide par défaut.
 
 ```php
 define('_CAMPAGNODON_MODE', 'civicrm');
@@ -34,6 +35,7 @@ define('_CAMPAGNODON_CIVICRM_API_OPTIONS', [
         'key' => "xxxxxx"
 ]);
 define('_CAMPAGNODON_CIVICRM_PREFIX', 'campagnodon');
+define('_CAMPAGNODON_PAYS_DEFAULT', 'FR');
 ```
 
 ## Synchroniser les données distantes.

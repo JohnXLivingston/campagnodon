@@ -16,6 +16,7 @@
  
   <necessite nom="bank" compatibilite="[4.7.0;)"/>
   <necessite nom="spip_bonux" compatibilite="[3.8.0;)"/>
+  <necessite nom="pays" compatibilite="[3.4.9;]"/>
   <!-- Les dépendances ci-dessous sont là pour avoir la même mise en forme que sur le site d'Attac. -->
   <!-- Ce sont des versions datées des plugins, il faudra un jour les mettre à jour -->
   <necessite nom="spipr_dist" compatibilite="[0.4.17;0.4.*]" />

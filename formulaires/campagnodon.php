@@ -59,7 +59,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     'adresse' => '',
     'code_postal' => '',
     'ville' => '',
-    // 'pays' => 'FR', FIXME: only France?
+    'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : ''
   ];
   
   return $values;
@@ -76,10 +76,11 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   }
 
   $montants = liste_montants_campagne();
+  $recu_fiscal = _request('recu_fiscal') == '1';
   
   $obligatoires = ['email']; // Pas besoin de 'montant', il sera testé plus loin
-  if (_request('recu_fiscal') == '1') {
-    array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville');
+  if ($recu_fiscal) {
+    array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville', 'pays');
   }
   
   foreach($obligatoires as $obligatoire) {
@@ -87,6 +88,10 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
       $erreurs[$obligatoire] = _T('info_obligatoire');
     }
   }
+
+  if ($e = _request('email') and !email_valide($e)) {
+		$erreurs['email'] = _T('campagnodon_form:erreur_email_invalide');
+	}
 
   $montant = _request('montant');
   if (!preg_match('/^\d+$/', $montant) || intval($montant) <= 0) {
@@ -97,7 +102,15 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     $erreurs['montant'] = _T('info_obligatoire');
   }
 
-  // TODO: ajouter les tests manquants sur les données (code postal, champs divers, etc...)
+  if ($recu_fiscal) {
+    $pays = _request('pays');
+    $ret = sql_select('nom', 'spip_pays', 'code='.sql_quote($pays));
+		if (sql_count($ret) != 1) {
+			$erreurs['pays'] = _T('campagnodon_form:erreur_pays_invalide');
+		}
+  }
+
+  // TODO: ajouter les tests manquants sur les données (email, code postal, champs divers, etc...)
   return $erreurs;
 }
 
@@ -172,7 +185,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
         'street_address' => _request('adresse'),
         'postal_code' => _request('code_postal'),
         'city' => _request('ville'),
-        // TODO: pays ?
+        'country' => _request('pays') // FIXME: vérifier que les valeurs sont bien compatibles avec celles de l'api CiviCRM.
       ));
     }
 

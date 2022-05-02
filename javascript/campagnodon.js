@@ -25,19 +25,19 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
 
   if (premier_appel) {
     // On va noter tous les champs obligatoires, pour pouvoir restaurer la valeur.
-    $form.find('[si_recu_fiscal] input[required]').attr('recu_fiscal_obligatoire', true);
+    $form.find('[si_recu_fiscal] [required]').attr('recu_fiscal_obligatoire', true);
   }
 
   if (checked) {
     // On affiche les zones liées
     $form.find('[si_recu_fiscal]').show();
     // On remet les attribut required sur les champs concernés.
-    $form.find('[si_recu_fiscal] input[recu_fiscal_obligatoire]').attr('required', true);
+    $form.find('[si_recu_fiscal] [recu_fiscal_obligatoire]').attr('required', true);
   } else {
     // On masque les zones à masquer.
     $form.find('[si_recu_fiscal]').hide();
     // On enlève les attributs required des champs concernés.
-    $form.find('[si_recu_fiscal] input[recu_fiscal_obligatoire]').removeAttr('required');
+    $form.find('[si_recu_fiscal] [recu_fiscal_obligatoire]').removeAttr('required');
   }
 }
 
