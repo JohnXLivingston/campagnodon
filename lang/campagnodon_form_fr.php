@@ -3,6 +3,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'je_donne' => 'Je donne :',
   'coordonnees' => 'Coordonnées',
   'label_email' => 'Adresse e-mail',
+  'label_civilite' => 'Civilité',
   'label_prenom' => 'Prénom',
   'label_nom' => 'Nom',
   'label_adresse' => 'Adresse',
@@ -15,5 +16,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'valider' => 'Je valide et je procède au don',
   'champ_obligatoire' => 'Champs obligatoires',
   'erreur_email_invalide' => 'Adresse email invalide',
+  'erreur_civilite_invalide' => 'Civilité invalide',
   'erreur_pays_invalide' => 'Pays invalide'
 );

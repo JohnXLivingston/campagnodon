@@ -31,6 +31,17 @@ function liste_montants_campagne() {
   ];
 }
 
+function liste_civilites() {
+  if (defined('_CAMPAGNODON_LISTE_CIVILITE') && is_array(_CAMPAGNODON_LISTE_CIVILITE)) {
+    return _CAMPAGNODON_LISTE_CIVILITE;
+  }
+  return array(
+    'M' => 'M.',
+    'Mme' => 'Mme.',
+    'Mx' => 'Mx.'
+  );
+}
+
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
@@ -47,13 +58,16 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
   }
 
   $montants = liste_montants_campagne();
+  $civilites = liste_civilites();
   
   $values = [
     /* Éléments statiques */
-    'montants_propositions' => $montants['propositions'],
+    '_montants_propositions' => $montants['propositions'],
+    '_civilites' => $civilites,
     'montant' => '',
     'email' => '',
     'recu_fiscal' => '',
+    'civilite' => '',
     'prenom' => '',
     'nom' => '',
     'adresse' => '',
@@ -76,6 +90,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   }
 
   $montants = liste_montants_campagne();
+  $civilites = liste_civilites();
   $recu_fiscal = _request('recu_fiscal') == '1';
   
   $obligatoires = ['email']; // Pas besoin de 'montant', il sera testé plus loin
@@ -108,6 +123,11 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
 		if (sql_count($ret) != 1) {
 			$erreurs['pays'] = _T('campagnodon_form:erreur_pays_invalide');
 		}
+
+    $civilite = _request('civilite');
+    if (!empty($civilite) && !array_key_exists($civilite, $civilites)) {
+      $erreurs['civilite'] = _T('campagnodon_form:erreur_civilite_invalide');
+    }
   }
 
   // TODO: ajouter les tests manquants sur les données (email, code postal, champs divers, etc...)
@@ -171,8 +191,6 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     $civi_api = new civicrm_api3(_CAMPAGNODON_CIVICRM_API_OPTIONS);
 
     $params = array(
-      'first_name' => _request('prenom'),
-      'last_name' => _request('nom'),
       'email' => _request('email'),
       'amount' => _request('montant'),
       'campaign_id' => $campagne['id_origine'],
@@ -182,6 +200,9 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     );
     if (_request('recu_fiscal') == '1') {
       $params = array_merge($params, array(
+        'prefix' => _request('civilite'), // TODO: cabler dans l'API coté CiviCRM.
+        'first_name' => _request('prenom'),
+        'last_name' => _request('nom'),
         'street_address' => _request('adresse'),
         'postal_code' => _request('code_postal'),
         'city' => _request('ville'),

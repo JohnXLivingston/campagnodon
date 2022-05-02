@@ -14,10 +14,10 @@
             <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
               [<span class='erreur_message'>(#GET{erreurs})</span>]
               <div class="campagnodon_radio">
-                <BOUCLE_montants(POUR){tableau #ENV{montants_propositions}}>
+                <BOUCLE_montants(POUR){tableau #ENV{_montants_propositions}}>
                   #SET{val,#CLE}
                   <label>
-                    <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}"[(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
+                    <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
                     <span>#VALEUR</span>
                   </label>
                 </BOUCLE_montants>
@@ -61,7 +61,21 @@
           </p>
 
           <div class="row-fluid">
-            <div class="form-group span6">
+            <div class="form-group span2">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{civilite}})]
+              <div class="editer editer_civilite [(#GET{erreurs}|oui)erreur]">
+                <label for="champ_civilite"><:campagnodon_form:label_civilite:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <select name="civilite" class="select" id="champ_civilite">
+                  <option value=""></option>
+                  <BOUCLE_civilites(POUR){tableau #ENV{_civilites}}>
+                    #SET{val,#CLE}
+                    <option value="#GET{val}" [(#ENV{civilite}|=={#GET{val}}|oui)selected="selected"]>#VALEUR</option>
+                  </BOUCLE_civilites>
+                </select>
+              </div>
+            </div>
+            <div class="form-group span5">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{prenom}})]
               <div class="editer editer_prenom obligatoire [(#GET{erreurs}|oui)erreur]">
                 <label for="champ_prenom"><:campagnodon_form:label_prenom:></label>
@@ -69,7 +83,7 @@
                 <input type="text" name="prenom" class="text" value="#ENV*{prenom}" id="champ_prenom" [(#ENV{authentifie}|=={oui}|oui) readonly="readonly"] />
               </div>
             </div>
-            <div class="form-group span6">
+            <div class="form-group span5">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{nom}})]
               <div class="editer editer_nom obligatoire [(#GET{erreurs}|oui)erreur]">
                 <label for="champ_nom">Nom de famille</label>
