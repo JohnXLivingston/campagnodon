@@ -35,3 +35,9 @@ define('_CAMPAGNODON_CIVICRM_API_OPTIONS', [
 ]);
 define('_CAMPAGNODON_CIVICRM_PREFIX', 'campagnodon');
 ```
+
+## Synchroniser les données distantes.
+
+Dans le cas où Campagnodon est lié à un système distant (ex: CiviCRM), il y a des données à synchroniser.
+La tâche planifiée `campagnodon_synchronisation_campagnes` tourne toutes les heures.
+Pour pouvoir utiliser Campagnodon immédiatement, il suffit d'aller la déclencher à la main dans la page d'administration `Maintenance > Liste des travaux` de SPIP.
