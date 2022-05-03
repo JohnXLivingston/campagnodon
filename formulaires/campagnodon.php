@@ -74,7 +74,8 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     'adresse' => '',
     'code_postal' => '',
     'ville' => '',
-    'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : ''
+    'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : '',
+    'telephone' => ''
   ];
   
   return $values;
@@ -135,6 +136,13 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     if (!empty($date_naissance)) {
       if ($erreur = $verifier($date_naissance, 'date', array('format' => 'amj'))) {
         $erreurs['date_naissance'] = $erreur;
+      }
+    }
+
+    $telephone = _request('telephone');
+    if (!empty($telephone)) {
+      if ($erreur = $verifier($telephone, 'telephone')) {
+        $erreurs['telephone'] = $erreur;
       }
     }
   }
@@ -224,7 +232,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
         'street_address' => _request('adresse'),
         'postal_code' => _request('code_postal'),
         'city' => _request('ville'),
-        'country' => _request('pays') // FIXME: vérifier que les valeurs sont bien compatibles avec celles de l'api CiviCRM.
+        'country' => _request('pays'), // FIXME: vérifier que les valeurs sont bien compatibles avec celles de l'api CiviCRM.
+        'phone' => _request('telephone'), // TODO: cabler dans l'API coté CiviCRM
       ));
 
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
