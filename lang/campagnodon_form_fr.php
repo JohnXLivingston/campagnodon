@@ -18,6 +18,5 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'champ_obligatoire' => 'Champs obligatoires',
   'erreur_email_invalide' => 'Adresse email invalide',
   'erreur_civilite_invalide' => 'Civilité invalide',
-  'erreur_date_naissance_invalide' => 'Date de naissance invalide',
   'erreur_pays_invalide' => 'Pays invalide'
 );

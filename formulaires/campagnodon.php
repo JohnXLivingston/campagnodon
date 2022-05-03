@@ -82,6 +82,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
 
 function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   $erreurs = [];
+  $verifier = charger_fonction('verifier', 'inc/');
   
   $obligatoires = [];
 
@@ -110,8 +111,8 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
 	}
 
   $montant = _request('montant');
-  if (!preg_match('/^\d+$/', $montant) || intval($montant) <= 0) {
-    $erreurs['montant'] = _T('info_obligatoire');
+  if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
+    $erreurs['montant'] = $erreur;
   }
   // TODO: implémenter le montant libre (et fixer une borne ?)
   if (!array_key_exists($montant, $montants['propositions'])) {
@@ -132,14 +133,8 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
 
     $date_naissance = _request('date_naissance');
     if (!empty($date_naissance)) {
-      $date_naissance_valide = false;
-      if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date_naissance, $date_naissance_matches)) {
-        if (checkdate(intval($date_naissance_matches[2]), intval($date_naissance_matches[3]), intval($date_naissance_matches[1]))) {
-          $date_naissance_valide = true;
-        }
-      }
-      if (!$date_naissance_valide) {
-        $erreurs['date_naissance'] = _T('campagnodon_form:erreur_date_naissance_invalide');
+      if ($erreur = $verifier($date_naissance, 'date', array('format' => 'amj'))) {
+        $erreurs['date_naissance'] = $erreur;
       }
     }
   }
@@ -213,6 +208,14 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       // TODO: recu fiscal
     );
     if (_request('recu_fiscal') == '1') {
+      // FIXME: je n'ai pas réussi à faire marcher la phase de normalisation ci-dessous.
+      // $date_naissance = _request('date_naissance');
+      // $date_naissance_normalisee = null;
+      // if (!empty($date_naissance)) {
+      //   $verifier = charger_fonction('verifier', 'inc/');
+      //   $verifier($date_naissance, 'date', array('format' => 'amj', 'normaliser' => 'date'), $date_naissance_normalisee);
+      // }
+
       $params = array_merge($params, array(
         'prefix' => _request('civilite'), // TODO: cabler dans l'API coté CiviCRM.
         'first_name' => _request('prenom'),
@@ -223,6 +226,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
         'city' => _request('ville'),
         'country' => _request('pays') // FIXME: vérifier que les valeurs sont bien compatibles avec celles de l'api CiviCRM.
       ));
+
+      // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
     }
 
     $result = $civi_api->Attac->create_member($params);
