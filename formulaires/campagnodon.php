@@ -42,6 +42,13 @@ function liste_civilites() {
   );
 }
 
+function liste_souscriptions_optionnelles() {
+  if (defined('_CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES') && is_array(_CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES)) {
+    return _CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES;
+  }
+  return array();
+}
+
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
@@ -59,11 +66,13 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
 
   $montants = liste_montants_campagne();
   $civilites = liste_civilites();
+  $souscriptions_optionnelles = liste_souscriptions_optionnelles();
   
   $values = [
     /* Éléments statiques */
     '_montants_propositions' => $montants['propositions'],
     '_civilites' => $civilites,
+    '_souscriptions_optionnelles' => $souscriptions_optionnelles,
     'montant' => '',
     'email' => '',
     'recu_fiscal' => '',
@@ -75,8 +84,12 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     'code_postal' => '',
     'ville' => '',
     'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : '',
-    'telephone' => ''
+    'telephone' => '',
   ];
+
+  foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
+    $values['souscription_optionnelle_'.$cle] = '';
+  } 
   
   return $values;
 }
@@ -101,7 +114,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville', 'pays');
   }
   
-  foreach($obligatoires as $obligatoire) {
+  foreach ($obligatoires as $obligatoire) {
     if(!_request($obligatoire)) {
       $erreurs[$obligatoire] = _T('info_obligatoire');
     }
@@ -237,6 +250,13 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       ));
 
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
+    }
+
+    $souscriptions_optionnelles = liste_souscriptions_optionnelles();
+    foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
+      if (!empty($souscription_optionnelle['cle_distante'])) {
+        $params[$souscription_optionnelle['cle_distante']] = _request('souscription_optionnelle_'.$cle) == '1';
+      }
     }
 
     $result = $civi_api->Attac->create_member($params);

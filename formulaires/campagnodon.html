@@ -45,7 +45,14 @@
           <div class="form-group span12 choix">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
             <div class="editer editer_recu_fiscal [(#GET{erreurs}|oui)erreur]">
-              <input type="checkbox" name="recu_fiscal" class="checkbox" value="1" #ENV*{recu_fiscal}" id="champ_recu_fiscal" [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]/>
+              <input
+                type="checkbox"
+                name="recu_fiscal"
+                class="checkbox"
+                value="1"
+                id="champ_recu_fiscal"
+                [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]
+              />
               <label for="champ_recu_fiscal"><:campagnodon_form:label_recu_fiscal:></label>
               [<span class='erreur_message'>(#GET{erreurs})</span>]
             </div>
@@ -159,6 +166,28 @@
           </div>
 
         </div>
+
+        <BOUCLE_souscriptons_optionnelles(POUR){tableau #ENV{_souscriptions_optionnelles}}>
+          #SET{nom_champ,souscription_optionnelle_#CLE}
+          #SET{label_champ, #VALEUR|table_valeur{label}}
+          <div class="row-fluid">
+            <div class="form-group span12 choix">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{#GET{nom_champ}}})]
+              <div class="editer editer_#GET{nom_champ} [(#GET{erreurs}|oui)erreur]">
+                <input
+                  type="checkbox"
+                  name="#GET{nom_champ}"
+                  class="checkbox"
+                  value="1"
+                  id="champ_#GET{nom_champ}"
+                  [(#ENV{#GET{nom_champ}}|=={1}|oui)checked="checked"]
+                />
+                <label for="champ_#GET{nom_champ}">#GET{label_champ}</label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+              </div>
+            </div>
+          </div>
+        </BOUCLE_souscriptons_optionnelles>
       </fieldset>
 
       <p class="explication">
