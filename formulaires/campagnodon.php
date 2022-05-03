@@ -70,6 +70,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     'civilite' => '',
     'prenom' => '',
     'nom' => '',
+    'date_naissance' => '',
     'adresse' => '',
     'code_postal' => '',
     'ville' => '',
@@ -127,6 +128,19 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     $civilite = _request('civilite');
     if (!empty($civilite) && !array_key_exists($civilite, $civilites)) {
       $erreurs['civilite'] = _T('campagnodon_form:erreur_civilite_invalide');
+    }
+
+    $date_naissance = _request('date_naissance');
+    if (!empty($date_naissance)) {
+      $date_naissance_valide = false;
+      if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date_naissance, $date_naissance_matches)) {
+        if (checkdate(intval($date_naissance_matches[2]), intval($date_naissance_matches[3]), intval($date_naissance_matches[1]))) {
+          $date_naissance_valide = true;
+        }
+      }
+      if (!$date_naissance_valide) {
+        $erreurs['date_naissance'] = _T('campagnodon_form:erreur_date_naissance_invalide');
+      }
     }
   }
 
@@ -203,6 +217,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
         'prefix' => _request('civilite'), // TODO: cabler dans l'API coté CiviCRM.
         'first_name' => _request('prenom'),
         'last_name' => _request('nom'),
+        'birth_date' => _request('date_naissance'), // TODO: cabler dans l'API coté CiviCRM
         'street_address' => _request('adresse'),
         'postal_code' => _request('code_postal'),
         'city' => _request('ville'),

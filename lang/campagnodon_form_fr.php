@@ -6,6 +6,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_civilite' => 'Civilité',
   'label_prenom' => 'Prénom',
   'label_nom' => 'Nom',
+  'label_date_naissance' => 'Date de naissance',
   'label_adresse' => 'Adresse',
   'label_code_postal' => 'Code postal',
   'label_ville' => 'Ville',
@@ -17,5 +18,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'champ_obligatoire' => 'Champs obligatoires',
   'erreur_email_invalide' => 'Adresse email invalide',
   'erreur_civilite_invalide' => 'Civilité invalide',
+  'erreur_date_naissance_invalide' => 'Date de naissance invalide',
   'erreur_pays_invalide' => 'Pays invalide'
 );
