@@ -38,6 +38,7 @@ Note: ce type d'installation vient avec des données d'exemple.
 Le mode de fonctionnement pour Attac suppose les configurations ci-dessous.
 
 1) activer le composant «civicampaign» (`Administrer > Paramètres système > Composants`)
+2) installer l'extension [proca](https://github.com/fixthestatusquo/proca-civicrm/) (télécharger dans le dossier des extensions, puis activer dans `Administrer > Paramètres système > Extensions`)
 
 ### Installer les API spécifiques
 
