@@ -49,6 +49,17 @@ function liste_souscriptions_optionnelles() {
   return array();
 }
 
+function traduit_financial_type($type) {
+  if (
+    defined('_CAMPAGNODON_TYPE_CONTRIBUTION')
+    && is_array(_CAMPAGNODON_TYPE_CONTRIBUTION)
+    && array_key_exists($type, _CAMPAGNODON_TYPE_CONTRIBUTION)
+  ) {
+    return _CAMPAGNODON_TYPE_CONTRIBUTION[$type];
+  }
+  return $type;
+}
+
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
@@ -222,7 +233,12 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
 
     $params = array(
       'email' => _request('email'),
-      'amount' => _request('montant'),
+      'contributions' => [
+        [
+          'financial_type' => traduit_financial_type('don'),
+          'amount' => _request('montant')
+        ]
+      ],
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant
       // 'payment_method' => 'transfer' // FIXME: use the correct value
@@ -259,7 +275,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       }
     }
 
-    $result = $civi_api->Attac->create_member($params);
+    // $result = $civi_api->Attac->create_member($params);
+    $result = $civi_api->Campagnodon->create($params);
 
     // spip_log('Résultat CiviCRM: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
 

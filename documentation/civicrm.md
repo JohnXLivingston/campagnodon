@@ -40,12 +40,11 @@ Le mode de fonctionnement pour Attac suppose les configurations ci-dessous.
 1) activer le composant «civicampaign» (`Administrer > Paramètres système > Composants`)
 2) installer l'extension [proca](https://github.com/fixthestatusquo/proca-civicrm/) (télécharger dans le dossier des extensions, puis activer dans `Administrer > Paramètres système > Extensions`)
 
-### Installer les API spécifiques
+### Installer l'extension CiviCRM Campagnodon
 
-Allant de paire avec Campagnodon, il y a des API CiviCRM spécifiques à installer.
-Celles-ci sont dans ce [dépot](https://code.globenet.org/attacfr/attac-civicrm-api).
+Allant de paire avec Campagnodon, il y a une Extension CiviCRM [campagnodon-civicrm](https://code.globenet.org/attacfr/campagnodon-civicrm).
 
-Placer les fichiers de l'extension dans le dossier des extensions du CiviCRM, puis aller dans l'intefarce d'administration `Administrer > Paramètres système > Extension` pour l'activer.
+Placer les fichiers de l'extension dans le dossier des extensions du CiviCRM, puis aller dans l'interface d'administration `Administrer > Paramètres système > Extension` pour l'activer.
 
 Il faut ensuite obtenir des clés d'API CiviCRM, et les configurer coté SPIP.
 Pour obtenir les clés, on pourra par exemple installer l'extension `API Key Management`.

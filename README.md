@@ -27,6 +27,7 @@ Pour configurer la connexion avec CiviCRM, ajouter dans le fichier
 * une variable `_CAMPAGNODON_CIVICRM_PREFIX` qui contient le prefix a utiliser pour les ID de transactions créés dans CiviCRM. Cela permet de différencier les différentes plateformes de développement/test/production.
 * une variable **optionnelle** `_CAMPAGNODON_PAYS_DEFAULT` avec le code ISO du pays à renseigner par défaut pour l'adresses des contacts. Si non fourni, le champs sera vide par défaut.
 * une variable **optionnelle** `_CAMPAGNODON_LISTE_CIVILITE` avec la liste des civilités, et leur valeur dans le système distant. Si non fourni, on part sur une liste par défaut: M/Mme/Mx.
+* une variable **optionnelle** `_CAMPAGNODON_CIVICRM_TYPE_CONTRIBUTION` avec la correspondance «type de contribution» pour le système distant. Si cette variable est manquante, ou si certains types manquent, ils seront envoyé tel quel au système distant (avec le risque d'être refusé si invalide).
 * une variable **optionnelle** `_CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES` qui décrit les case à cocher qu'on peut ajouter en fin de formulaire. Voir l'exemple plus bas pour le format.
 
 ```php
@@ -42,6 +43,10 @@ define('_CAMPAGNODON_LISTE_CIVILITE', array(
         'M' => 'M.',
         'Mme' => 'Mme.',
         'Mx' => 'Mx.'
+));
+define('_CAMPAGNODON_TYPE_CONTRIBUTION', array(
+        'don' => 'Don', // «identifiant campagnodon» => «nom du financial type CiviCRM» (ou ID numérique pour ne pas être dépendant d'un changement de libellé)
+        'adhesion' => 'Cotisation des membres'
 ));
 
 define('_CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES', array(
