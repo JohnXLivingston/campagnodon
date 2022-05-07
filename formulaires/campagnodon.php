@@ -31,9 +31,9 @@ function liste_montants_campagne() {
   ];
 }
 
-function liste_civilites() {
-  if (defined('_CAMPAGNODON_LISTE_CIVILITE') && is_array(_CAMPAGNODON_LISTE_CIVILITE)) {
-    return _CAMPAGNODON_LISTE_CIVILITE;
+function liste_civilites($mode_options) {
+  if (is_array($mode_options) && array_key_exists('liste_civilite', $mode_options)) {
+    return $mode_options['liste_civilite'];
   }
   return array(
     'M' => 'M.',
@@ -42,20 +42,21 @@ function liste_civilites() {
   );
 }
 
-function liste_souscriptions_optionnelles() {
-  if (defined('_CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES') && is_array(_CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES)) {
-    return _CAMPAGNODON_SOUSCRIPTIONS_OPTIONNELLES;
+function liste_souscriptions_optionnelles($mode_options) {
+  if (is_array($mode_options) && array_key_exists('souscriptions_optionnelles', $mode_options)) {
+    return $mode_options['souscriptions_optionnelles'];
   }
   return array();
 }
 
-function traduit_financial_type($type) {
+function traduit_financial_type($mode_options, $type) {
   if (
-    defined('_CAMPAGNODON_TYPE_CONTRIBUTION')
-    && is_array(_CAMPAGNODON_TYPE_CONTRIBUTION)
-    && array_key_exists($type, _CAMPAGNODON_TYPE_CONTRIBUTION)
+    is_array($mode_options)
+    && array_key_exists('type_contribution', $mode_options)
+    && is_array($mode_options['type_contribution'])
+    && array_key_exists($type, $mode_options['type_contribution'])
   ) {
-    return _CAMPAGNODON_TYPE_CONTRIBUTION[$type];
+    return $mode_options['type_contribution'][$type];
   }
   return $type;
 }
@@ -75,9 +76,12 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
     return false;
   }
 
+  include_spip('inc/campagnodon.utils');
+  $mode_options = campagnodon_mode_options($campagne['origine']);
+
   $montants = liste_montants_campagne();
-  $civilites = liste_civilites();
-  $souscriptions_optionnelles = liste_souscriptions_optionnelles();
+  $civilites = liste_civilites($mode_options);
+  $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
   
   $values = [
     /* Éléments statiques */
@@ -116,8 +120,11 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
     $erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
   }
 
+  include_spip('inc/campagnodon.utils');
+  $mode_options = campagnodon_mode_options($campagne['origine']);
+
   $montants = liste_montants_campagne();
-  $civilites = liste_civilites();
+  $civilites = liste_civilites($mode_options);
   $recu_fiscal = _request('recu_fiscal') == '1';
   
   $obligatoires = ['email']; // Pas besoin de 'montant', il sera testé plus loin
@@ -178,45 +185,46 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
 function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
   try {
     spip_log("traiter_dist" . $type . ":". $id_campagne);
-    if (_CAMPAGNODON_MODE !== 'civicrm') {
-      throw new CampagnodonException("Campagnodon Non configuré, constante _CAMPAGNODON_MODE manquante.", "campagnodon:erreur_sauvegarde");
-    }
-    if (!defined('_CAMPAGNODON_CIVICRM_API_OPTIONS')) {
-      throw new CampagnodonException("CiviCRM Non configuré, constante _CAMPAGNODON_CIVICRM_API_OPTIONS manquante.", "campagnodon:erreur_sauvegarde");
-    }
 
     $campagne = get_campagne_ouverte($id_campagne);
     if (empty($campagne)) {
       throw new CampagnodonException('Campagne invalide au moment de l\'enregistrement', "campagnodon:campagne_invalide");
     }
-    if ($campagne['origine'] !== 'civicrm') {
-      throw new CampagnodonException('La campagne n\'a pas CiviCRM pour origine.', "campagnodon:campagne_invalide");
+
+    include_spip('inc/campagnodon.utils');
+    $mode_options = campagnodon_mode_options($campagne['origine']);
+    if (!$mode_options['type']) {
+      throw new CampagnodonException("Campagnodon non configuré, mode inconnu: '".$campagne['origine']."'.", "campagnodon:erreur_sauvegarde");
+    }
+    $fonction_nouvelle_contribution = campagnodon_fonction_connecteur($campagne['origine'], 'nouvelle_contribution');
+    if (!$fonction_nouvelle_contribution) {
+      throw new CampagnodonException("Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '".$campagne['origine']."'.", "campagnodon:erreur_sauvegarde");
     }
 
     $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
       'id_campagnodon_campagne' => $id_campagne,
-      'type_distant' => 'civicrm'
+      'mode' => $campagne['origine']
     ]);
     if (!($id_campagnodon_transaction > 0)) {
       throw new CampagnodonException("Erreur à la création de la transaction campagnodon.", "campagnodon:erreur_sauvegarde");
     }
 
     $inserer_transaction = charger_fonction('inserer_transaction', 'bank');
-    $options = [
+    $transaction_options = [
       // 'auteur' => _request('email'), // FIXME: peut-on se passer de cette info ?
       'parrain' => 'campagnodon',
       'tracking_id' => $id_campagnodon_transaction,
       'force' => true
     ];
     if (!(
-      $id_transaction = $inserer_transaction(_request('amount'), $options)
+      $id_transaction = $inserer_transaction(_request('amount'), $transaction_options)
       and $hash = sql_getfetsel('transaction_hash', 'spip_transactions', 'id_transaction=' . intval($id_transaction))
     )) {
       throw new CampagnodonException("Erreur à la création de la transaction ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
     }
 
     include_spip('inc/campagnodon.utils');
-    $transaction_idx_distant = get_transaction_idx_distant($id_campagnodon_transaction);
+    $transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction);
     if (false === sql_updateq(
       'spip_campagnodon_transactions',
       [
@@ -228,14 +236,11 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
     }
 
-    include_spip('inc/civicrm/class.api');
-    $civi_api = new civicrm_api3(_CAMPAGNODON_CIVICRM_API_OPTIONS);
-
     $params = array(
       'email' => _request('email'),
       'contributions' => [
         [
-          'financial_type' => traduit_financial_type('don'),
+          'financial_type' => traduit_financial_type($mode_options, 'don'),
           'amount' => _request('montant')
         ]
       ],
@@ -268,43 +273,27 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
     }
 
-    $souscriptions_optionnelles = liste_souscriptions_optionnelles();
+    $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
     foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
       if (!empty($souscription_optionnelle['cle_distante'])) {
         $params[$souscription_optionnelle['cle_distante']] = _request('souscription_optionnelle_'.$cle) == '1';
       }
     }
 
-    // $result = $civi_api->Attac->create_member($params);
-    $result = $civi_api->Campagnodon->create($params);
-
-    // spip_log('Résultat CiviCRM: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
-
-    if (!$result) {
-      throw new CampagnodonException("Erreur CiviCRM " . $civi_api->errorMsg(), "campagnodon:erreur_sauvegarde");
+    try {
+      $result = $fonction_nouvelle_contribution($mode_options, $params);
+    } catch (Exception $e) {
+      throw new CampagnodonException("Erreur nouvelle_campagne mode=".$campagne['origine'].": " . $e->getMessage(), "campagnodon:erreur_sauvegarde");
     }
 
-    $update_campagnodon_transaction = [];
-    $civicrm_result = $civi_api->values;
-    if (empty($civicrm_result)) {
-      $civicrm_result = [];
-    }
-    if (!empty($civicrm_result->donation)) {
-      $update_campagnodon_transaction['id_don_distant'] = $civicrm_result->donation->id;
-      civicrm_search_contact_id($civicrm_result->donation, $update_campagnodon_transaction);
-    }
-    if (!empty($civicrm_result->subscription)) {
-      $update_campagnodon_transaction['id_adhesion_distant'] = $civicrm_result->subscription->id;
-      civicrm_search_contact_id($civicrm_result->subscription, $update_campagnodon_transaction);
-    }
-
-    if (count($update_campagnodon_transaction) === 0 || false === sql_updateq(
-      'spip_campagnodon_transactions',
-      $update_campagnodon_transaction,
-      'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
-    )) {
-      throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction." (insertion infos CiviCRM)", "campagnodon:erreur_sauvegarde");
-    }
+    // $update_campagnodon_transaction = [];
+    // if (count($update_campagnodon_transaction) === 0 || false === sql_updateq(
+    //   'spip_campagnodon_transactions',
+    //   $update_campagnodon_transaction,
+    //   'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
+    // )) {
+    //   throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction." (insertion infos CiviCRM)", "campagnodon:erreur_sauvegarde");
+    // }
 
     return [
       'redirect' => generer_url_public('payer-acte', "id_transaction=$id_transaction&transaction_hash=$hash", false, false),
@@ -323,32 +312,4 @@ function get_campagne_ouverte($id_campagne) {
   $where = 'id_campagnodon_campagne='.sql_quote(intval($id_campagne));
   $where.= " AND statut='publie'";
   return sql_fetsel('*', 'spip_campagnodon_campagnes', $where);
-}
-
-/**
- * Cette fonction cherche le contact_id dans un sous-objet CiviCRM.
- */
-function civicrm_search_contact_id($obj, &$update_campagnodon_transaction) {
-  // spip_log(var_export($obj, true), "campagnodon"._LOG_DEBUG);
-  if (!empty($update_campagnodon_transaction['id_contact_distant'])) {
-    // On a déjà l'id.
-    return;
-  }
-  if (empty($obj)) {
-    return;
-  }
-  $id = strval($obj->id);
-  if (empty($id)) {
-    return;
-  }
-  if (empty($obj->values)) {
-    return;
-  }
-  if (empty($obj->values->$id)) {
-    return;
-  }
-  if (empty($obj->values->$id->contact_id)) {
-    return;
-  }
-  $update_campagnodon_transaction['id_contact_distant'] = $obj->values->$id->contact_id;
 }

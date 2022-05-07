@@ -48,7 +48,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'id_transaction' => 'bigint(21) DEFAULT NULL', // Id de la transaction SPIP Bank
       'date_transaction' => 'datetime NOT NULL DEFAULT NOW()',
       'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
-      'type_distant' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Valeurs possibles: «civicrm».''
+      'mode' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'transaction_distant' => 'varchar(255) DEFAULT NULL', // L'ID de transaction qu'on renseigne dans CiviCRM. De la forme: campagnodon/123456789.
       'id_contact_distant' => 'bigint(21) DEFAULT NULL', // L'id du contact dans le système distant
       'id_don_distant' => 'bigint(21) DEFAULT NULL', // L'id du don dans le système distant le cas échéant
@@ -73,7 +73,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'titre' => "text NOT NULL DEFAULT ''",
       'texte' => "longtext NOT NULL DEFAULT ''",
       'date' => "datetime NOT NULL DEFAULT '0000-00-00 00:00:00'",
-      'origine' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // origine de la campagne. Valeurs possibles: «civicrm».
+      'origine' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // origine de la campagne. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'id_origine' => 'bigint(21) DEFAULT NULL', // ID dans la base de donnée d'origine (le cas échéant).
       'statut' => 'varchar(20) CHARACTER SET ASCII NOT NULL DEFAULT "publie"',
       'maj' => 'TIMESTAMP'
