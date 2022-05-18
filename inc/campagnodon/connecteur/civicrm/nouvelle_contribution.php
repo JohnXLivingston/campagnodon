@@ -8,7 +8,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
 function inc_campagnodon_connecteur_civicrm_nouvelle_contribution_dist($mode_options, $params) {
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
   $civi_api = new civicrm_api3($mode_options['api_options']);
-  $result = $civi_api->Campagnodon->create($params);
+  $result = $civi_api->Campagnodon->start($params);
 
   // spip_log('Résultat CiviCRM: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
 
