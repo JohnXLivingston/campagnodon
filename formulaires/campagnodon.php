@@ -296,7 +296,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     // }
 
     return [
-      'redirect' => generer_url_public('payer-acte', "id_transaction=$id_transaction&transaction_hash=$hash", false, false),
+      'redirect' => generer_url_public('payer', "id_transaction=$id_transaction&transaction_hash=$hash", false, false),
       'editable' => false,
     ];
   } catch (CampagnodonException $e) {
