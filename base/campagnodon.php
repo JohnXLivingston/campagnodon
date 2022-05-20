@@ -68,9 +68,6 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
       'mode' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'transaction_distant' => 'varchar(255) DEFAULT NULL', // L'ID de transaction qu'on renseigne dans CiviCRM. De la forme: campagnodon/123456789.
-      'id_contact_distant' => 'bigint(21) DEFAULT NULL', // L'id du contact dans le système distant
-      'id_don_distant' => 'bigint(21) DEFAULT NULL', // L'id du don dans le système distant le cas échéant
-      'id_adhesion_distant' => 'bigint(21) DEFAULT NULL', // L'id de l'adhésion dans le système distant le cas échéant
       'maj' => 'TIMESTAMP'
     ],
     'key' => [

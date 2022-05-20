@@ -9,11 +9,29 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * (voir le pipeline campagnodon_bank_dsp2_renseigner_facturation)
  * @param $mode_options
  *  Les options venant de _CAMPAGNODON_MODES
- * @param $id_contact_distant
+ * @param $transaction_distant
  *  L'id dans le système distant.
- * @param $flux
- *  Le flux du pipeline de spip bank.
  */
-function inc_campagnodon_connecteur_test_dsp2_renseigner_facturation_dist($mode_options, $id_contact_distant, &$flux) {
-  // FIXME: remonter les infos de la base de donnée.
+function inc_campagnodon_connecteur_test_dsp2_renseigner_facturation_dist($mode_options, $transaction_distant) {
+  // On remonte les infos de la base de donnée (table testdata).
+  if (empty($transaction_distant)) {
+    return false;
+  }
+  $data = sql_getfetsel('data', 'spip_campagnodon_testdata', 'idx=' . sql_quote($transaction_distant));
+  if (!$data) {
+    return false;
+  }
+
+  $data = json_decode($data, true);
+  $result = array(
+    'nom' => $data['last_name'] ?? null,
+    'prenom' => $data['first_name'] ?? null,
+    'email' => $data['email'] ?? null,
+    'adresse' => $data['street_address'] ?? null,
+    'code_postal' => $data['postal_code'] ?? null,
+    'ville' => $data['city'] ?? null,
+    'pays' => $data['country'] ?? null,
+  );
+  spip_log('inc_campagnodon_connecteur_test_dsp2_renseigner_facturation_dist: données remontées: '.json_encode($result).'.', 'campagnodon'._LOG_DEBUG);
+  return $result;
 }

@@ -36,7 +36,7 @@ function campagnodon_fonction_connecteur($mode, $nom_fonction) {
   if (!preg_match('/^[a-z]+$/', $type)) {
     return false;
   }
-  if (!preg_match('/^[a-z_]+$/', $nom_fonction)) {
+  if (!preg_match('/^[a-z0-9_]+$/', $nom_fonction)) {
     return false;
   }
   return charger_fonction($nom_fonction, 'inc/campagnodon/connecteur/'.$type);
