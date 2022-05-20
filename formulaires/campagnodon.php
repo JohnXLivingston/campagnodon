@@ -223,6 +223,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       throw new CampagnodonException("Erreur à la création de la transaction ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
     }
 
+    $url_paiement = generer_url_public('payer', "id_transaction=$id_transaction&transaction_hash=$hash", true, false);
+
     include_spip('inc/campagnodon.utils');
     $transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction);
     if (false === sql_updateq(
@@ -245,7 +247,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
         ]
       ],
       'campaign_id' => $campagne['id_origine'],
-      'transaction_idx' => $transaction_idx_distant
+      'transaction_idx' => $transaction_idx_distant,
+      'payment_url' => $url_paiement
       // 'payment_method' => 'transfer' // FIXME: use the correct value
       // TODO: recu fiscal
     );
@@ -296,7 +299,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
     // }
 
     return [
-      'redirect' => generer_url_public('payer', "id_transaction=$id_transaction&transaction_hash=$hash", false, false),
+      'redirect' => $url_paiement,
       'editable' => false,
     ];
   } catch (CampagnodonException $e) {
