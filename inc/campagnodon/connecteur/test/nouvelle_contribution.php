@@ -11,5 +11,12 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  *  TODO: documenter le format de ces données.
  */
 function inc_campagnodon_connecteur_test_nouvelle_contribution_dist($mode_options, $params) {
-  throw new Exception('Not implemented yet');
+  $id = sql_insertq('spip_campagnodon_testdata', [
+    'idx' => $params['transaction_idx'] ?? null,
+    'data' => json_encode($params)
+  ]);
+  if (!$id) {
+    throw new Exception('Failed');
+  }
+  return $id;
 }

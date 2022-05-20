@@ -13,6 +13,21 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
+function campagnodon_use_test_table() {
+  if (defined('_CAMPAGNODON_MODES') && is_array(_CAMPAGNODON_MODES)) {
+    $tests = array_filter(_CAMPAGNODON_MODES, function ($c) {
+      if (is_array($c) && $c['type'] === 'test') {
+        return true;
+      }
+      return false;
+    });
+    if (count($tests) > 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Déclaration des alias de tables pour SPIP (permet notamment de faire des BOUCLE_nom_de_lobjet).
  * 
@@ -25,6 +40,9 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 function campagnodon_declarer_tables_interfaces($interfaces) {
   $interfaces['table_des_tables']['campagnodon_transactions'] = 'campagnodon_transactions';
   $interfaces['table_des_tables']['campagnodon_campagnes'] = 'campagnodon_campagnes';
+  if (campagnodon_use_test_table()) {
+    $interfaces['table_des_tables']['campagnodon_testdata'] = 'campagnodon_testdata';
+  }
   return $interfaces;
 }
 
@@ -57,7 +75,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
     ],
     'key' => [
       'PRIMARY KEY' => 'id_campagnodon_transaction',
-      'UNIQUE id_transaction' => 'id_transaction'
+      'UNIQUE campagnodon_id_transaction' => 'id_transaction'
     ],
     'champs_editables' => [],
     'rechercher_champs' => [],
@@ -80,10 +98,34 @@ function campagnodon_declarer_tables_objets_sql($tables) {
     ],
     'key' => [
       'PRIMARY KEY' => 'id_campagnodon_campagne',
-      'UNIQUE origine_key' => 'origine,id_origine'
+      'UNIQUE campagnodon_origine_key' => 'origine,id_origine'
     ],
     'champs_editables' => [],
     'rechercher_champs' => [],
   ];
+
+  // On ajoute une table de test s'il y a au moins un connecteur de test configuré.
+  if (campagnodon_use_test_table()) {
+    $tables['spip_campagnodon_testdata'] = [
+      'principale' => 'oui',
+      'page' => false,
+      'type' => 'campagnodon_testdata',
+      'date' => 'date',
+      'field' => [
+        'id_campagnodon_testdata' => 'bigint(21) NOT NULL',
+        'idx' => 'varchar(255) DEFAULT NULL',
+        'data' => 'text',
+        'date' => 'datetime NOT NULL DEFAULT NOW()',
+        'maj' => 'TIMESTAMP'
+      ],
+      'key' => [
+        'PRIMARY KEY' => 'id_campagnodon_testdata',
+        'UNIQUE campagnodon_idx' => 'idx'
+      ],
+      'champs_editables' => [],
+      'rechercher_champs' => [],
+    ];
+  }
+
   return $tables;
 }
