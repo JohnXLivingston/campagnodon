@@ -217,7 +217,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       'force' => true
     ];
     if (!(
-      $id_transaction = $inserer_transaction(_request('amount'), $transaction_options)
+      $id_transaction = $inserer_transaction(_request('montant'), $transaction_options)
       and $hash = sql_getfetsel('transaction_hash', 'spip_transactions', 'id_transaction=' . intval($id_transaction))
     )) {
       throw new CampagnodonException("Erreur à la création de la transaction ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
