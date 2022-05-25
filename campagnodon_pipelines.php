@@ -70,11 +70,13 @@ function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 
 function programmer_sync_bank_result($flux) {
 	$transaction = null;
-	if (!empty($flux['args']['row']) && !empty($flux['args']['id_transaction'])) {
+	if (!empty($flux['args']['row']) && !empty($flux['args']['row']['id_transaction'])) {
 		// on est sur un pipeline qui nous fourni la ligne
-		$transaction = $flux['args']['id_transaction'];
+		spip_log('programmer_sync_bank_result: la ligne de donnée est dans le flux.', 'campagnodon'._LOG_DEBUG);
+		$transaction = $flux['args']['row'];
 	} else {
 		// il faut aller chercher la transaction en base.
+		spip_log('programmer_sync_bank_result: la ligne de donnée n\'est pas dans le flux, je dois chercher en base.', 'campagnodon'._LOG_DEBUG);
 		$id_transaction = $flux['args']['id_transaction'];
 		if (!$id_transaction) {
 			spip_log('id_transaction manquant dans le flux fourni.', 'campagnodon'._LOG_ERREUR);
@@ -88,10 +90,19 @@ function programmer_sync_bank_result($flux) {
 	}
 	if ($transaction['parrain'] !== 'campagnodon') {
 		// Ça ne concerne pas notre plugin.
+		spip_log('programmer_sync_bank_result: cette ligne n\'a pas campagnodon comme parrain, je saute.', 'campagnodon'._LOG_DEBUG);
 		return;
 	}
-	spip_log('programmer_sync_bank_result: je dois programmer une synchronisationde la ligne', 'campagnodon'._LOG_DEBUG);
 	$id_campagnodon_transaction = $transaction['tracking_id'];
+	if (!$id_campagnodon_transaction) {
+		spip_log("Transaction introuvable pour id_transaction=".$id_transaction.' car pas de tracking_id.', "campagnodon"._LOG_ERREUR);
+		return;
+	}
+	spip_log('programmer_sync_bank_result: je dois programmer une synchronisation de la ligne id_campagnodon_transaction='.$id_campagnodon_transaction, 'campagnodon'._LOG_DEBUG);
+
+	include_spip('inc/campagnodon.utils');
+	campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente');
+
 	$id_job = job_queue_add(
 		'campagnodon_synchroniser_transaction',
 		'Campagnodon - Synchronisation de la transaction '.$id_transaction,

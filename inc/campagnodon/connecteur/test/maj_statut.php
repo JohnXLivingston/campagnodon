@@ -10,7 +10,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * La référence externe de la transaction
  * @param $statut
  * Le nouveau statut. Doit être une valeur valide parmis: attente, ok, echec, abandon, rembourse
- * TODO: faut-il traiter commande ?
+ * TODO: faut-il traiter "commande" ?
  * @param $mode_paiement
  * Le mode de paiement. Les valeurs peuvent etre assez diverses (cheque, payzen, ...)
  */

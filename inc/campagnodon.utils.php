@@ -52,23 +52,44 @@ function campagnodon_mode_options($mode) {
   return _CAMPAGNODON_MODES[$mode];
 }
 
+function _traduit_type_paiement($mode_options, $type) {
+  if (
+    is_array($mode_options)
+    && array_key_exists('type_paiement', $mode_options)
+    && is_array($mode_options['type_paiement'])
+    && array_key_exists($type, $mode_options['type_paiement'])
+  ) {
+    return $mode_options['type_paiement'][$type];
+  }
+  return $type;
+}
+
+function campagnodon_maj_sync_statut($id_campagnodon_transaction, $status) {
+  sql_update('spip_campagnodon_transactions', [
+    'statut_synchronisation' => sql_quote($status),
+    'date_synchronisation' => 'NOW()'
+  ], 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
+}
+
 /**
  * Synchronise une transaction avec le système distant.
  * En cas d'échec (système injoignable par ex), replanifie une synchronisation.
  * @param $id_campagnodon_transaction
  */
 function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_tentatives = 0) {
+  spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.'.', 'campagnodon'._LOG_DEBUG);
+
   $campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
   if (!$campagnodon_transaction) {
     spip_log("spip_campagnodon_transactions introuvable: ".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
-    return;
+    return 0;
   }
   $transaction = sql_fetsel('*', 'spip_transactions', 'id_transaction=' . intval($campagnodon_transaction['id_transaction']));
   if (!$transaction) {
     spip_log("Transaction introuvable pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
-    return;
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+    return 0;
   }
-
   $statut = $transaction['statut'];
   $statut_distant = null;
   // Parfois spip bank ajoute des choses derrière les statuts. Par ex «echec[fail]». Dans le doute, on applique cette règle pour tous les statuts.
@@ -86,30 +107,39 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     $statut_distant = 'rembourse';
   } else {
     spip_log("Je ne sais pas synchroniser le statut '".$statut."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
-    return;
-  }
-
-  $mode_paiement = $transaction['mode'];
-  if (preg_match('/^([^\/]*)/', $mode_paiement, $matches)) {
-    $mode_paiement_distant = $matches[1];
-  } else {
-    spip_log("Je ne sais pas synchroniser le mode '".$mode_paiement."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
-    return;
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+    return 0;
   }
 
   $mode = $campagnodon_transaction['mode'];
+  $mode_options = campagnodon_mode_options($mode);
+
+  $mode_paiement = $transaction['mode'];
+  if (empty($mode_paiement)) {
+    // on peut ne pas encore avoir de mode de paiement, auquel cas on ne le synchronise pas.
+    $mode_paiement_distant = null;
+  } elseif (preg_match('/^([^\/]*)/', $mode_paiement, $matches)) {
+    $mode_paiement_distant = _traduit_type_paiement($mode_options, $matches[1]);
+  } else {
+    spip_log("Je ne sais pas synchroniser le mode '".$mode_paiement."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+    return 0;
+  }
+
   $fonction_maj_statut = campagnodon_fonction_connecteur($mode, 'maj_statut');
   if (!$fonction_maj_statut) {
     spip_log('Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '.$mode, "campagnodon"._LOG_ERREUR);
-    return;
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+    return 0;
   }
-  $mode_options = campagnodon_mode_options($mode);
 
   $failed = false;
   try {
     if (false === $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $mode_paiement_distant)) {
       spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
       $failed = true;
+    } else {
+      spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', le connecteur a réussi à mettre à jour.', 'campagnodon'._LOG_DEBUG);
     }
   } catch (Exception $e) {
     spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.": ".$e->getMessage(), "campagnodon"._LOG_ERREUR);
@@ -119,9 +149,11 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   if ($failed) {
     if ($nb_tentatives > 10) {
       spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", et j'ai dépassé le nombre de tentatives max.", "campagnodon"._LOG_ERREUR);
-      return;
+      campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+      return 0;
     }
     spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je replanifie une synchro.", "campagnodon"._LOG_ERREUR);
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente_rejoue');
     job_queue_add(
       'campagnodon_synchroniser_transaction',
       'Campagnodon - Synchronisation de la transaction '.$id_transaction. ' (tentative n°'.$nb_tentatives.' après échec)',
@@ -131,5 +163,10 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
       time() + ($nb_tentatives * 120),
       -10
     );
+    return 0;
   }
+
+  spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', tout est ok.', 'campagnodon'._LOG_DEBUG);
+  campagnodon_maj_sync_statut($id_campagnodon_transaction, 'ok');
+  return 1;
 }
