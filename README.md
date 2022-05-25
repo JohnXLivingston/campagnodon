@@ -96,6 +96,15 @@ define('_CAMPAGNODON_MODES', array(
                         'cheque' => 'Check', // ou l'ID numérique 4
                         'payzen' => 'Debit Card'
                 ),
+                // `statut_paiement`: la correspondance entre le statut de paiement de SPIP Bank, et le statut de paiement coté CiviCRM (contribution_status)
+                // S'il manque la valeur courante, elle sera envoyée telle qu'elle à CiviCRM, qui va probablement rejeter la requête.
+                'statut_paiement' => array(
+                        'ok' => 'Completed', // ou l'ID numérique 1
+                        'echec' => 'Failed',
+                        'attente' => 'In Progress',
+                        'abandon' => 'Cancelled',
+                        'rembourse' => 'Refunded',
+                ),
                 // `souscriptions_optionnelles` décrit les case à cocher qu'on peut ajouter en fin de formulaire.
                 'souscriptions_optionnelles' => array(
                         'newsletter' => array(

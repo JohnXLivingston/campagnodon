@@ -8,13 +8,14 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  *  Les options venant de _CAMPAGNODON_MODES
  * @param $idx
  * La référence externe de la transaction
- * @param $statut_distant
+ * @param $statut
  * Le nouveau statut. Doit être une valeur valide parmis: attente, ok, echec, abandon, rembourse
  * TODO: faut-il traiter "commande" ?
+ * @param $statut_paiement_distant
  * @param $mode_paiement_distant
  * Le mode de paiement. Les valeurs peuvent etre assez diverses (cheque, payzen, ...)
  */
-function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx, $statut, $mode_paiement_distant) {
+function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx, $statut, $statut_paiement_distant, $mode_paiement_distant) {
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
   $civi_api = new civicrm_api3($mode_options['api_options']);
 
@@ -32,7 +33,8 @@ function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx,
   $result = $civi_api->Campagnodon->updatestatus(array(
     'transaction_idx' => $idx,
     'status' => $statut_distant,
-    'payment_instrument' => $mode_paiement_distant
+    'payment_instrument' => $mode_paiement_distant,
+    'contribution_status' => $statut_paiement_distant
   ));
   if (!$result) {
     throw new Exception("Erreur CiviCRM " . $civi_api->errorMsg());

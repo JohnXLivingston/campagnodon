@@ -64,6 +64,18 @@ function _traduit_type_paiement($mode_options, $type) {
   return $type;
 }
 
+function _traduit_statut_paiement($mode_options, $statut) {
+  if (
+    is_array($mode_options)
+    && array_key_exists('statut_paiement', $mode_options)
+    && is_array($mode_options['statut_paiement'])
+    && array_key_exists($statut, $mode_options['statut_paiement'])
+  ) {
+    return $mode_options['statut_paiement'][$statut];
+  }
+  return $statut;
+}
+
 function campagnodon_maj_sync_statut($id_campagnodon_transaction, $status) {
   sql_update('spip_campagnodon_transactions', [
     'statut_synchronisation' => sql_quote($status),
@@ -90,6 +102,10 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
     return 0;
   }
+
+  $mode = $campagnodon_transaction['mode'];
+  $mode_options = campagnodon_mode_options($mode);
+
   $statut = $transaction['statut'];
   $statut_distant = null;
   // Parfois spip bank ajoute des choses derrière les statuts. Par ex «echec[fail]». Dans le doute, on applique cette règle pour tous les statuts.
@@ -110,9 +126,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
     return 0;
   }
-
-  $mode = $campagnodon_transaction['mode'];
-  $mode_options = campagnodon_mode_options($mode);
+  $statut_paiement_distant = _traduit_statut_paiement($mode_options, $statut_distant);
 
   $mode_paiement = $transaction['mode'];
   if (empty($mode_paiement)) {
@@ -135,7 +149,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 
   $failed = false;
   try {
-    if (false === $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $mode_paiement_distant)) {
+    if (false === $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $statut_paiement_distant, $mode_paiement_distant)) {
       spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
       $failed = true;
     } else {
