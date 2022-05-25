@@ -68,14 +68,38 @@ function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 	return $flux;
 }
 
-function sync_bank_result($flux) {
-	if ($flux['args']['row']['parrain'] !== 'campagnodon') {
+function programmer_sync_bank_result($flux) {
+	$transaction = null;
+	if (!empty($flux['args']['row']) && !empty($flux['args']['id_transaction'])) {
+		// on est sur un pipeline qui nous fourni la ligne
+		$transaction = $flux['args']['id_transaction'];
+	} else {
+		// il faut aller chercher la transaction en base.
+		$id_transaction = $flux['args']['id_transaction'];
+		if (!$id_transaction) {
+			spip_log('id_transaction manquant dans le flux fourni.', 'campagnodon'._LOG_ERREUR);
+			return;
+		}
+		$transaction = sql_fetsel('*', 'spip_transactions', 'id_transaction=' . intval($id_transaction));
+		if (!$transaction) {
+			spip_log("Transaction introuvable pour id_transaction=".$id_transaction, "campagnodon"._LOG_ERREUR);
+			return;
+		}
+	}
+	if ($transaction['parrain'] !== 'campagnodon') {
 		// Ça ne concerne pas notre plugin.
 		return;
 	}
-	spip_log('Pipeline bank_dsp2_renseigner_facturation: je dois marquer une ligne comme «à synchroniser».', 'campagnodon'._LOG_DEBUG);
-	// TODO: faire la fonction
-	spip_log('Not Implemented Yet', 'campagnodon'._LOG_ERREUR);
+	spip_log('programmer_sync_bank_result: je dois programmer une synchronisationde la ligne', 'campagnodon'._LOG_DEBUG);
+	$id_campagnodon_transaction = $transaction['tracking_id'];
+	$id_job = job_queue_add(
+		'campagnodon_synchroniser_transaction',
+		'Campagnodon - Synchronisation de la transaction '.$id_transaction,
+		[$id_campagnodon_transaction],
+		'inc/campagnodon.utils',
+		false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
+		0, // on execute tout de suite
+	);
 }
 
 /**
@@ -86,7 +110,7 @@ function sync_bank_result($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_bank_traiter_reglement($flux) {
-	sync_bank_result($flux);
+	programmer_sync_bank_result($flux);
 }
 
 
@@ -98,7 +122,7 @@ function campagnodon_bank_traiter_reglement($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_trig_bank_reglement_en_attente($flux) {
-	sync_bank_result($flux);
+	programmer_sync_bank_result($flux);
 }
 
 
@@ -110,7 +134,7 @@ function campagnodon_trig_bank_reglement_en_attente($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_trig_bank_reglement_en_echec($flux) {
-	sync_bank_result($flux);
+	programmer_sync_bank_result($flux);
 }
 
 

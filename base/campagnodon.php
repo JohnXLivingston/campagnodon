@@ -111,6 +111,8 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'field' => [
         'id_campagnodon_testdata' => 'bigint(21) NOT NULL',
         'idx' => 'varchar(255) DEFAULT NULL',
+        'statut' => "varchar(20) NOT NULL DEFAULT 'init'",
+        'mode_paiement' => 'varchar(20) DEFAULT NULL',
         'data' => 'text',
         'date' => 'datetime NOT NULL DEFAULT NOW()',
         'maj' => 'TIMESTAMP'
