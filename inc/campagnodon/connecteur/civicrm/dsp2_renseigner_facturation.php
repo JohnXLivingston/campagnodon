@@ -29,8 +29,8 @@ function inc_campagnodon_connecteur_civicrm_dsp2_renseigner_facturation_dist($mo
       $flux['data']['code_postal'] = $civi_infos->postal_code;
       $flux['data']['ville'] = $civi_infos->city;
       $flux['data']['pays'] = $civi_infos->country;
-      spip_log('Réponse Civi: '.var_export($civi_infos, true), 'campagnodon'._LOG_DEBUG);
-      spip_log('Résultat: '.json_encode($flux['data']), 'campagnodon'._LOG_DEBUG);
+      // spip_log('Réponse Civi: '.var_export($civi_infos, true), 'campagnodon'._LOG_DEBUG);
+      // spip_log('Résultat: '.json_encode($flux['data']), 'campagnodon'._LOG_DEBUG);
       return $flux;
     }
   }
