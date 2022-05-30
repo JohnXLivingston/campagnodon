@@ -101,16 +101,7 @@ function programmer_sync_bank_result($flux) {
 	spip_log('programmer_sync_bank_result: je dois programmer une synchronisation de la ligne id_campagnodon_transaction='.$id_campagnodon_transaction, 'campagnodon'._LOG_DEBUG);
 
 	include_spip('inc/campagnodon.utils');
-	campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente');
-
-	$id_job = job_queue_add(
-		'campagnodon_synchroniser_transaction',
-		'Campagnodon - Synchronisation de la transaction '.$id_transaction,
-		[$id_campagnodon_transaction],
-		'inc/campagnodon.utils',
-		false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
-		0, // on execute tout de suite
-	);
+	campagnodon_queue_synchronisation($id_campagnodon_transaction);
 }
 
 /**

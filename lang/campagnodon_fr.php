@@ -15,5 +15,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_mode' => 'Système distant',
   'label_transaction' => 'SPIP Bank',
   'label_campagne' => 'Campagne',
+  'bouton_synchroniser' => 'Synchroniser',
   'campagne_invalide' => 'Erreur: campagne introuvable'
 );

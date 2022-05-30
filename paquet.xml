@@ -25,6 +25,7 @@
   <necessite nom="switchcase" />
   
   <pipeline nom="jquery_plugins" inclure="campagnodon_front_pipeline.php"/>
+  <pipeline nom="autoriser" inclure="campagnodon_autorisations.php"/>
   <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
   <pipeline nom="declarer_tables_objets_sql" inclure="base/campagnodon.php"/>
   <pipeline nom="taches_generales_cron" inclure="campagnodon_pipelines.php" />

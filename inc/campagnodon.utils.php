@@ -83,6 +83,36 @@ function campagnodon_maj_sync_statut($id_campagnodon_transaction, $status) {
   ], 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
 }
 
+function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives = 0) {
+  $id_job = null;
+  if ($nb_tentatives > 0) {
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente_rejoue');
+    $id_job = job_queue_add(
+      'campagnodon_synchroniser_transaction',
+      'Campagnodon - Synchronisation de la transaction '.$id_transaction. ' (tentative n°'.$nb_tentatives.' après échec)',
+      [$id_campagnodon_transaction, $nb_tentatives + 1],
+      'inc/campagnodon.utils',
+      false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
+      time() + ($nb_tentatives * 120),
+      -10
+    );
+  } else {
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente');
+    $id_job = job_queue_add(
+      'campagnodon_synchroniser_transaction',
+      'Campagnodon - Synchronisation de la transaction '.$id_transaction,
+      [$id_campagnodon_transaction],
+      'inc/campagnodon.utils',
+      false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
+      0, // on execute tout de suite
+    );
+  }
+
+  if ($id_job) {
+    job_queue_link($id_job, ['objet' => 'campagnodon_transactions', 'id_objet' => $id_campagnodon_transaction]);
+  }
+}
+
 /**
  * Synchronise une transaction avec le système distant.
  * En cas d'échec (système injoignable par ex), replanifie une synchronisation.
@@ -167,16 +197,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
       return 0;
     }
     spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je replanifie une synchro.", "campagnodon"._LOG_ERREUR);
-    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente_rejoue');
-    job_queue_add(
-      'campagnodon_synchroniser_transaction',
-      'Campagnodon - Synchronisation de la transaction '.$id_transaction. ' (tentative n°'.$nb_tentatives.' après échec)',
-      [$id_campagnodon_transaction, $nb_tentatives + 1],
-      'inc/campagnodon.utils',
-      false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
-      time() + ($nb_tentatives * 120),
-      -10
-    );
+    campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives);
     return 0;
   }
 

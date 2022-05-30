@@ -35,12 +35,17 @@
 			<td class="montant">[(#MONTANT|bank_affiche_montant)]</td>
 			<td class="mode">#MODE</td>
       <td class="statut_synchronisation">
-				<span style="color:[
+				<div style="color:[
 					(#STATUT_SYNCHRONISATION|switchcase{ok,green,attente,orange,red})
 				];">
 					[(#DATE_SYNCHRONISATION|affdate{Y-m-d H:i:s})]<br>
 					#STATUT_SYNCHRONISATION
-				</span>
+				</div>
+				[(#AUTORISER{campagnodon_synchroniser,campagnodon_transactions}|oui)
+					<div class="actions">
+						[(#BOUTON_ACTION{<:campagnodon:bouton_synchroniser:>,#URL_ACTION_AUTEUR{campagnodon_synchroniser,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax})]
+					</div>
+				]
 			</td>
 			<td class="id_campagnodon_campagne" scope="col"><a href="[(#ID_CAMPAGNODON_CAMPAGNE|generer_url_entite{campagnodon_campagne})]"
 				title="<:info_numero_abbreviation|attribut_html:> #ID_CAMPAGNODON_CAMPAGNE">#ID_CAMPAGNODON_CAMPAGNE</a>
