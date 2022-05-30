@@ -203,6 +203,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
 
     $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
       'id_campagnodon_campagne' => $id_campagne,
+      'type_transaction' => $type,
       'mode' => $campagne['origine']
     ]);
     if (!($id_campagnodon_transaction > 0)) {

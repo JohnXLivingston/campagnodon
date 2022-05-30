@@ -65,6 +65,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'id_campagnodon_transaction' => 'bigint(21) NOT NULL',
       'id_transaction' => 'bigint(21) DEFAULT NULL', // Id de la transaction SPIP Bank
       'date_transaction' => 'datetime NOT NULL DEFAULT NOW()',
+      'type_transaction' => "varchar(20) NOT NULL DEFAULT 'don'",
       'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
       'mode' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'transaction_distant' => 'varchar(255) DEFAULT NULL', // L'ID de transaction qu'on renseigne dans CiviCRM. De la forme: campagnodon/123456789.
@@ -78,6 +79,14 @@ function campagnodon_declarer_tables_objets_sql($tables) {
     ],
     'champs_editables' => [],
     'rechercher_champs' => [],
+    'join' => [
+      'id_transaction' => 'id_transaction',
+      'id_campagnodon_campagne' => 'id_campagnodon_campagne'
+    ],
+    'tables_jointures' => [
+      'id_transaction' => 'spip_transactions',
+      'id_campagnodon_campagne' => 'spip_campagnodon_campagnes'
+    ]
   ];
   $tables['spip_campagnodon_campagnes'] = [
     'principale' => 'oui',
