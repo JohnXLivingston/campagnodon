@@ -22,6 +22,7 @@
   <!-- Ce sont des versions datées des plugins, il faudra un jour les mettre à jour -->
   <necessite nom="spipr_dist" compatibilite="[0.4.17;0.4.*]" />
   <necessite nom="zcore" compatibilite="[2.8.9;2.8.*]" />
+  <necessite nom="switchcase" />
   
   <pipeline nom="jquery_plugins" inclure="campagnodon_front_pipeline.php"/>
   <pipeline nom="declarer_tables_interfaces" inclure="base/campagnodon.php"/>
