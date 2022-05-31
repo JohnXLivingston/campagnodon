@@ -11,12 +11,10 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * @param $statut
  * Le nouveau statut. Doit être une valeur valide parmis: attente, ok, echec, abandon, rembourse
  * TODO: faut-il traiter "commande" ?
- * @param $statut_paiement
- * Le statut du paiement. Plus ou moins identique à $statut, mais on se réserve le droit d'avoir des statuts différents.
  * @param $mode_paiement
  * Le mode de paiement. Les valeurs peuvent etre assez diverses (cheque, payzen, ...)
  */
-function inc_campagnodon_connecteur_test_maj_statut_dist($mode_options, $idx, $statut, $statut_paiement, $mode_paiement) {
+function inc_campagnodon_connecteur_test_maj_statut_dist($mode_options, $idx, $statut, $mode_paiement) {
   return sql_updateq('spip_campagnodon_testdata', [
     'statut' => $statut,
     'mode_paiement' => $mode_paiement
