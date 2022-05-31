@@ -73,7 +73,13 @@ function campagnodon_maj_sync_statut($id_campagnodon_transaction, $status) {
 
 function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives = 0) {
   $id_job = null;
+  if ($nb_tentatives > 10) {
+    spip_log("J'ai dépassé le nombre de tentatives max pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je ne replanifie rien.", "campagnodon"._LOG_ERREUR);
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+    return;
+  }
   if ($nb_tentatives > 0) {
+    spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je replanifie une synchro (tentative=".$nb_tentatives.").", "campagnodon"._LOG_ERREUR);
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente_rejoue');
     $id_job = job_queue_add(
       'campagnodon_synchroniser_transaction',
@@ -178,12 +184,6 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   }
 
   if ($failed) {
-    if ($nb_tentatives > 10) {
-      spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", et j'ai dépassé le nombre de tentatives max.", "campagnodon"._LOG_ERREUR);
-      campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
-      return 0;
-    }
-    spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je replanifie une synchro.", "campagnodon"._LOG_ERREUR);
     campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
     return 0;
   }
