@@ -23,7 +23,7 @@
 	</thead>
 	<tbody>
 	<BOUCLE_liste_campagnodon_transactions(CAMPAGNODON_TRANSACTIONS transactions)
-		{statut_synchronisation=#ENV{statut_synchronisation,'.'}}
+		{statut_synchronisation?=#ENV{statut_synchronisation}}
 		{tri #ENV{par,id_campagnodon_transaction},#GET{defaut_tri}}
 		{pagination #ENV{nb,10}}
 	>
