@@ -16,5 +16,11 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_transaction' => 'SPIP Bank',
   'label_campagne' => 'Campagne',
   'bouton_synchroniser' => 'Synchroniser',
+  'label_filtre_statut_synchronisation_' => 'Toutes',
+  'label_filtre_statut_synchronisation_ok' => 'Synchro Ok',
+  'label_filtre_statut_synchronisation_attente' => 'Synchro en attente',
+  'label_filtre_statut_synchronisation_attente_rejoue' => 'Synchro à retenter',
+  'label_filtre_statut_synchronisation_echec' => 'Synchro en échec',
+  'label_filtre_statut_synchronisation_jamais' => 'Jamais synchronisé',
   'campagne_invalide' => 'Erreur: campagne introuvable'
 );
