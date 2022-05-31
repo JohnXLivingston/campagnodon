@@ -14,6 +14,7 @@
 			<th class="date_transaction" scope="col">[(#TRI{date_transaction,<:campagnodon:label_date_transaction:>,ajax})]</th>
 			<th class="type_transaction" scope="col"><:campagnodon:label_type_transaction:></th>
 			<th class="id_transaction" scope="col">[(#TRI{id_transaction,<:campagnodon:label_transaction:>})]</th>
+			<th class='statut' scope='col'>[(#TRI{statut,<:bank:label_tri_statut:>,ajax})]</th>
 			<th class="montant" scope="col"><:campagnodon:label_montant:></th>
 			<th class="mode" scope="col"><:campagnodon:label_mode:></th>
       <th class="statut_synchronisation" scope="col">[(#TRI{date_synchronisation,<:campagnodon:label_derniere_synchronisation:>})]</th>
@@ -33,6 +34,7 @@
 			<td class="id_transaction" scope="col"><a href="[(#ID_TRANSACTION|generer_url_entite{transaction})]"
 				title="<:info_numero_abbreviation|attribut_html:> #ID_TRANSACTION">#ID_TRANSACTION</a>
 			</td>
+			<td class="statut">[(#STATUT|match{echec|ok|rembourse}|et{#MESSAGE|trim|strlen}|?{[<abbr title="[(#MESSAGE|attribut_html)[ - (#ERREUR|attribut_html)]]">(#STATUT)</abbr>],#STATUT})]</td>
 			<td class="montant">[(#MONTANT|bank_affiche_montant)]</td>
 			<td class="mode">#MODE</td>
       <td class="statut_synchronisation">
