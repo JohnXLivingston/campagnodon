@@ -90,7 +90,7 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
     $id_job = job_queue_add(
       'campagnodon_synchroniser_transaction',
       'Campagnodon - Synchronisation de la transaction '.$id_transaction. ' (tentative n°'.$nb_tentatives.' après échec)',
-      [$id_campagnodon_transaction, $nb_tentatives + 1],
+      [$id_campagnodon_transaction, $nb_tentatives],
       'inc/campagnodon.utils',
       false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
       time() + ($nb_tentatives * 120),
@@ -197,7 +197,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
       return 0;
     }
     spip_log("La synchronisation ayant échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je replanifie une synchro.", "campagnodon"._LOG_ERREUR);
-    campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives);
+    campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
     return 0;
   }
 
