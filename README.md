@@ -101,11 +101,12 @@ define('_CAMPAGNODON_MODES', array(
                         'newsletter' => array(
                                 'label' => 'M\'inscrire sur la liste d\'information d\Attac France',
                                 'type' => 'group', // Le type de souscription. Voir coté Campagnodon_CiviCRM ce qui est autorisé (actuellement on n'a que «group»).
-                                'cle_distante' => '42' // la clé du groupe (peut être son ID numérique, ou son label)
+                                'cle_distante' => '42', // la clé du groupe (peut être son ID numérique, ou son label)
+                                'when' => 'completed' // Quand faire l'ajout dans le groupe. `completed` ou `init` (`init` par défaut).
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',
-                                'type' => 'group',
+                                // 'type' => 'group',
                         ),
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',

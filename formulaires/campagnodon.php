@@ -286,7 +286,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
         }
         $params['optional_subscriptions'][] = array(
           'type' => $souscription_optionnelle['type'],
-          'key' => $souscription_optionnelle['cle_distante']
+          'key' => $souscription_optionnelle['cle_distante'],
+          'when' => $souscription_optionnelle['when'] ?? 'init'
         );
       }
     }
