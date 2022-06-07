@@ -100,11 +100,12 @@ define('_CAMPAGNODON_MODES', array(
                 'souscriptions_optionnelles' => array(
                         'newsletter' => array(
                                 'label' => 'M\'inscrire sur la liste d\'information d\Attac France',
-                                'cle_distante' => 'newsletter' // la clé utilisée dans l'API distante
+                                'type' => 'group', // Le type de souscription. Voir coté Campagnodon_CiviCRM ce qui est autorisé (actuellement on n'a que «group»).
+                                'cle_distante' => '42' // la clé du groupe (peut être son ID numérique, ou son label)
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',
-                                'cle_distante' => 'comite_local'
+                                'type' => 'group',
                         ),
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',

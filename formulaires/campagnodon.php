@@ -249,7 +249,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       ],
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant,
-      'payment_url' => $url_paiement
+      'payment_url' => $url_paiement,
+      'optional_subscriptions' => array()
       // 'payment_method' => 'transfer' // FIXME: use the correct value
       // TODO: recu fiscal
     );
@@ -279,8 +280,14 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
 
     $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
     foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
-      if (!empty($souscription_optionnelle['cle_distante'])) {
-        $params[$souscription_optionnelle['cle_distante']] = _request('souscription_optionnelle_'.$cle) == '1';
+      if (_request('souscription_optionnelle_'.$cle) == '1') {
+        if (!$souscription_optionnelle['type']) {
+          throw new CampagnodonException("Campagnodon mal configuré, souscription_optionnelle mal configurée: '".$cle."'.", "campagnodon:erreur_sauvegarde");
+        }
+        $params['optional_subscriptions'][] = array(
+          'type' => $souscription_optionnelle['type'],
+          'key' => $souscription_optionnelle['cle_distante']
+        );
       }
     }
 
