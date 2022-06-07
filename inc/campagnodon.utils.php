@@ -83,7 +83,7 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente_rejoue');
     $id_job = job_queue_add(
       'campagnodon_synchroniser_transaction',
-      'Campagnodon - Synchronisation de la transaction '.$id_transaction. ' (tentative n°'.$nb_tentatives.' après échec)',
+      'Campagnodon - Synchronisation de la transaction '.$id_campagnodon_transaction. ' (tentative n°'.$nb_tentatives.' après échec)',
       [$id_campagnodon_transaction, $nb_tentatives],
       'inc/campagnodon.utils',
       false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
@@ -94,7 +94,7 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'attente');
     $id_job = job_queue_add(
       'campagnodon_synchroniser_transaction',
-      'Campagnodon - Synchronisation de la transaction '.$id_transaction,
+      'Campagnodon - Synchronisation de la transaction '.$id_campagnodon_transaction,
       [$id_campagnodon_transaction],
       'inc/campagnodon.utils',
       false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
