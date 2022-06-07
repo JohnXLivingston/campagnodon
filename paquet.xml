@@ -31,6 +31,7 @@
   <pipeline nom="taches_generales_cron" inclure="campagnodon_pipelines.php" />
   <pipeline nom="bank_dsp2_renseigner_facturation" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="bank_traiter_reglement" inclure="campagnodon_pipelines.php"/>
+	<pipeline nom="bank_traiter_remboursement" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="trig_bank_reglement_en_attente" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="trig_bank_reglement_en_echec" inclure="campagnodon_pipelines.php"/>
 

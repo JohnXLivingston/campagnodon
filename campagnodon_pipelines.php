@@ -115,6 +115,16 @@ function campagnodon_bank_traiter_reglement($flux) {
 	programmer_sync_bank_result($flux);
 }
 
+/**
+ * Synchronisation après remboursement
+ *
+ * @pipeline bank_traiter_remboursement
+ * @param  array $flux Données du pipeline
+ * @return array       Données du pipeline
+ */
+function campagnodon_bank_traiter_remboursement($flux) {
+	programmer_sync_bank_result($flux);
+}
 
 /**
  * Synchronisation quand paiement en attente
