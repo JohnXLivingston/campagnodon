@@ -32,7 +32,7 @@ function genie_campagnodon_synchronisation_campagnes_dist() {
 
     $lignes_distantes = $fonction_lister_campagnes($mode_options);
     if (false === $lignes_distantes) {
-      spip_log("Erreur à la remontée des campagnes distantes pour le mode ".$mode.", je ne synchronise rien ce coup ci: " . $civi_api->errorMsg(), "campagnodon"._LOG_ERREUR);
+      spip_log("Erreur à la remontée des campagnes distantes pour le mode ".$mode.", je ne synchronise rien ce coup ci.", "campagnodon"._LOG_ERREUR);
       continue;
     }
 
