@@ -3,8 +3,8 @@
 if (!defined('_ECRIRE_INC_VERSION')) return;
 
 class CampagnodonException extends Exception {
-  protected string $error_label = "";
-  public function __construct(string $message = "", string $error_label, int $code = 0, ?Throwable $previous = null) {
+  protected $error_label = "";
+  public function __construct($message = "", $error_label, $code = 0, $previous = null) {
     parent::__construct($message, $code, $previous);
     $this->error_label = $error_label;
   }
