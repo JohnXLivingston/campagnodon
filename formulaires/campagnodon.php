@@ -33,7 +33,12 @@ function liste_montants_campagne() {
 
 function liste_civilites($mode_options) {
   if (is_array($mode_options) && array_key_exists('liste_civilite', $mode_options)) {
-    return $mode_options['liste_civilite'];
+    // Pour des soucis de cohérence dans la config, il faut ici inverser le sens key=>val
+    $l = array();
+    foreach ($mode_options['liste_civilite'] as $k => $v) {
+      $l[$v] = $k;
+    }
+    return $l;
   }
   return array(
     'M' => 'M.',

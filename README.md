@@ -79,9 +79,9 @@ define('_CAMPAGNODON_MODES', array(
                 ],
                 // `liste_civilites`: la liste des civilités, et leur valeur dans le système distant. Si non fourni, on part sur une liste par défaut: M/Mme/Mx.
                 'liste_civilites' => array(
-                        '2' => 'M.', // NB: 'M' doit correspondre à la valeur à utiliser coté CiviCRM. On peut utiliser l'id numérique de la civilité, ou le libellé.
-                        '1' => 'Mme.',
-                        '3' => 'Mx.'
+                        'M.' => '2', // NB: '2' doit correspondre à la valeur à utiliser coté CiviCRM. On peut utiliser l'id numérique de la civilité, ou le libellé.
+                        'Mme.' => '1',
+                        'Mx.' => '3'
                 ),
                 // `prefix`: préfixe utililisé dans les identifiants Campagnodon. Si on a plusieurs SPIP différents qui pointent sur le même CiviCRM (par ex si on a plusieurs env de test), on pourra utiliser ce préfixe pour différencier ce qui vient des différents sytèmes.
                 'prefix' => 'campagnodon',
