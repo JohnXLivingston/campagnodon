@@ -6,7 +6,7 @@
  *
  * ```
  *   require_once('api/class.api.php');
- *   $api = new civicrm_api3();
+ *   $api = new campagnodon_civicrm_api3();
  * ```
  *
  * or from any code on the same server as civicrm
@@ -14,13 +14,13 @@
  * ```
  *   require_once('/your/civi/folder/api/class.api.php');
  *   // the path to civicrm.settings.php
- *   $api = new civicrm_api3 (['conf_path'=> '/your/path/to/your/civicrm/or/joomla/site']);
+ *   $api = new campagnodon_civicrm_api3 (['conf_path'=> '/your/path/to/your/civicrm/or/joomla/site']);
  * ```
  *
  * or to query a remote server via the rest api
  *
  * ```
- *   $api = new civicrm_api3 (['server' => 'http://example.org',
+ *   $api = new campagnodon_civicrm_api3 (['server' => 'http://example.org',
  *                             'api_key'=>'theusersecretkey',
  *                             'key'=>'thesitesecretkey']);
  * ```
@@ -80,14 +80,14 @@
  * Add 'referer' and 'useragent' to the initialisation config:
  *
  * ```
- *   $api = new civicrm_api3 (['server' => 'http://example.org',
+ *   $api = new campagnodon_civicrm_api3 (['server' => 'http://example.org',
  *                             'api_key'=>'theusersecretkey',
  *                             'key'=>'thesitesecretkey',
  *                             'referer'=>'https://my_site',
  *                             'useragent'=>'curl']);
  * ```
  */
-class civicrm_api3 {
+class campagnodon_civicrm_api3 {
 
   /**
    * Class constructor.

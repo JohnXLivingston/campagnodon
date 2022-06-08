@@ -13,7 +13,7 @@ function inc_campagnodon_connecteur_civicrm_dsp2_renseigner_facturation_dist($mo
   }
 
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
-  $civi_api = new civicrm_api3($mode_options['api_options']);
+  $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
   $result = $civi_api->Campagnodon->Dsp2info([
     'transaction_idx' => $transaction_distant
   ]);

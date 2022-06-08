@@ -16,7 +16,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  */
 function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx, $statut, $mode_paiement_distant) {
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
-  $civi_api = new civicrm_api3($mode_options['api_options']);
+  $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
 
   $statut_distant = null;
   switch($statut) {

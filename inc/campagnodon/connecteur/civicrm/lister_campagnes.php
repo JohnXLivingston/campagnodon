@@ -11,7 +11,7 @@ function inc_campagnodon_connecteur_civicrm_lister_campagnes_dist($mode_options)
   spip_log('Campagnodon: synchronisation des campagnes depuis CiviCRM...', 'campagnodon'._LOG_DEBUG);
   /* Remontée des données de CiviCRM */
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
-  $civi_api = new civicrm_api3($mode_options['api_options']);
+  $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
   $result = $civi_api->Campaign->get([
     // FIXME: faut-il une pagination plus fine ?
     'options' => array('limit' => 10000)
