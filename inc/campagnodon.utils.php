@@ -98,7 +98,7 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
       [$id_campagnodon_transaction],
       'inc/campagnodon.utils',
       false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
-      0, // on execute tout de suite
+      0 // on execute tout de suite
     );
   }
 
