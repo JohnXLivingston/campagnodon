@@ -32,10 +32,10 @@ function liste_montants_campagne() {
 }
 
 function liste_civilites($mode_options) {
-  if (is_array($mode_options) && array_key_exists('liste_civilite', $mode_options)) {
+  if (is_array($mode_options) && array_key_exists('liste_civilites', $mode_options)) {
     // Pour des soucis de cohérence dans la config, il faut ici inverser le sens key=>val
     $l = array();
-    foreach ($mode_options['liste_civilite'] as $k => $v) {
+    foreach ($mode_options['liste_civilites'] as $k => $v) {
       $l[$v] = $k;
     }
     return $l;
@@ -269,6 +269,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       // }
 
       $params = array_merge($params, array(
+        'tax_receipt' => true,
         'prefix' => _request('civilite'),
         'first_name' => _request('prenom'),
         'last_name' => _request('nom'),
