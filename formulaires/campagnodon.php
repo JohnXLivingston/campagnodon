@@ -269,15 +269,15 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       // }
 
       $params = array_merge($params, array(
-        'prefix' => _request('civilite'), // TODO: cabler dans l'API coté CiviCRM.
+        'prefix' => _request('civilite'),
         'first_name' => _request('prenom'),
         'last_name' => _request('nom'),
-        'birth_date' => _request('date_naissance'), // TODO: cabler dans l'API coté CiviCRM
+        'birth_date' => _request('date_naissance'),
         'street_address' => _request('adresse'),
         'postal_code' => _request('code_postal'),
         'city' => _request('ville'),
         'country' => _request('pays'), // FIXME: vérifier que les valeurs sont bien compatibles avec celles de l'api CiviCRM.
-        'phone' => _request('telephone'), // TODO: cabler dans l'API coté CiviCRM
+        'phone' => _request('telephone'),
       ));
 
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
