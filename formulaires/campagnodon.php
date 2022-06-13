@@ -249,7 +249,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
       'contributions' => [
         [
           'financial_type' => traduit_financial_type($mode_options, 'don'),
-          'amount' => _request('montant')
+          'amount' => _request('montant'),
+          'currency' => 'EUR'
         ]
       ],
       'campaign_id' => $campagne['id_origine'],
