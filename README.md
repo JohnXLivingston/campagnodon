@@ -106,7 +106,9 @@ define('_CAMPAGNODON_MODES', array(
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',
-                                // 'type' => 'group',
+                                'type' => 'opt-in', // ici on est sur un opt-in (du genre accepter les démarchages)
+                                'cle_distante' => 'do_not_trade', // le nom de l'opt-in. Doit être une des valeurs codées coté CiviCRM.
+                                'when' => 'completed' // Quand faire l'ajout. `completed` ou `init` (`init` par défaut).
                         ),
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',
