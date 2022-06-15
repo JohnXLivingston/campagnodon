@@ -17,8 +17,16 @@
 	<tbody>
 	<BOUCLE_liste_campagnodon_campagnes(CAMPAGNODON_CAMPAGNES){id_mot?}{id_auteur?}{where?}{recherche?}{tri #ENV{par,id_campagnodon_campagne},#GET{defaut_tri}}{pagination #ENV{nb,10}}>
 		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
-			<td class="id">#ID_CAMPAGNODON_CAMPAGNE</td>
-			<td class="titre principale">#TITRE</td>
+			<td class="id">
+				<a href="#URL_ECRIRE{campagnodon_campagne,id_campagnodon_campagne=#ID_CAMPAGNODON_CAMPAGNE}" class="popin">
+					#ID_CAMPAGNODON_CAMPAGNE
+				</a>
+			</td>
+			<td class="titre principale">
+				<a href="#URL_ECRIRE{campagnodon_campagne,id_campagnodon_campagne=#ID_CAMPAGNODON_CAMPAGNE}" class="popin">
+					#TITRE
+				</a>
+			</td>
       <td>#ORIGINE</td>
       <td>#ID_ORIGINE</td>
       <td>#STATUT</td>

@@ -56,8 +56,13 @@
 					</div>
 				]
 			</td>
-			<td class="id_campagnodon_campagne" scope="col"><a href="[(#ID_CAMPAGNODON_CAMPAGNE|generer_url_entite{campagnodon_campagne})]"
-				title="<:info_numero_abbreviation|attribut_html:> #ID_CAMPAGNODON_CAMPAGNE">#ID_CAMPAGNODON_CAMPAGNE</a>
+			<td class="id_campagnodon_campagne" scope="col">
+				<a
+					href="#URL_ECRIRE{campagnodon_campagne,id_campagnodon_campagne=#ID_CAMPAGNODON_CAMPAGNE}" class="popin"
+					title="<:info_numero_abbreviation|attribut_html:> #ID_CAMPAGNODON_CAMPAGNE"
+				>
+						#ID_CAMPAGNODON_CAMPAGNE
+				</a>
 			</td>
 		</tr>
 	</BOUCLE_liste_campagnodon_transactions>

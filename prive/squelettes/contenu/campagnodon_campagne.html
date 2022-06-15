@@ -1,0 +1,105 @@
+[(#AUTORISER{voir,campagnodon_campagnes}|sinon_interdire_acces)]
+<BOUCLE_campagnodon_campagne(CAMPAGNODON_CAMPAGNES){id_campagnodon_campagne}>
+  <h1 class="grostitre"><:campagnodon:label_campagne:> ##ID_CAMPAGNODON_CAMPAGNE</h1>
+  <table>
+    [
+      <tr>
+        <td><:campagnodon:label_titre_campagne:></td>
+        <td><div class="titre">(#TITRE)</td>
+      </tr>
+    ]
+    [
+      <tr>
+        <td><:campagnodon:label_texte_campagne:></td>
+        <td><div class="texte">(#TEXTE)</td>
+      </tr>
+    ]
+    [
+      <tr>
+        <td><:campagnodon:label_date_campagne:></td>
+        <td><div class="date">(#DATE|affdate_heure)</td>
+      </tr>
+    ]
+    [
+      <tr>
+        <td><:campagnodon:label_origine_campagne:></td>
+        <td><div class="origine">(#ORIGINE)</td>
+      </tr>
+    ]
+    [
+      <tr>
+        <td><:campagnodon:label_id_origine_campagne:></td>
+        <td><div class="id_origine">(#ID_ORIGINE)</td>
+      </tr>
+    ]
+    [
+      <tr>
+        <td><:campagnodon:label_statut_campagne:></td>
+        <td><div class="statut">(#STATUT)</td>
+      </tr>
+    ]
+    <tr>
+        <td><:campagnodon:label_balise:></td>
+        <td id="campagnodon_balise_raffraichir">
+          <form>
+            <div>
+              <label>
+                <input type="radio" name="type" class="type" checked="checked" value="don" />
+                <:campagnodon:label_type_don:>
+              </label>
+              <label>
+                <input type="radio" name="type" class="type" value="adhesion" />
+                <:campagnodon:label_type_adhesion:>
+              </label>
+              <label>
+                <input type="radio" name="type" class="type" value="don_adhesion" />
+                <:campagnodon:label_type_don:> + <:campagnodon:label_type_adhesion:>
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" name="montant_perso" class="montant_libre" />
+                <:campagnodon:label_montant_perso:>
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" name="montant_libre" class="montant_libre" />
+                <:campagnodon:label_montant_libre:>
+              </label>
+            </div>
+          </form>
+        </td>
+    </tr>
+  </table>
+  <script type="text/javascript">
+    jQuery(function(){
+      $('#campagnodon_balise_raffraichir').each(function() {
+        const td = jQuery(this);
+        td.find('form').on('submit', function() { return false; });
+        const balise = jQuery('<div>');
+        td.append(balise);
+        function campagnodon_balise_raffraichir() {
+          let s = '<campagnodon|origine=#ORIGINE|id=#ID_ORIGINE';
+          let type = td.find('input[name=type]:checked:first');
+          if (type.length) {
+            s+= '|type=' + type.attr('value');
+          }
+          s+= '>';
+          if (td.find('input[name=montant_perso]:checked').length) {
+            td.find('input[name=montant_libre]').closest('div').show();
+            s+= '|montants=13,21,35,48,65,84,120,160';
+            if (td.find('input[name=montant_libre]:checked').length) {
+              s+= ',libre';
+            }
+          } else {
+            td.find('input[name=montant_libre]').closest('div').hide();
+          }
+          balise.text(s);
+        }
+        campagnodon_balise_raffraichir();
+        td.on('click', 'input[type=radio], input[type=checkbox]', campagnodon_balise_raffraichir);
+      });
+    });
+  </script>
+</BOUCLE_campagnodon_campagne>
