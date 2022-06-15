@@ -31,7 +31,7 @@ function campagnodon_taches_generales_cron($taches_generales) {
 function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 	if ($flux['args']['parrain'] !== 'campagnodon') {
 		// Ça ne concerne pas notre plugin.
-		return;
+		return $flux;
 	}
 	spip_log('Pipeline bank_dsp2_renseigner_facturation: je dois chercher les infos.', 'campagnodon'._LOG_DEBUG);
 
@@ -114,6 +114,7 @@ function programmer_sync_bank_result($flux) {
 function campagnodon_bank_traiter_reglement($flux) {
 	spip_log('Appel de campagnodon_bank_traiter_reglement.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
+	return $flux;
 }
 
 /**
@@ -126,6 +127,7 @@ function campagnodon_bank_traiter_reglement($flux) {
 function campagnodon_bank_traiter_remboursement($flux) {
 	spip_log('Appel de campagnodon_bank_traiter_remboursement.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
+	return $flux;
 }
 
 /**
@@ -138,6 +140,7 @@ function campagnodon_bank_traiter_remboursement($flux) {
 function campagnodon_trig_bank_reglement_en_attente($flux) {
 	spip_log('Appel de campagnodon_trig_bank_reglement_en_attente.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
+	return $flux;
 }
 
 
@@ -151,4 +154,5 @@ function campagnodon_trig_bank_reglement_en_attente($flux) {
 function campagnodon_trig_bank_reglement_en_echec($flux) {
 	spip_log('Appel de campagnodon_trig_bank_reglement_en_echec.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
+	return $flux;
 }
