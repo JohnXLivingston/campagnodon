@@ -157,7 +157,7 @@
           <div class="row-fluid">
             <div class="form-group span12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{telephone}})]
-              <div class="editer editer_telephone obligatoire [(#GET{erreurs}|oui)erreur]">
+              <div class="editer editer_telephone [(#GET{erreurs}|oui)erreur]">
                 <label for="champ_telephone"><:campagnodon_form:label_telephone:></label>
                 [<span class='erreur_message'>(#GET{erreurs})</span>]
                 <input type="tel" name="telephone" class="tel" value="#ENV*{telephone}" id="champ_telephone"/>
