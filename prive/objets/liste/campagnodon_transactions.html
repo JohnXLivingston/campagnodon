@@ -38,7 +38,10 @@
 			</td>
 			<td class="statut">[(#STATUT|match{echec|ok|rembourse}|et{#MESSAGE|trim|strlen}|?{[<abbr title="[(#MESSAGE|attribut_html)[ - (#ERREUR|attribut_html)]]">(#STATUT)</abbr>],#STATUT})]</td>
 			<td class="transaction_mode">[(#TRANSACTION_MODE|bank_afficher_mode)]</td>
-			<td class="montant">[(#MONTANT|affiche_monnaie)]</td>
+			<td class="montant">
+				[(#REM) Il faudrait remplacer affiche_monnaie par bank_affiche_montant quand SPIP Bank sera à jour chez Attac. ]
+				[(#MONTANT|affiche_monnaie)]
+			</td>
 			<td class="mode">#MODE</td>
       <td class="statut_synchronisation">
 				<div style="color:[
