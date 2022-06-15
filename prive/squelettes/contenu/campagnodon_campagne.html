@@ -85,7 +85,7 @@
           if (type.length) {
             s+= '|type=' + type.attr('value');
           }
-          s+= '>';
+
           if (td.find('input[name=montant_perso]:checked').length) {
             td.find('input[name=montant_libre]').closest('div').show();
             s+= '|montants=13,21,35,48,65,84,120,160';
@@ -95,6 +95,8 @@
           } else {
             td.find('input[name=montant_libre]').closest('div').hide();
           }
+
+          s+= '>';
           balise.text(s);
         }
         campagnodon_balise_raffraichir();
