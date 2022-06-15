@@ -48,11 +48,11 @@
                 <:campagnodon:label_type_don:>
               </label>
               <label>
-                <input type="radio" name="type" class="type" value="adhesion" />
+                <input type="radio" name="type" class="type" disabled value="adhesion" />
                 <:campagnodon:label_type_adhesion:>
               </label>
               <label>
-                <input type="radio" name="type" class="type" value="don_adhesion" />
+                <input type="radio" name="type" class="type" disabled value="don_adhesion" />
                 <:campagnodon:label_type_don:> + <:campagnodon:label_type_adhesion:>
               </label>
             </div>
@@ -77,8 +77,16 @@
       $('#campagnodon_balise_raffraichir').each(function() {
         const td = jQuery(this);
         td.find('form').on('submit', function() { return false; });
-        const balise = jQuery('<div>');
+
+        const balise = jQuery('<textarea>');
+        balise.attr('style', 'width:100%');
+        balise.attr('readonly', true);
+        balise.on('click', function() {
+          balise.select();
+          balise.setSelectionRange(0, 99999) /* pour les smartphones/tablettes */
+        });
         td.append(balise);
+
         function campagnodon_balise_raffraichir() {
           let s = '<campagnodon|origine=#ORIGINE|id=#ID_ORIGINE';
           let type = td.find('input[name=type]:checked:first');
