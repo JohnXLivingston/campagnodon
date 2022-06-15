@@ -112,6 +112,7 @@ function programmer_sync_bank_result($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_bank_traiter_reglement($flux) {
+	spip_log('Appel de campagnodon_bank_traiter_reglement.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
 }
 
@@ -123,6 +124,7 @@ function campagnodon_bank_traiter_reglement($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_bank_traiter_remboursement($flux) {
+	spip_log('Appel de campagnodon_bank_traiter_remboursement.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
 }
 
@@ -134,6 +136,7 @@ function campagnodon_bank_traiter_remboursement($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_trig_bank_reglement_en_attente($flux) {
+	spip_log('Appel de campagnodon_trig_bank_reglement_en_attente.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
 }
 
@@ -146,8 +149,6 @@ function campagnodon_trig_bank_reglement_en_attente($flux) {
  * @return array       Données du pipeline
  */
 function campagnodon_trig_bank_reglement_en_echec($flux) {
+	spip_log('Appel de campagnodon_trig_bank_reglement_en_echec.', 'campagnodon'._LOG_DEBUG);
 	programmer_sync_bank_result($flux);
 }
-
-
-// TODO: gérer le pipeline bank_traiter_remboursement ?
