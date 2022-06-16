@@ -14,21 +14,47 @@ class CampagnodonException extends Exception {
   }
 }
 
-function liste_montants_campagne() {
-  // TODO: pouvoir récupérer les montants depuis les paramètres du formulaire.
-  return [
-    'propositions' => [
-      '13' => '13 €',
-      '21' => '21 €',
-      '35' => '35 €',
-      '48' => '48 €',
-      '65' => '65 €',
-      '84' => '84 €',
-      '120' => '120 €',
-      '160' => '160 €',
-    ],
-    'libre' => false
+function liste_montants_campagne($id_campagne, $arg_liste_montants) {
+  if (empty($arg_liste_montants)) {
+    return [
+      'propositions' => [
+        '13' => '13 €',
+        '21' => '21 €',
+        '35' => '35 €',
+        '48' => '48 €',
+        '65' => '65 €',
+        '84' => '84 €',
+        '120' => '120 €',
+        '160' => '160 €',
+      ],
+      'libre' => false,
+      'uniquement_libre' => false
+    ];
+  }
+  $r = [
+    'propositions' => [],
+    'libre' => false,
+    'uniquement_libre' => false
   ];
+  $liste = explode(',', $arg_liste_montants);
+  foreach ($liste as $montant) {
+    if ($montant === 'libre') {
+      $r['libre'] = true;
+      continue;
+    }
+    $montant = trim($montant);
+    if (!preg_match('/^\d+$/', $montant)) {
+      spip_log("Montant invalide dans la configuration du formulaire: '".$montant."'.", "campagnodon"._LOG_ERREUR);
+      return false;
+    }
+    $r['propositions'][$montant] = $montant . ' €';
+  }
+
+  if ($r['libre'] && count($r['propositions']) === 0) {
+    $r['uniquement_libre'] = true;
+  }
+  
+  return $r;
 }
 
 function liste_civilites($mode_options) {
@@ -69,7 +95,7 @@ function traduit_financial_type($mode_options, $type) {
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
-function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
+function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
   if ($type !== 'don') {
     spip_log("Type de Campagnodon inconnu: ".$type, "campagnodon"._LOG_ERREUR);
     return false;
@@ -84,7 +110,11 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
   include_spip('inc/campagnodon.utils');
   $mode_options = campagnodon_mode_options($campagne['origine']);
 
-  $montants = liste_montants_campagne();
+  $montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+  if (!$montants) {
+    spip_log("Liste de montants invalide", "campagnodon"._LOG_ERREUR);
+    return false;
+  }
   $civilites = liste_civilites($mode_options);
   $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
   
@@ -114,7 +144,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL) {
   return $values;
 }
 
-function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
+function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
   $erreurs = [];
   $verifier = charger_fonction('verifier', 'inc/');
   
@@ -128,7 +158,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   include_spip('inc/campagnodon.utils');
   $mode_options = campagnodon_mode_options($campagne['origine']);
 
-  $montants = liste_montants_campagne();
+  $montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
   $civilites = liste_civilites($mode_options);
   $recu_fiscal = _request('recu_fiscal') == '1';
   
@@ -187,7 +217,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL) {
   return $erreurs;
 }
 
-function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL) {
+function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
   try {
     spip_log("traiter_dist" . $type . ":". $id_campagne);
 
