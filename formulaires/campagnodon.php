@@ -316,7 +316,6 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'payment_url' => $url_paiement,
       'optional_subscriptions' => array()
       // 'payment_method' => 'transfer' // FIXME: use the correct value
-      // TODO: recu fiscal
     );
     if (_request('recu_fiscal') == '1') {
       // FIXME: je n'ai pas réussi à faire marcher la phase de normalisation ci-dessous.
