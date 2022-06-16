@@ -107,12 +107,6 @@
               s+= 'libre';
             }
           }
-          if (td.find('input[name=montant_perso]:checked').length) {
-            s+= '|montants=13,21,35,48,65,84,120,160';
-            if (td.find('input[name=montant_libre]:checked').length) {
-              s+= ',libre';
-            }
-          }
 
           s+= '>';
           balise.text(s);
