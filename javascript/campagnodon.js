@@ -13,6 +13,11 @@ function campagnodon_formulaire(formSelector) {
     campagnodon_formulaire_montant_libre($form, false, true);
     campagnodon_formulaire_recu_fiscal_explication($form);
   });
+
+  $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_recu_fiscal_explication($form));
+  $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_recu_fiscal_explication($form));
+  $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_recu_fiscal_explication($form));
+
   campagnodon_formulaire_montant_libre($form, true);
   campagnodon_formulaire_recu_fiscal_explication($form);
 }
@@ -74,9 +79,19 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
 function campagnodon_formulaire_recu_fiscal_explication($form) {
   const $montant = $form.find('input[type=radio][name=montant]:checked');
   const explication = $form.find('[recu_fiscal_explication]');
+  let montant;
   if ($montant.length) {
+    montant = $montant.attr('value');
+    if (montant === 'libre') {
+      const $montant_libre = $form.find('input[name=montant_libre]');
+      montant = $montant_libre.prop('value');
+      montant = parseInt(montant);
+    } else {
+      montant = parseInt(montant);
+    }
+  }
+  if (montant !== undefined && !isNaN(montant)) {
     let text = explication.attr('recu_fiscal_explication');
-    const montant = parseInt($montant.attr('value'));
     text = text.replace(/_MONTANT_/g, montant);
     text = text.replace(/_COUT_/g, Math.round(montant * .34));
     explication.text(text);
