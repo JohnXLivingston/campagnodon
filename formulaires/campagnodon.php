@@ -303,7 +303,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     }
 
     $params = array(
-      'email' => _request('email'),
+      'email' => trim(_request('email')),
       'contributions' => [
         [
           'financial_type' => traduit_financial_type($mode_options, 'don'),
@@ -329,14 +329,14 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       $params = array_merge($params, array(
         'tax_receipt' => true,
         'prefix' => _request('civilite'),
-        'first_name' => _request('prenom'),
-        'last_name' => _request('nom'),
+        'first_name' => trim(_request('prenom')),
+        'last_name' => trim(_request('nom')),
         'birth_date' => _request('date_naissance'),
-        'street_address' => _request('adresse'),
-        'postal_code' => _request('code_postal'),
-        'city' => _request('ville'),
+        'street_address' => trim(_request('adresse')),
+        'postal_code' => trim(_request('code_postal')),
+        'city' => trim(_request('ville')),
         'country' => _request('pays'), // FIXME: vérifier que les valeurs sont bien compatibles avec celles de l'api CiviCRM.
-        'phone' => _request('telephone'),
+        'phone' => trim(_request('telephone'))
       ));
 
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
