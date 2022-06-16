@@ -50,12 +50,36 @@ function liste_montants_campagne($id_campagne, $arg_liste_montants) {
     $r['propositions'][$montant] = $montant . ' €';
   }
 
-  if ($r['libre'] && count($r['propositions']) === 0) {
-    $r['uniquement_libre'] = true;
+  if (count($r['propositions']) === 0) {
+    if ($r['libre']) {
+      $r['uniquement_libre'] = true;
+    } else {
+      spip_log("Liste des montants vide.", "campagnodon"._LOG_ERREUR);
+      return false;
+    }
   }
   
   return $r;
 }
+
+/**
+ * Retourne le montant (montant vs montant_libre, etc...)
+ * @param $config_montants Correspond au retour de la fonction liste_montants_campagne
+ */
+function get_form_montant($config_montants) {
+  $v_montant = _request('montant');
+  if ($v_montant === 'libre') {
+    if (!$config_montants['libre']) {
+      return null;
+    }
+    return trim(_request('montant_libre'));
+  }
+  if (!array_key_exists($v_montant, $config_montants['propositions'])) {
+    return null;
+  }
+  return $v_montant;
+}
+
 
 function liste_civilites($mode_options) {
   if (is_array($mode_options) && array_key_exists('liste_civilites', $mode_options)) {
@@ -110,8 +134,8 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   include_spip('inc/campagnodon.utils');
   $mode_options = campagnodon_mode_options($campagne['origine']);
 
-  $montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
-  if (!$montants) {
+  $config_montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+  if (!$config_montants) {
     spip_log("Liste de montants invalide", "campagnodon"._LOG_ERREUR);
     return false;
   }
@@ -120,10 +144,13 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   
   $values = [
     /* Éléments statiques */
-    '_montants_propositions' => $montants['propositions'],
+    '_montants_propositions' => $config_montants['propositions'],
+    '_montants_proposition_libre' => $config_montants['libre'],
+    '_montants_propositions_uniquement_libre' => $config_montants['uniquement_libre'],
     '_civilites' => $civilites,
     '_souscriptions_optionnelles' => $souscriptions_optionnelles,
     'montant' => '',
+    'montant_libre' => '',
     'email' => '',
     'recu_fiscal' => '',
     'civilite' => '',
@@ -158,7 +185,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
   include_spip('inc/campagnodon.utils');
   $mode_options = campagnodon_mode_options($campagne['origine']);
 
-  $montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+  $config_montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
   $civilites = liste_civilites($mode_options);
   $recu_fiscal = _request('recu_fiscal') == '1';
   
@@ -177,13 +204,11 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 		$erreurs['email'] = _T('campagnodon_form:erreur_email_invalide');
 	}
 
-  $montant = _request('montant');
-  if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
-    $erreurs['montant'] = $erreur;
-  }
-  // TODO: implémenter le montant libre (et fixer une borne ?)
-  if (!array_key_exists($montant, $montants['propositions'])) {
+  $montant = get_form_montant($config_montants);
+  if (empty($montant)) {
     $erreurs['montant'] = _T('info_obligatoire');
+  } else if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
+    $erreurs['montant'] = $erreur;
   }
 
   if ($recu_fiscal) {
@@ -226,6 +251,9 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       throw new CampagnodonException('Campagne invalide au moment de l\'enregistrement', "campagnodon:campagne_invalide");
     }
 
+    $config_montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+    $montant = get_form_montant($config_montants);
+
     include_spip('inc/campagnodon.utils');
     $mode_options = campagnodon_mode_options($campagne['origine']);
     if (!$mode_options['type']) {
@@ -253,7 +281,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'force' => true
     ];
     if (!(
-      $id_transaction = $inserer_transaction(_request('montant'), $transaction_options)
+      $id_transaction = $inserer_transaction($montant, $transaction_options)
       and $hash = sql_getfetsel('transaction_hash', 'spip_transactions', 'id_transaction=' . intval($id_transaction))
     )) {
       throw new CampagnodonException("Erreur à la création de la transaction ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
@@ -279,7 +307,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'contributions' => [
         [
           'financial_type' => traduit_financial_type($mode_options, 'don'),
-          'amount' => _request('montant'),
+          'amount' => $montant,
           'currency' => 'EUR'
         ]
       ],

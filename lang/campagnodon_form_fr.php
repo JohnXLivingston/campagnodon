@@ -1,6 +1,7 @@
 <?php
 $GLOBALS[$GLOBALS['idx_lang']] = array(
   'je_donne' => 'Je donne :',
+  'montant_libre' => 'Montant libre',
   'coordonnees' => 'Coordonnées',
   'label_email' => 'Adresse e-mail',
   'label_civilite' => 'Civilité',

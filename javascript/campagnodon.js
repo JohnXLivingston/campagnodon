@@ -9,8 +9,38 @@ function campagnodon_formulaire(formSelector) {
   $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form));
   campagnodon_formulaire_recu_fiscal($form, true);
 
-  $form.on('click', 'input[type=radio][name=montant]', () => campagnodon_formulaire_recu_fiscal_explication($form));
+  $form.on('click', 'input[type=radio][name=montant]', () => {
+    campagnodon_formulaire_montant_libre($form, false, true);
+    campagnodon_formulaire_recu_fiscal_explication($form);
+  });
+  campagnodon_formulaire_montant_libre($form, true);
   campagnodon_formulaire_recu_fiscal_explication($form);
+}
+
+/**
+ * Cette fonction s'occupe de mettre à jour le formulaire en fonction de si on choisi le montant libre ou non.
+ * @param {jQuery} $form Le conteneur jQuery du formulaire
+ * @param {boolean} permier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
+ * @param {boolean} est_click Vrai si c'est un click.
+ */
+function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_click = false) {
+  const $radio_montant_libre = $form.find('input[name=montant][value=libre]');
+  if (!$radio_montant_libre.length) {
+    // Le montant libre n'est pas activé
+    return;
+  }
+  if ($radio_montant_libre.attr('type') === 'hidden') {
+    // Le champ est hidden => il n'y a que du montant libre => il n'y a rien à faire
+    return;
+  }
+  const montant_libre = $radio_montant_libre.is(':checked');
+  const $input_montant_libre = $form.find('input[name=montant_libre]');
+  $input_montant_libre.attr('disabled', !montant_libre);
+  $input_montant_libre.attr('required', montant_libre);
+
+  if (montant_libre && est_click) {
+    $input_montant_libre.focus();
+  }
 }
 
 /**

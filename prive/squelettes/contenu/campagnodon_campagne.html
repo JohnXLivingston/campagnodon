@@ -94,14 +94,24 @@
             s+= '|type=' + type.attr('value');
           }
 
+          const montant_perso = !!td.find('input[name=montant_perso]:checked').length;
+          const montant_libre = !!td.find('input[name=montant_libre]:checked').length
+          if (montant_libre || montant_perso) {
+            s+= '|montants=';
+            if (montant_perso) {
+              s+= '13,21,35,48,65,84,120,160';
+              if (montant_libre) {
+                s+= ',libre';
+              }
+            } else if (montant_libre) {
+              s+= 'libre';
+            }
+          }
           if (td.find('input[name=montant_perso]:checked').length) {
-            td.find('input[name=montant_libre]').closest('div').show();
             s+= '|montants=13,21,35,48,65,84,120,160';
             if (td.find('input[name=montant_libre]:checked').length) {
               s+= ',libre';
             }
-          } else {
-            td.find('input[name=montant_libre]').closest('div').hide();
           }
 
           s+= '>';

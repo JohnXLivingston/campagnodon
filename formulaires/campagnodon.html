@@ -13,14 +13,42 @@
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
             <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
               [<span class='erreur_message'>(#GET{erreurs})</span>]
-              <div class="campagnodon_radio">
-                <BOUCLE_montants(POUR){tableau #ENV{_montants_propositions}}>
-                  #SET{val,#CLE}
-                  <label>
-                    <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
-                    <span>#VALEUR</span>
-                  </label>
-                </BOUCLE_montants>
+              <div class="campagnodon_montant">
+                <BOUCLE_liste_montants(CONDITION){si #ENV{_montants_propositions_uniquement_libre}|non}>
+                  <div class="campagnodon_montant_ligne">
+                    <BOUCLE_montants(POUR){tableau #ENV{_montants_propositions}}>
+                      #SET{val,#CLE}
+                      <label>
+                        <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
+                        <span>#VALEUR</span>
+                      </label>
+                    </BOUCLE_montants>
+                  </div>
+                </BOUCLE_liste_montants>
+                [(#ENV{_montants_proposition_libre}|oui)
+                  [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre}})]
+                  [<span class='erreur_message'>(#GET{erreurs})</span>]
+                  <div class="campagnodon_montant_ligne">
+                    [(#ENV{_montants_propositions_uniquement_libre}|oui)
+                      <input type="hidden" name="montant" value="libre" />
+                    ]
+                    [(#ENV{_montants_propositions_uniquement_libre}|non)
+                      #SET{val,libre}
+                      <label>
+                        <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
+                        <span><:campagnodon_form:montant_libre:></span>
+                      </label>
+                    ]
+                    <label>
+                      <input
+                        type="number" name="montant_libre"
+                        class="text" value="#ENV*{montant_libre}"
+                        id="champ_montant_libre"
+                        [(#ENV{_montants_propositions_uniquement_libre}|non)disabled="disabled"]
+                      />&nbsp;€
+                    </label>
+                  </div>
+                ]
               </div>
             </div>
           </div>
