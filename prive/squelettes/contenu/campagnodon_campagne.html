@@ -38,7 +38,7 @@
         <td><div class="statut">(#STATUT)</td>
       </tr>
     ]
-    <tr>
+    [(#STATUT|=={publie}|oui)<tr>
         <td><:campagnodon:label_balise:></td>
         <td id="campagnodon_balise_raffraichir">
           <form>
@@ -70,7 +70,7 @@
             </div>
           </form>
         </td>
-    </tr>
+    </tr>]
   </table>
   <script type="text/javascript">
     jQuery(function(){
