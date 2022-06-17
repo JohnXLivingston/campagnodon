@@ -95,7 +95,10 @@
           if (montant_libre || montant_perso) {
             s+= '|montants=';
             if (montant_perso) {
-              s+= '13,21,35,48,65,84,120,160';
+              // TODO
+              // Montants adhésions par défaut : 13, 21, 34, 48, 65, 84, 120, 160
+              // Montants dons mensuels par défaut : 6, 15, 30, 50
+              s+= '30,50,100,200';
               if (montant_libre) {
                 s+= ',libre';
               }
