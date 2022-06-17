@@ -18,16 +18,15 @@ function liste_montants_campagne($id_campagne, $arg_liste_montants) {
   if (empty($arg_liste_montants)) {
     return [
       'propositions' => [
-        '13' => '13 €',
-        '21' => '21 €',
-        '35' => '35 €',
-        '48' => '48 €',
-        '65' => '65 €',
-        '84' => '84 €',
-        '120' => '120 €',
-        '160' => '160 €',
+        '30' => '30 €',
+        '50' => '50 €',
+        '100' => '100 €',
+        '200' => '200 €',
       ],
-      'libre' => false,
+      // TODO
+      // Montants adhésions par défaut : 13, 21, 34, 48, 65, 84, 120, 160
+      // Montants dons mensuels par défaut : 6, 15, 30, 50
+      'libre' => true,
       'uniquement_libre' => false
     ];
   }
