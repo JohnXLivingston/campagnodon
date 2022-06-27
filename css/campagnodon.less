@@ -1,4 +1,46 @@
 .formulaire_campagnodon {
+  .editer_montant_adhesion {
+    .erreur_message {
+      margin-bottom: 10px;
+    }
+
+    .campagnodon_montant_adhesion {
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      gap: 5px;
+
+      label {
+        display: inline;
+      }
+
+      input[type=radio] + span {
+        // Le style du libellé
+        padding: 0.7em;
+        margin-right: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: none;
+        vertical-align: middle;
+      }
+
+      input[type=radio]:hover + span {
+        background-color: #DA1E48;
+        color: white;
+        border:#DA1E48 1px solid;
+      }
+
+      input[type=radio]:checked + span {
+        background: #DA1E48;
+        border:#DA1E48 1px solid;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-shadow: 0 0 3px rgba(0,0,0,.5);
+        color: white;
+      }
+    }
+  }
+
   .editer_montant {
     .erreur_message {
       margin-bottom: 10px;
@@ -59,7 +101,8 @@
       content: ' *';
     }
 
-    .campagnodon_montant_ligne {
+    .campagnodon_montant_ligne,
+    .campagnodon_montant_adhesion {
       label:after {
         content: ''
       }

@@ -14,7 +14,26 @@ class CampagnodonException extends Exception {
   }
 }
 
-function liste_montants_campagne($id_campagne, $arg_liste_montants) {
+function liste_montants_campagne($type, $id_campagne, $arg_liste_montants) {
+  if ($type === 'adhesion') {
+    $propositions_adhesion = [
+      '13' => '13 € (moins de 450 € de revenus mensuels)',
+      '21' => '21 € (entre 450 € et 900 € de revenus mensuels)',
+      '35' => '35 € (entre 900 € et 1200 € de revenus mensuels)',
+      '48' => '48 € (entre 1200 € et 1600 € de revenus mensuels)',
+      '65' => '65 € (entre 1600 € et 2300 € de revenus mensuels)',
+      '84' => '84 € (entre 2300 € et 3000 € de revenus mensuels)',
+      '120' => '120 € (entre 3000 € et 4000 € de revenus mensuels)',
+      '160' => '160 € (plus de 4000 € de revenus mensuels)'
+    ];
+    return [
+      'propositions' => [],
+      'libre' => true,
+      'uniquement_libre' => true,
+      'propositions_adhesion' => $propositions_adhesion
+    ];
+  }
+
   if (empty($arg_liste_montants)) {
     return [
       'propositions' => [
@@ -27,13 +46,15 @@ function liste_montants_campagne($id_campagne, $arg_liste_montants) {
       // Montants adhésions par défaut : 13, 21, 34, 48, 65, 84, 120, 160
       // Montants dons mensuels par défaut : 6, 15, 30, 50
       'libre' => true,
-      'uniquement_libre' => false
+      'uniquement_libre' => false,
+      'propositions_adhesion' => null
     ];
   }
   $r = [
     'propositions' => [],
     'libre' => false,
-    'uniquement_libre' => false
+    'uniquement_libre' => false,
+    'propositions_adhesion' => null
   ];
   $liste = explode(',', $arg_liste_montants);
   foreach ($liste as $montant) {
@@ -80,6 +101,21 @@ function get_form_montant($config_montants) {
 }
 
 
+/**
+ * Retourne le montant de l'adhésion
+ * @param $config_montants Correspond au retour de la fonction liste_montants_campagne
+ */
+function get_form_montant_adhesion($config_montants) {
+  $v_montant = _request('montant_adhesion');
+  if (empty($config_montants['propositions_adhesion'])) {
+    return null;
+  }
+  if (!array_key_exists($v_montant, $config_montants['propositions_adhesion'])) {
+    return null;
+  }
+  return $v_montant;
+}
+
 function liste_civilites($mode_options) {
   if (is_array($mode_options) && array_key_exists('liste_civilites', $mode_options)) {
     // Pour des soucis de cohérence dans la config, il faut ici inverser le sens key=>val
@@ -119,7 +155,7 @@ function traduit_financial_type($mode_options, $type) {
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
 function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
-  if ($type !== 'don') {
+  if ($type !== 'don' && $type !== 'adhesion') {
     spip_log("Type de Campagnodon inconnu: ".$type, "campagnodon"._LOG_ERREUR);
     return false;
   }
@@ -133,7 +169,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   include_spip('inc/campagnodon.utils');
   $mode_options = campagnodon_mode_options($campagne['origine']);
 
-  $config_montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+  $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
   if (!$config_montants) {
     spip_log("Liste de montants invalide", "campagnodon"._LOG_ERREUR);
     return false;
@@ -142,10 +178,11 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
   
   $values = [
-    /* Éléments statiques */
+    '_type' => $type,
     '_montants_propositions' => $config_montants['propositions'],
     '_montants_proposition_libre' => $config_montants['libre'],
     '_montants_propositions_uniquement_libre' => $config_montants['uniquement_libre'],
+    '_montants_propositions_adhesion' => $config_montants['propositions_adhesion'],
     '_civilites' => $civilites,
     '_souscriptions_optionnelles' => $souscriptions_optionnelles,
     'montant' => '',
@@ -184,7 +221,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
   include_spip('inc/campagnodon.utils');
   $mode_options = campagnodon_mode_options($campagne['origine']);
 
-  $config_montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+  $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
   $civilites = liste_civilites($mode_options);
   $recu_fiscal = _request('recu_fiscal') == '1';
   
@@ -210,7 +247,17 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
     $erreurs['montant'] = $erreur;
   }
 
-  if ($recu_fiscal) {
+  $montant_adhesion = null;
+  if ($type === 'adhesion') {
+    $montant_adhesion = get_form_montant_adhesion($config_montants);
+    if (empty($montant_adhesion)) {
+      $erreurs['montant_adhesion'] = _T('info_obligatoire');
+    } else if ($erreur = $verifier($montant_adhesion, 'entier', array('min' => 1, 'max' => 10000000))) {
+      $erreurs['montant_adhesion'] = $erreur;
+    }
+  }
+
+  if ($recu_fiscal || $type === 'adhesion') {
     $pays = _request('pays');
     $ret = sql_select('nom', 'spip_pays', 'code='.sql_quote($pays));
 		if (sql_count($ret) != 1) {
@@ -250,7 +297,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       throw new CampagnodonException('Campagne invalide au moment de l\'enregistrement', "campagnodon:campagne_invalide");
     }
 
-    $config_montants = liste_montants_campagne($id_campagne, $arg_liste_montants);
+    $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
     $montant = get_form_montant($config_montants);
 
     include_spip('inc/campagnodon.utils');

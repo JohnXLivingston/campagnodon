@@ -3,9 +3,36 @@
   [<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
   <BOUCLE_editable(CONDITION){si #ENV{editable}}>
-    <form name="formulaire_#FORM" action="#ENV{action}" method="post">
+    <form name="formulaire_#FORM" action="#ENV{action}" method="post" campagnodon_type="#ENV{_type}">
       #ACTION_FORMULAIRE{#ENV{action}}
 
+      [(#REM) Si on est sur un formulaire d'adhésion, on affiche le bloc correspondant :]
+      <BOUCLE_adhesion(CONDITION){si #ENV{_type}|=={adhesion}}>
+        <fieldset>
+          <legend><span><:campagnodon_form:j_adhere:></span></legend>
+          <div class="row-fluid">
+            <div class="form-group span12">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_adhesion}})]
+              <div class="editer editer_montant_adhesion obligatoire [(#GET{erreurs}|oui)erreur]">
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <div class="campagnodon_montant_adhesion">
+
+                  [(#REM) Et on boucle sur les propositions.]
+                  <BOUCLE_montants_adhesion(POUR){tableau #ENV{_montants_propositions_adhesion}}>
+                    #SET{val,#CLE}
+                    <label>
+                      <input type="radio" name="montant_adhesion" class="radio" required="required" id="montant_adhesion_#GET{val}" value="#GET{val}" [(#ENV{montant_adhesion}|=={#GET{val}}|oui)checked="checked"] />
+                      <span>#VALEUR</span>
+                    </label>
+                  </BOUCLE_montants_adhesion>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </BOUCLE_adhesion>
+
+      [(#REM) Ci dessous le bloc des dons. Toujours affiché (mais son apparence change légèrement)]
       <fieldset>
         <legend><span><:campagnodon_form:je_donne:></span></legend>
         <div class="row-fluid">
@@ -14,6 +41,8 @@
             <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
               [<span class='erreur_message'>(#GET{erreurs})</span>]
               <div class="campagnodon_montant">
+
+                [(#REM) Sauf si on ne met que des montants de don libre, on affiche la liste des montants présélectionnés.]
                 <BOUCLE_liste_montants(CONDITION){si #ENV{_montants_propositions_uniquement_libre}|non}>
                   <div class="campagnodon_montant_ligne">
                     <BOUCLE_montants(POUR){tableau #ENV{_montants_propositions}}>
@@ -25,10 +54,14 @@
                     </BOUCLE_montants>
                   </div>
                 </BOUCLE_liste_montants>
+
+                [(#REM) On affiche la saisie de montant libre si activée.]
                 [(#ENV{_montants_proposition_libre}|oui)
                   [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre}})]
                   [<span class='erreur_message'>(#GET{erreurs})</span>]
                   <div class="campagnodon_montant_ligne">
+
+                    [(#REM) Si on n'a que le montant libre, le champs 'montant' est caché, sinon c'est un bouton radio.]
                     [(#ENV{_montants_propositions_uniquement_libre}|oui)
                       <input type="hidden" name="montant" value="libre" />
                     ]
@@ -55,6 +88,7 @@
         </div>
       </fieldset>
 
+      [(#REM) Les coordonnées personnelles:]
       <fieldset>
         <legend><span><:campagnodon_form:coordonnees:></span></legend>
 

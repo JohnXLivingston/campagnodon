@@ -114,7 +114,12 @@ define('_CAMPAGNODON_MODES', array(
                                 'label' => 'Je souhaite participer à des actions',
                                 // 'cle_distante' => ???
                         )
-                )
+                ),
+                // 'adhesion_options' => array(
+                //         'magazine' => array( // Si défini, alors il y a aura une part «magazine» dans les adhésions (avec une fiscalité différente).
+                //                 'prix' => 12 // le prix de l'adhésion au magazine. L'adhésion aura alors un prix au moins égal à 12 + 1.
+                //         )
+                // )
         )
 ));
 ```
