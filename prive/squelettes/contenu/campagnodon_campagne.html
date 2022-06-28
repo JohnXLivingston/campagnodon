@@ -86,12 +86,21 @@
         function campagnodon_balise_raffraichir() {
           let s = '<campagnodon|origine=#ORIGINE|id=#ID_ORIGINE';
           let type = td.find('input[name=type]:checked:first');
+          let type_valeur = null;
           if (type.length) {
-            s+= '|type=' + type.attr('value');
+            type_valeur = type.attr('value');
+            s+= '|type=' + type_valeur;
+          }
+          if (type_valeur === 'adhesion') {
+            td.find('input[name=montant_perso]').prop('disabled', true);
+            td.find('input[name=montant_libre]').prop('disabled', true);
+          } else {
+            td.find('input[name=montant_perso]').prop('disabled', false);
+            td.find('input[name=montant_libre]').prop('disabled', false);
           }
 
-          const montant_perso = !!td.find('input[name=montant_perso]:checked').length;
-          const montant_libre = !!td.find('input[name=montant_libre]:checked').length
+          const montant_perso = !!td.find('input[name=montant_perso]:checked:not(:disabled)').length;
+          const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length
           if (montant_libre || montant_perso) {
             s+= '|montants=';
             if (montant_perso) {
