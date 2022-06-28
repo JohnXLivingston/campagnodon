@@ -115,11 +115,11 @@ define('_CAMPAGNODON_MODES', array(
                                 // 'cle_distante' => ???
                         )
                 ),
-                // 'adhesion_options' => array(
-                //         'magazine' => array( // Si défini, alors il y a aura une part «magazine» dans les adhésions (avec une fiscalité différente).
-                //                 'prix' => 12 // le prix de l'adhésion au magazine. L'adhésion aura alors un prix au moins égal à 12 + 1.
-                //         )
-                // )
+                'adhesion_magazine_prix' => 12, // Optionnel. Le prix de l'adhésion au magazine. L'adhésion aura alors un prix au moins égal à 12 + 1.
+                'adhesion_type' => {
+                        'adhesion' => 1, // Le membership type (id numérique ou libellé)
+                        'magazine' => 2 // Le membership type pour le magazine (id numérique ou libellé)
+                },
         )
 ));
 ```

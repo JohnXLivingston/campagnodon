@@ -151,6 +151,30 @@ function traduit_financial_type($mode_options, $type) {
   return $type;
 }
 
+function traduit_adhesion_type($mode_options, $type) {
+  if (
+    is_array($mode_options)
+    && array_key_exists('adhesion_type', $mode_options)
+    && is_array($mode_options['adhesion_type'])
+    && array_key_exists($type, $mode_options['adhesion_type'])
+  ) {
+    return $mode_options['adhesion_type'][$type];
+  }
+  return $type;
+}
+
+function get_adhesion_magazine_prix($mode_options, $type) {
+  if (
+    $type === 'adhesion'
+    && is_array($mode_options)
+    && array_key_exists('adhesion_magazine_prix', $mode_options)
+    && ! empty($mode_options['adhesion_magazine_prix'])
+  ) {
+    return intval($mode_options['adhesion_magazine_prix']);
+  }
+  return 0;
+}
+
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
@@ -200,6 +224,10 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
     'telephone' => '',
   ];
 
+  if ($type === 'adhesion') {
+    $values['adhesion_avec_don'] = '';
+  }
+
   foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
     $values['souscription_optionnelle_'.$cle] = '';
   } 
@@ -223,13 +251,15 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 
   $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
   $civilites = liste_civilites($mode_options);
-  $recu_fiscal = _request('recu_fiscal') == '1';
+  $recu_fiscal = _request('recu_fiscal') == '1' || $type === 'adhesion'; // on veut toujours un reçu pour les adhésions
+  $adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
+  $adhesion_magazine_prix = get_adhesion_magazine_prix($mode_options, $type);
   
   $obligatoires = ['email']; // Pas besoin de 'montant', il sera testé plus loin
-  if ($recu_fiscal) {
+  if ($recu_fiscal || $adhesion_avec_don) {
     array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville', 'pays');
   }
-  
+
   foreach ($obligatoires as $obligatoire) {
     if(!_request($obligatoire)) {
       $erreurs[$obligatoire] = _T('info_obligatoire');
@@ -241,10 +271,12 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 	}
 
   $montant = get_form_montant($config_montants);
-  if (empty($montant)) {
-    $erreurs['montant'] = _T('info_obligatoire');
-  } else if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
-    $erreurs['montant'] = $erreur;
+  if ($type !== 'adhesion' || $adhesion_avec_don) {
+    if (empty($montant)) {
+      $erreurs['montant'] = _T('info_obligatoire');
+    } else if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
+      $erreurs['montant'] = $erreur;
+    }
   }
 
   $montant_adhesion = null;
@@ -252,7 +284,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
     $montant_adhesion = get_form_montant_adhesion($config_montants);
     if (empty($montant_adhesion)) {
       $erreurs['montant_adhesion'] = _T('info_obligatoire');
-    } else if ($erreur = $verifier($montant_adhesion, 'entier', array('min' => 1, 'max' => 10000000))) {
+    } else if ($erreur = $verifier($montant_adhesion, 'entier', array('min' => 1 + $adhesion_magazine_prix, 'max' => 10000000))) {
       $erreurs['montant_adhesion'] = $erreur;
     }
   }
@@ -298,7 +330,14 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     }
 
     $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
-    $montant = get_form_montant($config_montants);
+    $recu_fiscal = _request('recu_fiscal') == '1' || $type === 'adhesion'; // on veut toujours un reçu pour les adhésions
+    $adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
+    $montant = ($type !== 'adhesion' || $adhesion_avec_don) ? get_form_montant($config_montants) : null;
+    $montant_adhesion = ($type === 'adhesion') ? get_form_montant_adhesion($config_montants) : null;
+
+    $montant_total = 0;
+    if ($montant) { $montant_total+= $montant; }
+    if ($montant_adhesion) { $montant_total+= $montant_adhesion; }
 
     include_spip('inc/campagnodon.utils');
     $mode_options = campagnodon_mode_options($campagne['origine']);
@@ -309,6 +348,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     if (!$fonction_nouvelle_contribution) {
       throw new CampagnodonException("Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '".$campagne['origine']."'.", "campagnodon:erreur_sauvegarde");
     }
+
+    $adhesion_magazine_prix = get_adhesion_magazine_prix($mode_options, $type);
 
     $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
       'id_campagnodon_campagne' => $id_campagne,
@@ -327,7 +368,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'force' => true
     ];
     if (!(
-      $id_transaction = $inserer_transaction($montant, $transaction_options)
+      $id_transaction = $inserer_transaction($montant_total, $transaction_options)
       and $hash = sql_getfetsel('transaction_hash', 'spip_transactions', 'id_transaction=' . intval($id_transaction))
     )) {
       throw new CampagnodonException("Erreur à la création de la transaction ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
@@ -348,22 +389,53 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
     }
 
-    $params = array(
-      'email' => trim(_request('email')),
-      'contributions' => [
+    $contributions = null;
+    if ($type === 'don') {
+      $contributions = [
         [
           'financial_type' => traduit_financial_type($mode_options, 'don'),
           'amount' => $montant,
           'currency' => 'EUR'
         ]
-      ],
+      ];
+    } else if ($type === 'adhesion') {
+      $contributions = [];
+      if ($adhesion_magazine_prix > 0) {
+        $contributions[] = [
+          'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
+          'amount' => strval($adhesion_magazine_prix),
+          'currency' => 'EUR',
+          'membership' => traduit_adhesion_type($mode_options, 'magazine')
+        ];
+      }
+
+      $contributions[] = [
+        'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
+        'amount' => strval(intval($montant_adhesion) - intval($adhesion_magazine_prix)),
+        'currency' => 'EUR',
+        'membership' => traduit_adhesion_type($mode_options, 'adhesion')
+      ];
+
+      if ($adhesion_avec_don) {
+        $contributions[] = [
+          'financial_type' => traduit_financial_type($mode_options, 'don'),
+          'amount' => $montant,
+          'currency' => 'EUR'
+        ];
+      }
+    } else {
+      throw new CampagnodonException("Type inconnu: '".$type."'");
+    }
+    $params = array(
+      'email' => trim(_request('email')),
+      'contributions' => $contributions,
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant,
       'payment_url' => $url_paiement,
       'optional_subscriptions' => array()
       // 'payment_method' => 'transfer' // FIXME: use the correct value
     );
-    if (_request('recu_fiscal') == '1') {
+    if ($recu_fiscal || $adhesion_avec_don) {
       // FIXME: je n'ai pas réussi à faire marcher la phase de normalisation ci-dessous.
       // $date_naissance = _request('date_naissance');
       // $date_naissance_normalisee = null;

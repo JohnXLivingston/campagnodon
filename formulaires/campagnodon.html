@@ -6,7 +6,7 @@
     <form name="formulaire_#FORM" action="#ENV{action}" method="post" campagnodon_type="#ENV{_type}">
       #ACTION_FORMULAIRE{#ENV{action}}
 
-      [(#REM) Si on est sur un formulaire d'adhésion, on affiche le bloc correspondant :]
+      [(#REM) Si on est sur un formulaire d'adhésion, on affiche le bloc correspondant, ainsi qu'une checkbock pour ajouter un don :]
       <BOUCLE_adhesion(CONDITION){si #ENV{_type}|=={adhesion}}>
         <fieldset>
           <legend><span><:campagnodon_form:j_adhere:></span></legend>
@@ -30,10 +30,28 @@
             </div>
           </div>
         </fieldset>
+
+        <div class="row-fluid">
+          <div class="form-group span12 choix">
+            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adhesion_avec_don}})]
+            <div class="editer editer_adhesion_avec_don [(#GET{erreurs}|oui)erreur]">
+              <input
+                type="checkbox"
+                name="adhesion_avec_don"
+                class="checkbox"
+                value="1"
+                id="champ_adhesion_avec_don"
+                [(#ENV{adhesion_avec_don}|=={1}|oui)checked="checked"]
+              />
+              <label for="champ_adhesion_avec_don"><:campagnodon_form:label_adhesion_avec_don:></label>
+              [<span class='erreur_message'>(#GET{erreurs})</span>]
+            </div>
+          </div>
+        </div>
       </BOUCLE_adhesion>
 
       [(#REM) Ci dessous le bloc des dons. Toujours affiché (mais son apparence change légèrement)]
-      <fieldset>
+      <fieldset si_adhesion_avec_don>
         <legend><span><:campagnodon_form:je_donne:></span></legend>
         <div class="row-fluid">
           <div class="form-group span12">

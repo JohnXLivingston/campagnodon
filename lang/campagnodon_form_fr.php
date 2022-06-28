@@ -1,7 +1,7 @@
 <?php
 $GLOBALS[$GLOBALS['idx_lang']] = array(
   'je_donne' => 'Je donne :',
-  'j_adhere' => "J'adhère à Attac pour l'année civile en version un montant de :",
+  'j_adhere' => "J'adhère pour l'année civile en version un montant de :",
   'montant_libre' => 'Montant libre',
   'coordonnees' => 'Coordonnées',
   'label_email' => 'Adresse e-mail',
@@ -15,6 +15,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_pays' => 'Pays',
   'label_telephone' => 'Téléphone',
   'label_recu_fiscal' => 'Je souhaite recevoir un reçu fiscal',
+  'label_adhesion_avec_don' => 'Je souhaite effectuer un don libre en plus de mon adhésion',
   'recu_fiscal_explication' => 'Pour un montant de _MONTANT_€, cela ne vous coûte réellement que _COUT_€ après déduction fiscale.',
   'recu_fiscal_champs_supplementaires' => 'Ces informations sont nécessaires en vue de l\'établissement du reçu qui vous sera envoyé permettant une déduction fiscale',
   'valider' => 'Je valide et je procède au don',
