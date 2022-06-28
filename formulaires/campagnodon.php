@@ -212,7 +212,6 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
     'montant' => '',
     'montant_libre' => '',
     'email' => '',
-    'recu_fiscal' => '',
     'civilite' => '',
     'prenom' => '',
     'nom' => '',
@@ -226,6 +225,8 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
 
   if ($type === 'adhesion') {
     $values['adhesion_avec_don'] = '';
+  } else {
+    $values['recu_fiscal'] = '';
   }
 
   foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
@@ -251,7 +252,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 
   $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
   $civilites = liste_civilites($mode_options);
-  $recu_fiscal = _request('recu_fiscal') == '1' || $type === 'adhesion'; // on veut toujours un reçu pour les adhésions
+  $recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
   $adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
   $adhesion_magazine_prix = get_adhesion_magazine_prix($mode_options, $type);
   
@@ -330,7 +331,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     }
 
     $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants);
-    $recu_fiscal = _request('recu_fiscal') == '1' || $type === 'adhesion'; // on veut toujours un reçu pour les adhésions
+    $recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
     $adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
     $montant = ($type !== 'adhesion' || $adhesion_avec_don) ? get_form_montant($config_montants) : null;
     $montant_adhesion = ($type === 'adhesion') ? get_form_montant_adhesion($config_montants) : null;

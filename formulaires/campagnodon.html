@@ -121,23 +121,26 @@
           </div>
         </div>
 
-        <div class="row-fluid">
-          <div class="form-group span12 choix">
-            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
-            <div class="editer editer_recu_fiscal [(#GET{erreurs}|oui)erreur]">
-              <input
-                type="checkbox"
-                name="recu_fiscal"
-                class="checkbox"
-                value="1"
-                id="champ_recu_fiscal"
-                [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]
-              />
-              <label for="champ_recu_fiscal"><:campagnodon_form:label_recu_fiscal:></label>
-              [<span class='erreur_message'>(#GET{erreurs})</span>]
+        [(#REM) sur le formulaire d'adhésion, recu_fiscal est implicite.]
+        [(#ENV{_type}|=={adhesion}|non)
+          <div class="row-fluid">
+            <div class="form-group span12 choix">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
+              <div class="editer editer_recu_fiscal [(#GET{erreurs}|oui)erreur]">
+                <input
+                  type="checkbox"
+                  name="recu_fiscal"
+                  class="checkbox"
+                  value="1"
+                  id="champ_recu_fiscal"
+                  [(#ENV{recu_fiscal}|=={1}|oui)checked="checked"]
+                />
+                <label for="champ_recu_fiscal"><:campagnodon_form:label_recu_fiscal:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+              </div>
             </div>
           </div>
-        </div>
+        ]
 
         <div si_recu_fiscal="">
           <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
