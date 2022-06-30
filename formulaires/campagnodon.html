@@ -29,6 +29,17 @@
               </div>
             </div>
           </div>
+          [(#REM) Le paragraphe «adhesion_explication» est rempli via JS.]
+          <p class="explication" display="none"
+            [(#ENV{_adhesion_magazine}|oui)
+              adhesion_magazine_prix="#ENV{_adhesion_magazine_prix}"
+              adhesion_explication="<:campagnodon_form:adhesion_magazine_explication:>"
+            ]
+            [(#ENV{_adhesion_magazine}|non)
+              adhesion_explication="<:campagnodon_form:adhesion_explication:>">
+            ]
+          >
+          </p>
         </fieldset>
 
         <div class="row-fluid">
@@ -104,6 +115,11 @@
             </div>
           </div>
         </div>
+        [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Sa position dépend du type de formulaire.]
+        [(#ENV{_type}|=={adhesion}|oui)
+          <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
+          </p>
+        ]
       </fieldset>
 
       [(#REM) Les coordonnées personnelles:]
@@ -143,8 +159,11 @@
         ]
 
         <div si_recu_fiscal="">
-          <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
-          </p>
+          [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Sa position dépend du type de formulaire.]
+          [(#ENV{_type}|=={adhesion}|non)
+            <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
+            </p>
+          ]
 
           <p class="explication">
             <:campagnodon_form:recu_fiscal_champs_supplementaires:>

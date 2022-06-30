@@ -13,15 +13,16 @@ function campagnodon_formulaire(formSelector) {
 
   $form.on('click', 'input[type=radio][name=montant]', () => {
     campagnodon_formulaire_montant_libre($form, false, true);
-    campagnodon_formulaire_recu_fiscal_explication($form);
+    campagnodon_formulaire_explications($form);
   });
 
-  $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_recu_fiscal_explication($form));
-  $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_recu_fiscal_explication($form));
-  $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_recu_fiscal_explication($form));
+  $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
 
+  $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
   campagnodon_formulaire_montant_libre($form, true);
-  campagnodon_formulaire_recu_fiscal_explication($form);
+  campagnodon_formulaire_explications($form);
 }
 
 /**
@@ -118,6 +119,10 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
   }
 }
 
+/**
+ * Cette fonction met à jour le texte explicatif sous le champ «don».
+ * @param {jQuery} $form
+ */
 function campagnodon_formulaire_recu_fiscal_explication($form) {
   let montant_est_libre = false;
   if ($form.find('input[name=montant][type=hidden][value=libre]').length) {
@@ -149,4 +154,46 @@ function campagnodon_formulaire_recu_fiscal_explication($form) {
   } else {
     explication.hide();
   }
+}
+
+/**
+ * Cette fonction met à jour le texte explicatif sur l'adhésion.
+ * @param {jQuery} $form
+ */
+function campagnodon_formulaire_adhesion_explication($form) {
+  const $montant_adhesion = $form.find('input[type=radio][name=montant_adhesion]:checked');
+  let montant_adhesion;
+  if ($montant_adhesion.length) {
+    montant_adhesion = parseInt($montant_adhesion.attr('value'));
+  }
+  $form.find('[adhesion_explication]').each(function () {
+    const explication = $(this);
+    let adhesion_magazine_prix = parseInt(explication.attr('adhesion_magazine_prix'))
+    if (adhesion_magazine_prix === undefined || isNaN(adhesion_magazine_prix)) {
+      adhesion_magazine_prix = 0;
+    }
+    if (montant_adhesion !== undefined && !isNaN(montant_adhesion)) {
+      let cout_adhesion = Math.round((montant_adhesion - adhesion_magazine_prix) * .34);
+      let restant_adhesion = montant_adhesion - cout_adhesion;
+
+      let text = explication.attr('adhesion_explication');
+      text = text.replace(/_MONTANT_ADHESION_/g, montant_adhesion);
+      text = text.replace(/_COUT_ADHESION_/g, cout_adhesion);
+      text = text.replace(/_MAGAZINE_PRIX_/g, adhesion_magazine_prix);
+      text = text.replace(/_RESTANT_ADHESION_/g, restant_adhesion);
+      explication.text(text);
+      explication.show();
+    } else {
+      explication.hide();
+    }
+  });
+}
+
+/**
+ * Cette fonction met à jour les différents textes explicatifs (sur les déductions fiscales, etc...)
+ * @param {jQuery} $form
+ */
+function campagnodon_formulaire_explications($form) {
+  campagnodon_formulaire_recu_fiscal_explication($form);
+  campagnodon_formulaire_adhesion_explication($form);
 }
