@@ -119,19 +119,27 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
 }
 
 function campagnodon_formulaire_recu_fiscal_explication($form) {
-  const $montant = $form.find('input[type=radio][name=montant]:checked');
-  const explication = $form.find('[recu_fiscal_explication]');
+  let montant_est_libre = false;
+  if ($form.find('input[name=montant][type=hidden][value=libre]').length) {
+    // Le champ est hidden => il n'y a que du montant libre
+    montant_est_libre = true;
+  } else if ($form.find('input[type=radio][name=montant][value=libre]:checked').length) {
+    montant_est_libre = true;
+  }
+
   let montant;
-  if ($montant.length) {
-    montant = $montant.attr('value');
-    if (montant === 'libre') {
-      const $montant_libre = $form.find('input[name=montant_libre]');
-      montant = $montant_libre.prop('value');
-      montant = parseInt(montant);
-    } else {
-      montant = parseInt(montant);
+  if (montant_est_libre) {
+    const $montant_libre = $form.find('input[name=montant_libre]');
+    montant = $montant_libre.prop('value');
+    montant = parseInt(montant);
+  } else {
+    const $montant = $form.find('input[type=radio][name=montant]:checked');
+    if ($montant.length) {
+      montant = parseInt($montant.attr('value'));
     }
   }
+
+  const explication = $form.find('[recu_fiscal_explication]');
   if (montant !== undefined && !isNaN(montant)) {
     let text = explication.attr('recu_fiscal_explication');
     text = text.replace(/_MONTANT_/g, montant);
