@@ -434,7 +434,9 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     } else {
       throw new CampagnodonException("Type inconnu: '".$type."'");
     }
+
     $params = array(
+      'campagnodon_version' => '1', // numéro de version pour le format de donnée (pour s'assurer de la compatibilité des API)
       'email' => trim(_request('email')),
       'contributions' => $contributions,
       'campaign_id' => $campagne['id_origine'],
