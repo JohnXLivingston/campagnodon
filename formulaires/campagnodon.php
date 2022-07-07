@@ -487,7 +487,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     try {
       $result = $fonction_nouvelle_contribution($mode_options, $params);
     } catch (Exception $e) {
-      throw new CampagnodonException("Erreur nouvelle_campagne mode=".$campagne['origine'].": " . $e->getMessage(), "campagnodon:erreur_sauvegarde");
+      throw new CampagnodonException("Erreur nouvelle_contribution mode=".$campagne['origine'].": " . $e->getMessage(), "campagnodon:erreur_sauvegarde");
     }
 
     // $update_campagnodon_transaction = [];
