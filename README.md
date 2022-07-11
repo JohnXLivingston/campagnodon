@@ -59,7 +59,7 @@ define('_CAMPAGNODON_MODES', array(
                 'souscriptions_optionnelles' => array(
                         'newsletter' => array(
                                 'label' => 'M\'inscrire sur la liste d\'information d\Attac France',
-                                'pour' => ['adhesion', 'don'] // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle.
+                                'pour' => ['adhesion', 'don?'] // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle. Le «?» en suffixe indique qu'elle ne sera dispo que si on l'active explicitement via la balise.
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',
@@ -104,7 +104,7 @@ define('_CAMPAGNODON_MODES', array(
                                 'type' => 'group', // Le type de souscription. Voir coté Campagnodon_CiviCRM ce qui est autorisé (actuellement on n'a que «group»).
                                 'cle_distante' => '42', // la clé du groupe (peut être son ID numérique, ou son label)
                                 'when' => 'completed', // Quand faire l'ajout dans le groupe. `completed` ou `init` (`init` par défaut).
-                                'pour' => ['adhesion', 'don'] // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle.
+                                'pour' => ['adhesion', 'don?'] // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle. Le «?» en suffixe indique qu'elle ne sera dispo que si on l'active explicitement via la balise.
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',

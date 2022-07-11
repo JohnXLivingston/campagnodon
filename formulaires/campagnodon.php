@@ -132,16 +132,40 @@ function liste_civilites($mode_options) {
   );
 }
 
-function liste_souscriptions_optionnelles($type, $mode_options) {
+function liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso) {
   if (!is_array($mode_options) || !array_key_exists('souscriptions_optionnelles', $mode_options)) {
     return array();
   }
   $r = array();
-  foreach ($mode_options['souscriptions_optionnelles'] as $k => $so) {
-    if (! array_key_exists('pour', $so) || empty($so['pour'])) {
-      $r[$k] = $so;
-    } else if (is_array($so['pour']) && false !== array_search($type, $so['pour'], true)) {
-      $r[$k] = $so;
+  // 2 modes: soit on prend la config par défaut, doit on a personnalisé via la balise
+  if (empty($arg_souscriptions_perso)) {
+    foreach ($mode_options['souscriptions_optionnelles'] as $k => $so) {
+      if (!array_key_exists('pour', $so) || empty($so['pour'])) {
+        $r[$k] = $so;
+      } else if (is_array($so['pour']) && false !== array_search($type, $so['pour'], true)) {
+        $r[$k] = $so;
+      }
+    }
+  } else {
+    $souscriptions_perso = explode(',', $arg_souscriptions_perso);
+    foreach ($souscriptions_perso as $k) {
+      if (!array_key_exists($k, $mode_options['souscriptions_optionnelles'])) {
+        continue;
+      }
+      $so = $mode_options['souscriptions_optionnelles'][$k];
+      if (!is_array($so)) {
+        continue;
+      }
+      if (!array_key_exists('pour', $so) || empty($so['pour'])) {
+        $r[$k] = $so;
+      } else if (is_array($so['pour'])) {
+        if (
+          false !== array_search($type, $so['pour'], true)
+          || false !== array_search($type.'?', $so['pour'], true)
+        ) {
+          $r[$k] = $so;
+        }
+      }
     }
   }
   return $r;
@@ -186,7 +210,7 @@ function get_adhesion_magazine_prix($mode_options, $type) {
 /**
 * Declarer les champs postes et y integrer les valeurs par defaut
 */
-function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
+function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL, $arg_souscriptions_perso=NULL) {
   if ($type !== 'don' && $type !== 'adhesion') {
     spip_log("Type de Campagnodon inconnu: ".$type, "campagnodon"._LOG_ERREUR);
     return false;
@@ -207,7 +231,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
     return false;
   }
   $civilites = liste_civilites($mode_options);
-  $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options);
+  $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
   
   $values = [
     '_type' => $type,
@@ -251,7 +275,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   return $values;
 }
 
-function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
+function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL, $arg_souscriptions_perso=NULL) {
   $erreurs = [];
   $verifier = charger_fonction('verifier', 'inc/');
   
@@ -336,7 +360,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
   return $erreurs;
 }
 
-function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL) {
+function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL, $arg_souscriptions_perso=NULL) {
   try {
     spip_log("traiter_dist" . $type . ":". $id_campagne);
 
@@ -478,7 +502,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
     }
 
-    $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options);
+    $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
     foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
       if (_request('souscription_optionnelle_'.$cle) == '1') {
         if (!$souscription_optionnelle['type']) {

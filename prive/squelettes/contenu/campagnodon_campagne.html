@@ -64,12 +64,19 @@
                 <:campagnodon:label_montant_libre:>
               </label>
             </div>
+            <div>
+              <label>
+                <input type="checkbox" name="souscriptions_perso" class="souscriptions_perso" />
+                <:campagnodon:label_souscriptions_perso:>
+              </label>
+            </div>
           </form>
         </td>
     </tr>]
   </table>
   <script type="text/javascript">
     jQuery(function(){
+      const liste_souscriptions_perso = [(#ORIGINE|campagnodon_campagne_souscriptions_perso_json)];
       $('#campagnodon_balise_raffraichir').each(function() {
         const td = jQuery(this);
         td.find('form').on('submit', function() { return false; });
@@ -79,7 +86,9 @@
         balise.attr('readonly', true);
         balise.on('click', function() {
           balise.select();
-          balise.setSelectionRange(0, 99999) /* pour les smartphones/tablettes */
+          if (balise.setSelectionRange) {
+            balise.setSelectionRange(0, 99999) /* pour les smartphones/tablettes */
+          }
         });
         td.append(balise);
 
@@ -100,20 +109,28 @@
           }
 
           const montant_perso = !!td.find('input[name=montant_perso]:checked:not(:disabled)').length;
-          const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length
+          const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length;
           if (montant_libre || montant_perso) {
             s+= '|montants=';
             if (montant_perso) {
-              // TODO
-              // Montants adhésions par défaut : 13, 21, 34, 48, 65, 84, 120, 160
-              // Montants dons mensuels par défaut : 6, 15, 30, 50
-              s+= '30,50,100,200';
+              if (type_valeur === 'adhesion') {
+                s+= '13,21,48,65,84,120,160';
+              } else {
+                s+= '6,15,30,50';
+              }
               if (montant_libre) {
                 s+= ',libre';
               }
             } else if (montant_libre) {
               s+= 'libre';
             }
+          }
+
+          const souscriptions_perso = !!td.find('input[name=souscriptions_perso]:checked:not(:disabled)').length;
+          if (souscriptions_perso) {
+            s+= '|souscriptions=';
+            liste_so = liste_souscriptions_perso[type_valeur] ?? [];
+            s+= liste_so.join(',');
           }
 
           s+= '>';

@@ -30,5 +30,6 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_type_don' => 'Don',
   'label_type_adhesion' => 'Adhésion',
   'label_montant_perso' => 'Montants personnalisés',
-  'label_montant_libre' => 'Montant libre'
+  'label_montant_libre' => 'Montant libre',
+  'label_souscriptions_perso' => 'Personnaliser les souscriptions optionnelles'
 );
