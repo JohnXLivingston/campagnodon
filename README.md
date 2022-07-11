@@ -114,7 +114,9 @@ define('_CAMPAGNODON_MODES', array(
                         ),
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',
-                                // 'cle_distante' => ???
+                                'type' => 'tag',
+                                'cle_distante' => 26, // id ou libellé du tag
+                                'when' => 'completed' // Quand faire l'ajout. `completed` ou `init` (`init` par défaut).
                         ),
                         'magazine_pdf' => array(
                                 'label' => 'Je souhaite uniquement recevoir le journal Lignes d’Attac par courriel au format PDF',
