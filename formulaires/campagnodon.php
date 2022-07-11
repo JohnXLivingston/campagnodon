@@ -132,11 +132,19 @@ function liste_civilites($mode_options) {
   );
 }
 
-function liste_souscriptions_optionnelles($mode_options) {
-  if (is_array($mode_options) && array_key_exists('souscriptions_optionnelles', $mode_options)) {
-    return $mode_options['souscriptions_optionnelles'];
+function liste_souscriptions_optionnelles($type, $mode_options) {
+  if (!is_array($mode_options) || !array_key_exists('souscriptions_optionnelles', $mode_options)) {
+    return array();
   }
-  return array();
+  $r = array();
+  foreach ($mode_options['souscriptions_optionnelles'] as $k => $so) {
+    if (! array_key_exists('pour', $so) || empty($so['pour'])) {
+      $r[$k] = $so;
+    } else if (is_array($so['pour']) && false !== array_search($type, $so['pour'], true)) {
+      $r[$k] = $so;
+    }
+  }
+  return $r;
 }
 
 function traduit_financial_type($mode_options, $type) {
@@ -199,7 +207,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
     return false;
   }
   $civilites = liste_civilites($mode_options);
-  $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
+  $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options);
   
   $values = [
     '_type' => $type,
@@ -470,7 +478,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
     }
 
-    $souscriptions_optionnelles = liste_souscriptions_optionnelles($mode_options);
+    $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options);
     foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
       if (_request('souscription_optionnelle_'.$cle) == '1') {
         if (!$souscription_optionnelle['type']) {
