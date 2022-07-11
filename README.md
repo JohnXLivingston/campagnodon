@@ -115,6 +115,12 @@ define('_CAMPAGNODON_MODES', array(
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',
                                 // 'cle_distante' => ???
+                        ),
+                        'magazine_pdf' => array(
+                                'label' => 'Je souhaite uniquement recevoir le journal Lignes d’Attac par courriel au format PDF',
+                                'pour' => ['adhesion'],
+                                'type' => 'special:magazine_pdf', // C'est un type spécial (voir le code spécifique)
+                                'cle_distante' => 'custom_21' // le champ où stocker l'info coté CiviCRM (il s'agit d'un champs custom sur les memberships)
                         )
                 ),
                 'adhesion_magazine_prix' => 12, // Optionnel. Le prix de l'adhésion au magazine. L'adhésion aura alors un prix au moins égal à 12 + 1.

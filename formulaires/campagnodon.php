@@ -429,6 +429,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
     }
 
+    $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
+
     $contributions = null;
     if ($type === 'don') {
       $contributions = [
@@ -441,12 +443,22 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     } else if ($type === 'adhesion') {
       $contributions = [];
       if ($adhesion_magazine_prix > 0) {
-        $contributions[] = [
+        $contribution_magazine = [
           'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
           'amount' => strval($adhesion_magazine_prix),
           'currency' => 'EUR',
           'membership' => traduit_adhesion_type($mode_options, 'magazine')
         ];
+
+        // On cherche l'éventuel souscription optionnelle special:magazine_pdf.
+        foreach ($souscriptions_optionnelles as $cle => $so) {
+          if ($so['type'] !== 'special:magazine_pdf') { continue; }
+          $pdf_seulement_champ = $so['cle_distante'];
+          // FIXME: la façon dont est passé ce paramètre n'est vraiment pas propre.
+          $contribution_magazine['membership_option'] = $pdf_seulement_champ.':'.(_request('souscription_optionnelle_'.$cle) == '1' ? '1' : '0');
+        }
+
+        $contributions[] = $contribution_magazine;
       }
 
       $contributions[] = [
@@ -502,11 +514,14 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       // spip_log('Params contact CiviCRM: ' . json_encode($params), 'campagnodon'._LOG_DEBUG);
     }
 
-    $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
     foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
       if (_request('souscription_optionnelle_'.$cle) == '1') {
         if (!$souscription_optionnelle['type']) {
           throw new CampagnodonException("Campagnodon mal configuré, souscription_optionnelle mal configurée: '".$cle."'.", "campagnodon:erreur_sauvegarde");
+        }
+        if (substr($souscription_optionnelle['type'], 0, 8) === 'special:') {
+          // Cas particulier, on passe.
+          continue;
         }
         $params['optional_subscriptions'][] = array(
           'type' => $souscription_optionnelle['type'],
