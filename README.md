@@ -144,3 +144,15 @@ Pour pouvoir utiliser Campagnodon immédiatement, il suffit d'aller la déclench
 
 Pour ajouter d'autres modes (et donc d'autres types de système distants), il suffit de créer les fonctions nécessaires, qui seront appelée via la fonction `charger_fonction` de SPIP.
 Pour avoir la liste des fonctions nécessaires, voir dans le dossier qui défini les fonctions connecteurs du mode `test` (et remplacer `_test_` par `_montype_` dans les noms de fonctions).
+
+## Personnaliser des libellés
+
+Pour personnaliser des libellés, il suffit de surcharger les fichiers de langues.
+Par exemple, créer un fichier `squelettes/lang/local_campagnodon_form_fr.php` avec pour contenu:
+
+```php
+<?php
+$GLOBALS[$GLOBALS['idx_lang']] = array(
+  'j_adhere' => "J'adhère à Attac pour l'année civile en version un montant de :",
+);
+```
