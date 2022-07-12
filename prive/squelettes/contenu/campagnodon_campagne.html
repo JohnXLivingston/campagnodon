@@ -93,7 +93,7 @@
         td.append(balise);
 
         function campagnodon_balise_raffraichir() {
-          let s = '<campagnodon|origine=#ORIGINE|id=#ID_ORIGINE';
+          let s = '<campagnodon|origine=[(#ORIGINE)]|id=[(#ID_ORIGINE)]';
           let type = td.find('input[name=type]:checked:first');
           let type_valeur = null;
           if (type.length) {
