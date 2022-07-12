@@ -391,6 +391,13 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
       }
     }
 
+    $code_postal = _request('code_postal');
+    if (!empty($code_postal)) {
+      if ($erreur = $verifier($code_postal, 'code_postal', array('pays' => $pays))) {
+        $erreurs['code_postal'] = $erreur;
+      }
+    }
+
     $telephone = _request('telephone');
     if (!empty($telephone)) {
       if ($erreur = $verifier($telephone, 'telephone')) {
@@ -399,7 +406,6 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
     }
   }
 
-  // TODO: ajouter les tests manquants sur les données (email, code postal, champs divers, etc...)
   return $erreurs;
 }
 
