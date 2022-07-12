@@ -299,6 +299,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   ];
 
   if ($type === 'adhesion') {
+    $values['montant_adhesion'] = '';
     $values['adhesion_avec_don'] = '';
     $adhesion_magazine_prix = get_adhesion_magazine_prix($mode_options, $type);
     if ($adhesion_magazine_prix > 0) {
