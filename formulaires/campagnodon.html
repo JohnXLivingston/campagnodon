@@ -63,7 +63,10 @@
 
       [(#REM) Ci dessous le bloc des dons. Toujours affiché (mais son apparence change légèrement)]
       <fieldset si_adhesion_avec_don>
-        <legend><span><:campagnodon_form:je_donne:></span></legend>
+        [(#ENV{_type}|=={adhesion}|non)
+          <legend><span><:campagnodon_form:je_donne:></span></legend>
+        ]
+
         <div class="row-fluid">
           <div class="form-group span12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
