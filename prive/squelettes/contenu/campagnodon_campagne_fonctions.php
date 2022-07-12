@@ -36,3 +36,12 @@ function campagnodon_campagne_souscriptions_perso_json($origine) {
 
   return json_encode($result);
 }
+
+function campagnodon_campagne_montants_par_defaut() {
+  include_spip('inc/campagnodon.utils');
+  $r = [];
+  foreach (['don', 'adhesion'] as $type) {
+    $r[$type] = implode(',', campagnodon_montants_par_defaut($type));
+  }
+  return json_encode($r);
+}

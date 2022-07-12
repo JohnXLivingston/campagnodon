@@ -14,18 +14,65 @@ class CampagnodonException extends Exception {
   }
 }
 
+/**
+ * Pour configurer les montants, on a une liste qui peut avoir l'une des forme suivante:
+ * - 12,25,40
+ * - 10[-1000],20[1000-2000]
+ * Le premier format génère une liste avec des libellés du type «12€».
+ * Le deuxième, «12€ (entre X et Y de revenus mensuels)».
+ * Cette fonction parse une valeur, et ajoute l'option à la liste de propositions la valeur et le libellé correspondant.
+ * @param $options Le tableau cle=>valeur des options
+ * @param $montant Un (ou plusieurs) fragment(s) de la config («12» ou «20[1000-2000]).
+ */
+function parse_config_montant(&$options, $montant) {
+  if (is_array($montant)) {
+    foreach ($montant as $m) {
+      if (!parse_config_montant($options, $m)) { return false; }
+    }
+    return true;
+  }
+
+  $montant = trim($montant);
+  if (!preg_match('/^(?<montant>\d+)(?:\[(?<min>\d+)?-(?<max>\d+)?\])?$/', $montant, $matches)) {
+    spip_log("Montant invalide dans la configuration du formulaire: '".$montant."'.", "campagnodon"._LOG_ERREUR);
+    return false;
+  }
+  $v = $matches['montant'];
+  $label = '';
+  if (empty($matches['min']) && empty($matches['max'])) {
+    $label = $v . ' €';
+  } else if (empty($matches['min'])) {
+    $label = _T('campagnodon_form:option_revenu_en_dessous', array(
+      'montant' => $v,
+      'max' => $matches['max']
+    ));
+  } else if (empty($matches['max'])) {
+    $label = _T('campagnodon_form:option_revenu_au_dessus', array(
+      'montant' => $v,
+      'min' => $matches['min']
+    ));
+  } else {
+    $label = _T('campagnodon_form:option_revenu_entre', array(
+      'montant' => $v,
+      'min' => $matches['min'],
+      'max' => $matches['max']
+    ));
+  }
+  $options[$v] = $label;
+  return true;
+}
+
 function liste_montants_campagne($type, $id_campagne, $arg_liste_montants) {
+  include_spip('inc/campagnodon.utils');
+  $montants_par_defaut = campagnodon_montants_par_defaut($type);
+
   if ($type === 'adhesion') {
-    $propositions_adhesion = [
-      '13' => '13 € (moins de 450 € de revenus mensuels)',
-      '21' => '21 € (entre 450 € et 900 € de revenus mensuels)',
-      '35' => '35 € (entre 900 € et 1200 € de revenus mensuels)',
-      '48' => '48 € (entre 1200 € et 1600 € de revenus mensuels)',
-      '65' => '65 € (entre 1600 € et 2300 € de revenus mensuels)',
-      '84' => '84 € (entre 2300 € et 3000 € de revenus mensuels)',
-      '120' => '120 € (entre 3000 € et 4000 € de revenus mensuels)',
-      '160' => '160 € (plus de 4000 € de revenus mensuels)'
-    ];
+    $liste_montants = empty($arg_liste_montants) ? $montants_par_defaut : explode(',', $arg_liste_montants);
+    $propositions_adhesion = [];
+    if (!parse_config_montant($propositions_adhesion, $liste_montants)) {
+      spip_log("Montant invalide dans la configuration du formulaire: '".$montant."'.", "campagnodon"._LOG_ERREUR);
+      return false;
+    }
     return [
       'propositions' => [],
       'libre' => true,
@@ -35,21 +82,19 @@ function liste_montants_campagne($type, $id_campagne, $arg_liste_montants) {
   }
 
   if (empty($arg_liste_montants)) {
+    $propositions = [];
+    if (!parse_config_montant($propositions, $montants_par_defaut)) {
+      spip_log("Montant invalide dans la configuration du formulaire: '".$montant."'.", "campagnodon"._LOG_ERREUR);
+      return false;
+    }
     return [
-      'propositions' => [
-        '30' => '30 €',
-        '50' => '50 €',
-        '100' => '100 €',
-        '200' => '200 €',
-      ],
-      // TODO
-      // Montants adhésions par défaut : 13, 21, 34, 48, 65, 84, 120, 160
-      // Montants dons mensuels par défaut : 6, 15, 30, 50
+      'propositions' => $propositions,
       'libre' => true,
       'uniquement_libre' => false,
       'propositions_adhesion' => null
     ];
   }
+
   $r = [
     'propositions' => [],
     'libre' => false,
@@ -62,12 +107,10 @@ function liste_montants_campagne($type, $id_campagne, $arg_liste_montants) {
       $r['libre'] = true;
       continue;
     }
-    $montant = trim($montant);
-    if (!preg_match('/^\d+$/', $montant)) {
+    if (!parse_config_montant($r['propositions'], $montant)) {
       spip_log("Montant invalide dans la configuration du formulaire: '".$montant."'.", "campagnodon"._LOG_ERREUR);
       return false;
     }
-    $r['propositions'][$montant] = $montant . ' €';
   }
 
   if (count($r['propositions']) === 0) {

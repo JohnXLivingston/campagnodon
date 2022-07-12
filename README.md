@@ -31,6 +31,32 @@ Cette variable **optionnelle** indiquant le code ISO du pays à renseigner par d
 define('_CAMPAGNODON_PAYS_DEFAULT', 'FR');
 ```
 
+### _CAMPAGNODON_MONTANTS
+
+Cette variable **optionnelle** permet de personnaliser les montants par défaut pour les formulaires.
+
+En voici la syntaxe:
+
+```php
+define('_CAMPAGNODON_MONTANTS', array(
+        'don' => array( // le type de formulaire. 'don' ou 'adhesion'
+                '30','50','100','200'
+        ),
+        'adhesion' => array(
+                // une valeur entre [] indique une condition de revenu. 
+                // voir les phrases de localisation option_revenu_entre, option_revenu_en_dessous et option_revenu_au_dessus
+                '13[-450]',
+                '21[450-900]',
+                '35[900-1200]',
+                '48[1200-1600]',
+                '65[1600-2300]',
+                '84[2300-3000]',
+                '120[3000-4000]',
+                '160[4000-]'
+        )
+));
+```
+
 ### _CAMPAGNODON_MODES
 
 Cette variable décrit le (ou les) modes disponibles pour campagnodon.

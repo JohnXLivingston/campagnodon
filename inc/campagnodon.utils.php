@@ -192,3 +192,34 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   campagnodon_maj_sync_statut($id_campagnodon_transaction, 'ok');
   return 1;
 }
+
+function campagnodon_montants_par_defaut($type) {
+  if (
+    defined('_CAMPAGNODON_MONTANTS')
+    && is_array(_CAMPAGNODON_MONTANTS)
+    && array_key_exists($type, _CAMPAGNODON_MONTANTS)
+    && is_array(_CAMPAGNODON_MONTANTS[$type])
+  ) {
+    return _CAMPAGNODON_MONTANTS[$type];
+  }
+
+  if ($type === 'don') {
+    return ['30','50','100','200'];
+  }
+  if ($type === 'adhesion') {
+    return [
+      '13[-450]',
+      '21[450-900]',
+      '35[900-1200]',
+      '48[1200-1600]',
+      '65[1600-2300]',
+      '84[2300-3000]',
+      '120[3000-4000]',
+      '160[4000-]'
+    ];
+  }
+  // TODO
+  // Montants dons mensuels par défaut : 6, 15, 30, 50
+
+  return ['10', '20', '40'];
+}
