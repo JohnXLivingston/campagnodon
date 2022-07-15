@@ -1,0 +1,15 @@
+<BOUCLE_payer(TRANSACTIONS){id_transaction}{transaction_hash}>
+  <BOUCLE_campagnodon_transactions(CAMPAGNODON_TRANSACTIONS){id_transaction}>
+    <h1>
+      [(#TYPE_TRANSACTION|switchcase{adhesion,<:campagnodon_form:titre_page_payer_adhesion:>,<:campagnodon_form:titre_page_payer_don:>})]
+    </h1>
+    <div class="">
+      <div class="">
+        <p class="">
+          <span class="montant"><:campagnodon_form:label_montant:> <strong>[(#_payer:MONTANT|affiche_monnaie)]</strong><br /></span>
+        </p>
+      </div>
+      <INCLURE{fond=modeles/payer_acte,id_transaction,transaction_hash,title=<:campagnodon_form:titre_choix_mode_paiement:>} />
+    </div>
+  </BOUCLE_campagnodon_transactions>
+</BOUCLE_payer>

@@ -30,5 +30,9 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'champ_obligatoire' => 'Champs obligatoires',
   'erreur_email_invalide' => 'Adresse email invalide',
   'erreur_civilite_invalide' => 'Civilité invalide',
-  'erreur_pays_invalide' => 'Pays invalide'
+  'erreur_pays_invalide' => 'Pays invalide',
+  'titre_page_payer_don' => 'Régler votre don',
+  'titre_page_payer_adhesion' => 'Régler votre adhésion',
+  'titre_choix_mode_paiement' => 'Veuillez choisir votre mode de paiement',
+  'label_montant' => 'Montant'
 );

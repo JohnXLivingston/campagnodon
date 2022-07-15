@@ -464,7 +464,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       throw new CampagnodonException("Erreur à la création de la transaction ".$id_campagnodon_transaction, "campagnodon:erreur_sauvegarde");
     }
 
-    $url_paiement = generer_url_public('payer', "id_transaction=$id_transaction&transaction_hash=$hash", true, false);
+    $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash), false, false);
 
     include_spip('inc/campagnodon.utils');
     $transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction);
