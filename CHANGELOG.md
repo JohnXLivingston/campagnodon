@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.3 (Not Released Yet)
+## 0.0.3
 
 * Gestion des Adhésions, et divers WIP.
 
