@@ -152,10 +152,10 @@ define('_CAMPAGNODON_MODES', array(
                         )
                 ),
                 'adhesion_magazine_prix' => 12, // Optionnel. Le prix de l'adhésion au magazine. L'adhésion aura alors un prix au moins égal à 12 + 1.
-                'adhesion_type' => {
+                'adhesion_type' => array(
                         'adhesion' => 1, // Le membership type (id numérique ou libellé)
                         'magazine' => 2 // Le membership type pour le magazine (id numérique ou libellé)
-                },
+                ),
         )
 ));
 ```
