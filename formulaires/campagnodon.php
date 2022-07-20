@@ -465,6 +465,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     }
 
     $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash), false, false);
+    $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 
     include_spip('inc/campagnodon.utils');
     $transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction);
@@ -536,6 +537,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant,
       'payment_url' => $url_paiement,
+      'transaction_url' => $url_transaction,
       'optional_subscriptions' => array()
       // 'payment_method' => 'transfer' // FIXME: use the correct value
     );
