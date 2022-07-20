@@ -2,7 +2,10 @@
 
 ## 0.0.4 (Not Released Yet)
 
-* WIP
+* Page dédiée pour la transaction.
+* Le lien vers la page d'une transaction est transmis au système distant.
+* Recherche dans la liste des transactions et la liste des campagnes.
+* Fix mineurs.
 
 ## 0.0.3
 
