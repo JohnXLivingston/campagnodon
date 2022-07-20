@@ -115,7 +115,13 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'UNIQUE campagnodon_origine_key' => 'origine,id_origine'
     ],
     'champs_editables' => [],
-    'rechercher_champs' => [],
+    'rechercher_champs' => [
+      'id_campagnodon_campagne' => 1,
+      'titre' => 1,
+      'texte' => 1,
+      'id_origine' => 1,
+      'statut' => 1
+    ],
   ];
 
   // On ajoute une table de test s'il y a au moins un connecteur de test configuré.
