@@ -19,6 +19,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_mode' => 'Système distant',
   'label_transaction' => 'SPIP Bank',
   'label_campagne' => 'Campagne',
+  'label_transaction_distant' => 'ID',
   'bouton_synchroniser' => 'Synchroniser',
   'label_filtre_statut_synchronisation_' => 'Toutes',
   'label_filtre_statut_synchronisation_ok' => 'Synchro Ok',

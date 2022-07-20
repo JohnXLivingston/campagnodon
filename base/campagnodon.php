@@ -76,10 +76,15 @@ function campagnodon_declarer_tables_objets_sql($tables) {
     'key' => [
       'PRIMARY KEY' => 'id_campagnodon_transaction',
       'KEY campagnodon_statut_synchronisation' => 'statut_synchronisation',
+      'KEY campagnodon_transaction_distant' => 'transaction_distant',
       'UNIQUE campagnodon_id_transaction' => 'id_transaction'
     ],
     'champs_editables' => [],
-    'rechercher_champs' => [],
+    'rechercher_champs' => [
+      'id_campagnodon_transaction' => 1,
+      'type_transaction' => 1,
+      'transaction_distant' => 1
+    ],
     'join' => [
       'id_transaction' => 'id_transaction',
       'id_campagnodon_campagne' => 'id_campagnodon_campagne'

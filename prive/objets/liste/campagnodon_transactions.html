@@ -26,11 +26,14 @@
 	<BOUCLE_liste_campagnodon_transactions(CAMPAGNODON_TRANSACTIONS)
 		{campagnodon_jointure_transactions}
 		{statut_synchronisation?=#ENV{statut_synchronisation}}
+		{recherche?}
 		{tri #ENV{par,id_campagnodon_transaction},#GET{defaut_tri}}
 		{pagination #ENV{nb,10}}
 	>
 		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
-			<td class="id">#ID_CAMPAGNODON_TRANSACTION</td>
+			<td class="id" title="#TRANSACTION_DISTANT">
+					#ID_CAMPAGNODON_TRANSACTION
+			</td>
 			<td class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</td>
       <td class="type_transaction">#TYPE_TRANSACTION</td>
 			<td class="id_transaction" scope="col"><a href="[(#ID_TRANSACTION|generer_url_entite{transaction})]"
