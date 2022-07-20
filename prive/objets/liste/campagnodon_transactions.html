@@ -31,8 +31,14 @@
 		{pagination #ENV{nb,10}}
 	>
 		<tr class="[(#COMPTEUR_BOUCLE|alterner{row_odd,row_even})]">
-			<td class="id" title="#TRANSACTION_DISTANT">
+			<td class="id">
+				<a
+					href="#URL_ECRIRE{campagnodon_transaction,id_campagnodon_transaction=#ID_CAMPAGNODON_TRANSACTION}"
+					class="popin"
+					title="#TRANSACTION_DISTANT"
+				>
 					#ID_CAMPAGNODON_TRANSACTION
+				</a>
 			</td>
 			<td class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</td>
       <td class="type_transaction">#TYPE_TRANSACTION</td>

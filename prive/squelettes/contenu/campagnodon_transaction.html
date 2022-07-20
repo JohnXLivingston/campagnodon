@@ -1,0 +1,67 @@
+[(#AUTORISER{voir,campagnodon_transactions}|sinon_interdire_acces)]
+<BOUCLE_campagnodon_transaction(CAMPAGNODON_TRANSACTIONS){id_campagnodon_transaction}>
+  <h1 class="grostitre"><:campagnodon:label_transaction:> ##ID_CAMPAGNODON_TRANSACTION]</h1>
+  <table>
+    <tr>
+      <td><:campagnodon:label_transaction_distant:></td>
+      <td><div class="titre">[(#TRANSACTION_DISTANT)]</td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_mode:></td>
+      <td><div class="mode">[(#MODE)]</td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_date_transaction:></td>
+      <td><div class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_type_transaction:></td>
+      <td><div class="type_transaction">[(#TYPE_TRANSACTION)]</td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_transaction:></td>
+      <td><div class="">
+        <BOUCLE_transaction(TRANSACTIONS){id_transaction}>
+          <a
+            href="[(#ID_TRANSACTION|generer_url_entite{transaction})]"
+            title="<:info_numero_abbreviation|attribut_html:> #ID_TRANSACTION"
+          >
+            [(#ID_TRANSACTION)]
+          </a>
+          <br>
+          [(#STATUT|match{echec|ok|rembourse}|et{#MESSAGE|trim|strlen}|?{[<abbr title="[(#MESSAGE|attribut_html)[ - (#ERREUR|attribut_html)]]">(#STATUT)</abbr>],#STATUT})]
+          <br>
+          [(#REM) Il faudrait remplacer affiche_monnaie par bank_affiche_montant quand SPIP Bank sera à jour chez Attac. ]
+				  [(#MONTANT|affiche_monnaie)]
+        </BOUCLE_transaction>
+      </td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_derniere_synchronisation:></td>
+      <td><div class="statut_synchronisation">
+        <div style="color:[
+					(#STATUT_SYNCHRONISATION|switchcase{ok,green,attente,orange,red})
+				];">
+					[(#DATE_SYNCHRONISATION|affdate{Y-m-d H:i:s})]<br>
+					#STATUT_SYNCHRONISATION
+				</div>
+        [(#AUTORISER{campagnodon_synchroniser,campagnodon_transactions}|oui)
+					<div class="actions">
+						[(#BOUTON_ACTION{<:campagnodon:bouton_synchroniser:>,#URL_ACTION_AUTEUR{campagnodon_synchroniser,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax})]
+					</div>
+				]
+      </td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_campagne:></td>
+      <td><div class="id_campagnodon_campagne">
+        <a
+					href="#URL_ECRIRE{campagnodon_campagne,id_campagnodon_campagne=#ID_CAMPAGNODON_CAMPAGNE}" class="popin"
+					title="<:info_numero_abbreviation|attribut_html:> #ID_CAMPAGNODON_CAMPAGNE"
+				>
+					#ID_CAMPAGNODON_CAMPAGNE
+				</a>
+      </td>
+    </tr>
+  </table>
+</BOUCLE_campagnodon_transaction>
