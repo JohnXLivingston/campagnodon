@@ -15,10 +15,23 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 }
 
 
-// pipeline de chargement
+/**
+ * Pipeline de chargement.
+ * Cette fonction doit être présente pour que le pipeline soit pris en compte.
+ * Elle n'a rien de particulier à faire.
+ */
 function campagnodon_autoriser($flux){
 	return $flux;
 }
+
+// FIXME: je n'arrive pas à faire fonctionner ces fonctions pour les droits.
+// function autoriser_campagnodoncampagne_dist($faire, $type, $id, $qui, $opt) {
+// 	return false;
+// }
+
+// function autoriser_campagnodontransaction_dist($faire, $type, $id, $qui, $opt) {
+// 	return false;
+// }
 
 function autoriser_campagnodon_synchroniser_dist($faire, $type, $id, $qui, $opt) {
   return autoriser('webmestre');
