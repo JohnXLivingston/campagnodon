@@ -6,6 +6,7 @@
 * Le lien vers la page d'une transaction est transmis au système distant.
 * Recherche dans la liste des transactions et la liste des campagnes.
 * Fix mineurs.
+* Ajout du champs `operation_type` dans l'appel d'API Start.
 
 ## 0.0.3
 
