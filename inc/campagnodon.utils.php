@@ -223,3 +223,17 @@ function campagnodon_montants_par_defaut($type) {
 
   return ['10', '20', '40'];
 }
+
+function campagnodon_calcul_libelle_source($mode_options, $campagne) {
+  if (
+    !is_array($mode_options)
+    || !array_key_exists('libelle_source', $mode_options)
+    || empty($campagne)
+  ) {
+    return null;
+  }
+  $s = $mode_options['libelle_source'];
+  $s = preg_replace('/\{ID_CAMPAGNE\}/', $campagne['id_campagnodon_campagne'], $s);
+  $s = preg_replace('/\{TITRE_CAMPAGNE\}/', $campagne['titre'], $s);
+  return $s;
+}

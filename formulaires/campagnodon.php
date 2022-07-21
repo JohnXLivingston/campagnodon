@@ -438,6 +438,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     if (!$fonction_nouvelle_contribution) {
       throw new CampagnodonException("Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '".$campagne['origine']."'.", "campagnodon:erreur_sauvegarde");
     }
+    $source = campagnodon_calcul_libelle_source($mode_options, $campagne);
 
     $adhesion_magazine_prix = get_adhesion_magazine_prix($mode_options, $type);
 
@@ -488,7 +489,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
         [
           'financial_type' => traduit_financial_type($mode_options, 'don'),
           'amount' => $montant,
-          'currency' => 'EUR'
+          'currency' => 'EUR',
+          'source' => $source
         ]
       ];
     } else if ($type === 'adhesion') {
@@ -498,7 +500,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
           'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
           'amount' => strval($adhesion_magazine_prix),
           'currency' => 'EUR',
-          'membership' => traduit_adhesion_type($mode_options, 'magazine')
+          'membership' => traduit_adhesion_type($mode_options, 'magazine'),
+          'source' => $source
         ];
 
         // On cherche l'éventuel souscription optionnelle special:magazine_pdf.
@@ -516,14 +519,16 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
         'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
         'amount' => strval(intval($montant_adhesion) - intval($adhesion_magazine_prix)),
         'currency' => 'EUR',
-        'membership' => traduit_adhesion_type($mode_options, 'adhesion')
+        'membership' => traduit_adhesion_type($mode_options, 'adhesion'),
+        'source' => $source
       ];
 
       if ($adhesion_avec_don) {
         $contributions[] = [
           'financial_type' => traduit_financial_type($mode_options, 'don'),
           'amount' => $montant,
-          'currency' => 'EUR'
+          'currency' => 'EUR',
+          'source' => $source
         ];
       }
     } else {
@@ -533,6 +538,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     $params = array(
       'campagnodon_version' => '1', // numéro de version pour le format de donnée (pour s'assurer de la compatibilité des API)
       'email' => trim(_request('email')),
+      'source' => $source,
       'operation_type' => $type === 'don' ? 'donation' : 'membership',
       'contributions' => $contributions,
       'campaign_id' => $campagne['id_origine'],

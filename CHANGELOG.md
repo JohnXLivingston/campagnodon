@@ -7,6 +7,7 @@
 * Recherche dans la liste des transactions et la liste des campagnes.
 * Fix mineurs.
 * Ajout du champs `operation_type` dans l'appel d'API Start.
+* Ajout d'un paramètre «source» que l'on peut configurer. Sera utilisé pour les créations de contacts et contributions.
 
 ## 0.0.3
 
