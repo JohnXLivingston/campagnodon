@@ -156,7 +156,7 @@ define('_CAMPAGNODON_MODES', array(
                         'adhesion' => 1, // Le membership type (id numérique ou libellé)
                         'magazine' => 2 // Le membership type pour le magazine (id numérique ou libellé)
                 ),
-                // 'libelle_source': Optionnel. Si présent, va servir à calculer la valeur du champs «source» des contacts, et des contributions.
+                // 'libelle_source': Optionnel. Si présent, va servir à calculer la valeur du champs «source» des contacts, des contributions et des adhésions.
                 //      Avec les placeholders {ID_CAMPAGNE} et {TITRE_CAMPAGNE} qui seront remplacé par les valeurs adéquates.
                 'libelle_source' => 'Depuis le site - #{ID_CAMPAGNE} {TITRE_CAMPAGNE}',
         )
