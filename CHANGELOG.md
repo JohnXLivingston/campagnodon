@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.4 (Not Released Yet)
+## 0.0.4
 
 * Page dédiée pour la transaction.
 * Le lien vers la page d'une transaction est transmis au système distant.
