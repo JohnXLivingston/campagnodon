@@ -24,13 +24,15 @@ function inc_campagnodon_connecteur_test_dsp2_renseigner_facturation_dist($mode_
 
   $data = json_decode($data, true);
   $result = array(
-    'nom' => $data['last_name'] ?? null,
-    'prenom' => $data['first_name'] ?? null,
+    'last_name' => $data['last_name'] ?? null,
+    'first_name' => $data['first_name'] ?? null,
     'email' => $data['email'] ?? null,
-    'adresse' => $data['street_address'] ?? null,
-    'code_postal' => $data['postal_code'] ?? null,
-    'ville' => $data['city'] ?? null,
-    'pays' => $data['country'] ?? null,
+    'street_address' => $data['street_address'] ?? null,
+    'supplemental_address_1' => $data['supplemental_address_1'] ?? null,
+    'supplemental_address_2' => $data['supplemental_address_2'] ?? null,
+    'postal_code' => $data['postal_code'] ?? null,
+    'city' => $data['city'] ?? null,
+    'country' => $data['country'] ?? null,
   );
   spip_log('inc_campagnodon_connecteur_test_dsp2_renseigner_facturation_dist: données remontées: '.json_encode($result).'.', 'campagnodon'._LOG_DEBUG);
   return $result;

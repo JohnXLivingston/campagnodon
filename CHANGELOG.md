@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.5 (not released yet)
+
+* Adresse postale: découpage en 3 champs
+* Fix connecteur dsp2 civicrm. Refactoring du connecteur, pour plus de cohérence avec les autres connecteurs.
+
 ## 0.0.4
 
 * Page dédiée pour la transaction.

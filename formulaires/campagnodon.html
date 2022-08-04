@@ -222,7 +222,27 @@
               <div class="editer editer_adresse obligatoire [(#GET{erreurs}|oui)erreur]">
                 <label for="champ_adresse"><:campagnodon_form:label_adresse:></label>
                 [<span class='erreur_message'>(#GET{erreurs})</span>]
-                <textarea name="adresse" class="text" id="champ_adresse" required="required" >#ENV*{adresse}</textarea>
+                <input type="text" name="adresse" class="text" value="#ENV*{adresse}" id="champ_adresse" required="required" />
+              </div>
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div class="form-group span12">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{complement_adresse_1}})]
+              <div class="editer editer_complement_adresse_1 [(#GET{erreurs}|oui)erreur]">
+                <label for="champ_complement_adresse_1"><:campagnodon_form:label_complement_adresse_1:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <input type="text" name="complement_adresse_1" class="text" value="#ENV*{complement_adresse_1}" id="champ_complement_adresse_1" />
+              </div>
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div class="form-group span12">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{complement_adresse_2}})]
+              <div class="editer editer_complement_adresse_2 [(#GET{erreurs}|oui)erreur]">
+                <label for="champ_complement_adresse_2"><:campagnodon_form:label_complement_adresse_2:></label>
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <input type="text" name="complement_adresse_2" class="text" value="#ENV*{complement_adresse_2}" id="champ_complement_adresse_2" />
               </div>
             </div>
           </div>

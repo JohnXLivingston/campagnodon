@@ -60,10 +60,24 @@ function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 	}
 
 	spip_log('Pipeline bank_dsp2_renseigner_facturation: j\'ai pu trouver des informations.', 'campagnodon'._LOG_DEBUG);
-	foreach (array('nom', 'prenom', 'email', 'adresse', 'code_postal', 'ville', 'pays') as $attr) {
-		if (!empty($data[$attr])) {
-			$flux['data'][$attr] = $data[$attr];
+	foreach (array(
+		'nom' => 'last_name',
+		'prenom' => 'first_name',
+		'email' => 'email',
+		'adresse' => 'street_address',
+		'code_postal' => 'postal_code',
+		'ville' => 'city',
+		'pays' => 'country'
+	) as $spip_field => $distant_field) {
+		if (!empty($data[$distant_field])) {
+			$flux['data'][$spip_field] = $data[$distant_field];
 		}
+	}
+	if (!empty($data['supplemental_address_1'])) {
+		$flux['data']['adresse'] = (!empty($flux['data']['adresse']) ? $flux['data']['adresse'] . "\n" : '') . $data['supplemental_address_1'];
+	}
+	if (!empty($data['supplemental_address_2'])) {
+		$flux['data']['adresse'] = (!empty($flux['data']['adresse']) ? $flux['data']['adresse'] . "\n" : '') . $data['supplemental_address_2'];
 	}
 	return $flux;
 }
