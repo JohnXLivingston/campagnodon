@@ -595,7 +595,12 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     }
 
     try {
-      $result = $fonction_nouvelle_contribution($mode_options, $params);
+      $resultat = $fonction_nouvelle_contribution($mode_options, $params);
+      if(is_array($resultat) && array_key_exists('status', $resultat)) {
+        sql_update('spip_campagnodon_transactions', array(
+          'statut_distant' => sql_quote($resultat['status'])
+        ), 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
+      }
     } catch (Exception $e) {
       throw new CampagnodonException("Erreur nouvelle_contribution mode=".$campagne['origine'].": " . $e->getMessage(), "campagnodon:erreur_sauvegarde");
     }

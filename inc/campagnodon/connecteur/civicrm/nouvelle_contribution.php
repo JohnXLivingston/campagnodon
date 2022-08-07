@@ -16,10 +16,12 @@ function inc_campagnodon_connecteur_civicrm_nouvelle_contribution_dist($mode_opt
     throw new Exception("Erreur CiviCRM " . $civi_api->errorMsg());
   }
 
-  // $civicrm_result = $civi_api->values;
-  // if (empty($civicrm_result)) {
-  //   $civicrm_result = [];
-  // }
-
-  return true;
+  $civicrm_result = $civi_api->values;
+  $line = array_pop($civicrm_result);
+  if (!$line) {
+    throw new Exception("Erreur CiviCRM, je ne trouve pas de ligne dans le résultat.");
+  }
+  return array(
+    'status' => $line->status
+  );
 }

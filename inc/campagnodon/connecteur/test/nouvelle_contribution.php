@@ -18,5 +18,7 @@ function inc_campagnodon_connecteur_test_nouvelle_contribution_dist($mode_option
   if (!$id) {
     throw new Exception('Failed');
   }
-  return $id;
+  return array(
+    'status' => 'init'
+  );
 }

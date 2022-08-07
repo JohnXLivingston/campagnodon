@@ -69,6 +69,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
       'mode' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'transaction_distant' => 'varchar(255) DEFAULT NULL', // L'ID de transaction qu'on renseigne dans CiviCRM. De la forme: campagnodon/123456789.
+      'statut_distant' => 'varchar(255) DEFAULT NULL', // Dernier statut connu dans le système distant. Attention, peut ne pas être à jour en cas d'erreur de synchronisation.
       'statut_synchronisation' => "varchar(20) NOT NULL DEFAULT 'jamais'", // Statut de la dernière synchronisation. 'ok', 'echec', 'attente', 'attente_rejoue'.
       'date_synchronisation' => 'datetime DEFAULT NULL', // Date de la dernière synchro (ou tentative de synchro).
       'maj' => 'TIMESTAMP'
@@ -77,6 +78,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'PRIMARY KEY' => 'id_campagnodon_transaction',
       'KEY campagnodon_statut_synchronisation' => 'statut_synchronisation',
       'KEY campagnodon_transaction_distant' => 'transaction_distant',
+      'KEY campagnodon_statut_distant' => 'statut_distant',
       'UNIQUE campagnodon_id_transaction' => 'id_transaction'
     ],
     'champs_editables' => [],

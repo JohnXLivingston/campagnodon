@@ -4,19 +4,19 @@
   <table>
     <tr>
       <td><:campagnodon:label_transaction_distant:></td>
-      <td><div class="titre">[(#TRANSACTION_DISTANT)]</td>
+      <td><div class="titre">[(#TRANSACTION_DISTANT)]</div></td>
     </tr>
     <tr>
       <td><:campagnodon:label_mode:></td>
-      <td><div class="mode">[(#MODE)]</td>
+      <td><div class="mode">[(#MODE)]</div></td>
     </tr>
     <tr>
       <td><:campagnodon:label_date_transaction:></td>
-      <td><div class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</td>
+      <td><div class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</div></td>
     </tr>
     <tr>
       <td><:campagnodon:label_type_transaction:></td>
-      <td><div class="type_transaction">[(#TYPE_TRANSACTION)]</td>
+      <td><div class="type_transaction">[(#TYPE_TRANSACTION)]</div></td>
     </tr>
     <tr>
       <td><:campagnodon:label_transaction:></td>
@@ -34,7 +34,7 @@
           [(#REM) Il faudrait remplacer affiche_monnaie par bank_affiche_montant quand SPIP Bank sera à jour chez Attac. ]
 				  [(#MONTANT|affiche_monnaie)]
         </BOUCLE_transaction>
-      </td>
+      </div></td>
     </tr>
     <tr>
       <td><:campagnodon:label_derniere_synchronisation:></td>
@@ -50,7 +50,11 @@
 						[(#BOUTON_ACTION{<:campagnodon:bouton_synchroniser:>,#URL_ACTION_AUTEUR{campagnodon_synchroniser,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax})]
 					</div>
 				]
-      </td>
+      </div></td>
+    </tr>
+    <tr>
+      <td><:campagnodon:label_statut_distant:></td>
+      <td><div class="statut_distant">[(#STATUT_DISTANT)]</div></td>
     </tr>
     <tr>
       <td><:campagnodon:label_campagne:></td>
@@ -61,7 +65,7 @@
 				>
 					#ID_CAMPAGNODON_CAMPAGNE
 				</a>
-      </td>
+      </div></td>
     </tr>
   </table>
 </BOUCLE_campagnodon_transaction>

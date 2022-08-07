@@ -15,8 +15,15 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * Le mode de paiement. Les valeurs peuvent etre assez diverses (cheque, payzen, ...)
  */
 function inc_campagnodon_connecteur_test_maj_statut_dist($mode_options, $idx, $statut, $mode_paiement) {
-  return sql_updateq('spip_campagnodon_testdata', [
+  $r = sql_updateq('spip_campagnodon_testdata', [
     'statut' => $statut,
     'mode_paiement' => $mode_paiement
   ], 'idx='.sql_quote($idx));
+
+  if (false === $r) {
+    return false;
+  }
+  return array(
+    'status' => $statut
+  );
 }

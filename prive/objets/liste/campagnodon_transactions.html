@@ -19,6 +19,7 @@
 			<th class="montant" scope="col"><:campagnodon:label_montant:></th>
 			<th class="mode" scope="col"><:campagnodon:label_mode:></th>
       <th class="statut_synchronisation" scope="col">[(#TRI{date_synchronisation,<:campagnodon:label_derniere_synchronisation:>})]</th>
+			<th class="statut_distant" scope="col"><:campagnodon:label_statut_distant:></th>
 			<th class="id_campagnodon_campagne" scope="col">[(#TRI{id_campagnodon_campagne,<:campagnodon:label_campagne:>})]</th>
 		</tr>
 	</thead>
@@ -64,6 +65,9 @@
 						[(#BOUTON_ACTION{<:campagnodon:bouton_synchroniser:>,#URL_ACTION_AUTEUR{campagnodon_synchroniser,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax})]
 					</div>
 				]
+			</td>
+			<td class="statut_distant">
+				[(#STATUT_DISTANT)]
 			</td>
 			<td class="id_campagnodon_campagne" scope="col">
 				<a
