@@ -36,3 +36,7 @@ function campagnodon_autoriser($flux){
 function autoriser_campagnodon_synchroniser_dist($faire, $type, $id, $qui, $opt) {
   return autoriser('webmestre');
 }
+
+function autoriser_campagnodon_convertir_dist($faire, $type, $id, $qui, $opt) {
+	return autoriser('webmestre');
+}

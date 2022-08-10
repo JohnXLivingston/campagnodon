@@ -85,15 +85,19 @@ define('_CAMPAGNODON_MODES', array(
                 'souscriptions_optionnelles' => array(
                         'newsletter' => array(
                                 'label' => 'M\'inscrire sur la liste d\'information d\Attac France',
+                                'type' => 'xxx',
                                 'pour' => ['adhesion', 'don?'] // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle. Le «?» en suffixe indique qu'elle ne sera dispo que si on l'active explicitement via la balise.
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',
+                                'type' = 'xxx'
                         ),
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',
+                                'type' => 'xxx'
                         )
-                )
+                ),
+                'conversion' => array() // voir l'exemple avec CiviCRM pour le format exact.
         ),
         'civicrm_1' => array(
                 // `civicrm`: dans ce mode 
@@ -159,6 +163,35 @@ define('_CAMPAGNODON_MODES', array(
                 // 'libelle_source': Optionnel. Si présent, va servir à calculer la valeur du champs «source» des contacts, des contributions et des adhésions.
                 //      Avec les placeholders {ID_CAMPAGNE} et {TITRE_CAMPAGNE} qui seront remplacé par les valeurs adéquates.
                 'libelle_source' => 'Depuis le site - #{ID_CAMPAGNE} {TITRE_CAMPAGNE}',
+                'conversion' => array(
+                        // Ici on peut configurer des conversions d'un type vers un autre.
+                        // Les possibilités dépendent du système distant (voir la documentation associée.)
+                        'adhesion' => array( // le type contribution de départ.
+                                'don' => array( // les types vers lesquels on peut convertir
+                                        'statuts_distants' => array('double_membership'), // Les statuts distants pour lesquels on peut convertir. Voir la documentation du coté campagnodon_civicrm.
+                                        // 'souscriptions_optionnelles' => array(
+                                        //         // Des souscriptions optionnelles à activer en cas de conversion.
+                                        //         // Voir la documentation plus haut (même syntaxe que pour les formulaires)
+                                        // )
+                                        // 'garder_souscriptions_optionnelles' => array(
+                                        //         // Les souscriptions optionnelles qu'il faut garder quand on utilise cette conversion.
+                                        //         // Celles qui ne sont pas listées ici seront annulée.
+                                        // )
+
+                                )
+                        ),
+                        // 'don' => array(
+                        //         'adhesion' => array(
+                        //                 // mêmes clés que plus haut
+                        //                 'statuts_distants' => array['completed', ...]
+                        //                 'souscriptions_optionnelles' => array(),
+                        //                 'garder_souscriptions_optionnelles' => array(),
+
+                        //                 // membership
+
+                        //         )
+                        // )
+                )
         )
 ));
 ```

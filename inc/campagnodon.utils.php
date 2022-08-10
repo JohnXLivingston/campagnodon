@@ -19,7 +19,7 @@ function get_transaction_idx_distant($mode_options, $id_campagnodon_transaction)
 }
 
 /**
- * Retourne, le cas échanté, la fonction de connecteur à utiliser.
+ * Retourne, le cas échéant, la fonction de connecteur à utiliser.
  * @param string $mode
  *  Le mode utilisé (la clé dans _CAMPAGNODON_MODES).
  * @param string $nom_fonction
@@ -39,7 +39,7 @@ function campagnodon_fonction_connecteur($mode, $nom_fonction) {
   if (!preg_match('/^[a-z0-9_]+$/', $nom_fonction)) {
     return false;
   }
-  return charger_fonction($nom_fonction, 'inc/campagnodon/connecteur/'.$type);
+  return charger_fonction($nom_fonction, 'inc/campagnodon/connecteur/'.$type, true);
 }
 
 function campagnodon_mode_options($mode) {
@@ -243,4 +243,112 @@ function campagnodon_calcul_libelle_source($mode_options, $campagne) {
   $s = preg_replace('/\{ID_CAMPAGNE\}/', $campagne['id_campagnodon_campagne'], $s);
   $s = preg_replace('/\{TITRE_CAMPAGNE\}/', $campagne['titre'], $s);
   return $s;
+}
+
+
+/**
+ * Retourne une liste de types de contributions vers lesquels on peut convertir la transaction.
+ * @param $id_campagnodon_transaction
+ * @return array
+ */
+function campagnodon_peut_convertir_transaction_en($id_campagnodon_transaction) {
+  $campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
+  return _campagnodon_peut_convertir_transaction_en($campagnodon_transaction);
+}
+
+function _campagnodon_peut_convertir_transaction_en($campagnodon_transaction) {
+  if (!$campagnodon_transaction) {
+    return array();
+  }
+  include_spip('inc/campagnodon.utils');
+  $mode_options = campagnodon_mode_options($campagnodon_transaction['mode']);
+  if (!array_key_exists('conversion', $mode_options) || !is_array($mode_options['conversion'])) {
+    return array();
+  }
+
+  $conversions = $mode_options['conversion'];
+  if (
+    !array_key_exists($campagnodon_transaction['type_transaction'], $conversions)
+    || !is_array($conversions[$campagnodon_transaction['type_transaction']])
+  ) {
+    return array();
+  }
+  $conversions = $conversions[$campagnodon_transaction['type_transaction']];
+
+  $result = [];
+  foreach ($conversions as $nouveau_type => $options) {
+    if (!array_key_exists('statuts_distants', $options)) {
+      continue;
+    }
+    if (!is_array($options['statuts_distants'])) {
+      continue;
+    }
+    if (!in_array($campagnodon_transaction['statut_distant'], $options['statuts_distants'])) {
+      continue;
+    }
+    $result[] = $nouveau_type;
+  }
+
+  return $result;
+}
+
+/**
+ * Effectue la conversion d'une transaction.
+ * @param $id_campagnodon_transaction L'id de la transaction campagnodon
+ * @param $nouveau_type Le type en lequel convertir
+ */
+function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouveau_type) {
+  $campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
+  if (!$campagnodon_transaction) {
+    spip_log('Transaction introuvable: "'.$id_campagnodon_transaction.'"', 'campagnodon'._LOG_ERREUR);
+    return false;
+  }
+
+  $peut_convertir_en = _campagnodon_peut_convertir_transaction_en($campagnodon_transaction);
+  if (!in_array($nouveau_type, $peut_convertir_en)) {
+    spip_log('On ne peut pas convertir la transaction: "'.$id_campagnodon_transaction.'" en: "'.$nouveau_type.'"', 'campagnodon'._LOG_ERREUR);
+    return false;
+  }
+
+  $mode = $campagnodon_transaction['mode'];
+  $mode_options = campagnodon_mode_options($mode);
+
+	$fonction_convertir = campagnodon_fonction_connecteur($mode, 'convertir');
+  if (!$fonction_convertir) {
+    spip_log('Il n\'y a pas de connecteur "convertir" pour la transaction: "'.$id_campagnodon_transaction.'"', 'campagnodon'._LOG_ERREUR);
+    return false;
+  }
+
+  if ($nouveau_type === 'don') {
+    $nouveau_type_distant = 'donation';
+	} else if ($nouveau_type === 'adhesion') {
+    $nouveau_type_distant = 'membership';
+	} else {
+    $nouveau_type_distant = $nouveau_type;
+	}
+
+  // Appel de l'API de conversion.
+	$resultat = $fonction_convertir($mode_options, $campagnodon_transaction['transaction_distant'], $nouveau_type_distant);
+  $resultat_nouveau_type_distant = is_array($resultat) && array_key_exists('operation_type', $resultat) ? $resultat['operation_type'] : null;
+
+  if (empty($resultat_nouveau_type_distant) || $resultat_nouveau_type_distant !== $nouveau_type_distant) {
+    spip_log('L\'API de conversion semble avoir échoué pour la transaction: "'.$id_campagnodon_transaction.'"', 'campagnodon'._LOG_ERREUR);
+    return false;
+  }
+
+  // On met à jour le type sur campagnodon_transactions
+  if (false === sql_updateq(
+    'spip_campagnodon_transactions',
+    [
+      'type_transaction' => $nouveau_type,
+    ],
+    'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
+  )) {
+    spip_log("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
+    return false;
+  }
+
+	spip_log('On vient de convertir la transaction, on doit planifier une synchronisation pour la transaction Campagnodon: "'.$id_campagnodon_transaction.'"', 'campagnodon'._LOG_DEBUG);
+	campagnodon_queue_synchronisation($id_campagnodon_transaction);
+  return true;
 }
