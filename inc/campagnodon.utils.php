@@ -341,6 +341,7 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
     'spip_campagnodon_transactions',
     [
       'type_transaction' => $nouveau_type,
+      'statut_distant' => null, // on reset le statut_distant, il va être resynchronisé juste après.
     ],
     'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
   )) {

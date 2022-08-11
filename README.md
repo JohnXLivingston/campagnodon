@@ -119,7 +119,8 @@ define('_CAMPAGNODON_MODES', array(
                 // `type_contribution`: la correspondance «type de contribution» pour le système distant. Si cette variable est manquante, ou si certains types manquent, ils seront envoyé tel quel au système distant (avec le risque d'être refusé si invalide).
                 'type_contribution' => array(
                         'don' => 'Don', // «identifiant campagnodon» => «nom du financial type CiviCRM» (ou ID numérique pour ne pas être dépendant d'un changement de libellé)
-                        'adhesion' => 'Cotisation des membres'
+                        'adhesion' => 'Cotisation des membres',
+                        'adhesion_magazine' => '5'
                 ),
                 // `type_paiement`: la correspondance entre le «mode» de SPIP Bank, et le mode de paiement coté CiviCRM
                 // S'il manque la valeur courante, elle sera envoyée telle qu'elle à CiviCRM, qui va probablement rejeter la requête.
@@ -168,7 +169,8 @@ define('_CAMPAGNODON_MODES', array(
                         // Les possibilités dépendent du système distant (voir la documentation associée.)
                         'adhesion' => array( // le type contribution de départ.
                                 'don' => array( // les types vers lesquels on peut convertir
-                                        'statuts_distants' => array('double_membership'), // Les statuts distants pour lesquels on peut convertir. Voir la documentation du coté campagnodon_civicrm.
+                                        'statuts_distants' => array('double_membership'), // Les statuts distants pour lesquels on peut convertir.
+                                        // TODO: as-t-on besoin de souscriptions_optionnelles et garder_souscriptions_optionnelles ?
                                         // 'souscriptions_optionnelles' => array(
                                         //         // Des souscriptions optionnelles à activer en cas de conversion.
                                         //         // Voir la documentation plus haut (même syntaxe que pour les formulaires)
@@ -177,7 +179,6 @@ define('_CAMPAGNODON_MODES', array(
                                         //         // Les souscriptions optionnelles qu'il faut garder quand on utilise cette conversion.
                                         //         // Celles qui ne sont pas listées ici seront annulée.
                                         // )
-
                                 )
                         ),
                         // 'don' => array(
@@ -187,7 +188,7 @@ define('_CAMPAGNODON_MODES', array(
                         //                 'souscriptions_optionnelles' => array(),
                         //                 'garder_souscriptions_optionnelles' => array(),
 
-                        //                 // membership
+                        //                 'conversion_type_operation'
 
                         //         )
                         // )

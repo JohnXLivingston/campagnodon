@@ -499,7 +499,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       $contributions = [];
       if ($adhesion_magazine_prix > 0) {
         $contribution_magazine = [
-          'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
+          'financial_type' => traduit_financial_type($mode_options, 'adhesion_magazine'),
           'amount' => strval($adhesion_magazine_prix),
           'currency' => 'EUR',
           'membership' => traduit_adhesion_type($mode_options, 'magazine'),

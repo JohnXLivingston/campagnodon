@@ -2,6 +2,7 @@
 
 ## 0.0.5 (not released yet)
 
+* Fix: le type d'opération pour les abonnements magazines doit être différent que pour l'adhésion.
 * Adresse postale: découpage en 3 champs.
 * Fix connecteur dsp2 civicrm. Refactoring du connecteur, pour plus de cohérence avec les autres connecteurs.
 * On stocke le statut distant des transactions.
