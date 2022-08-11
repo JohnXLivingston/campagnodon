@@ -253,7 +253,7 @@ function campagnodon_calcul_libelle_source($mode_options, $campagne) {
  */
 function campagnodon_peut_convertir_transaction_en($id_campagnodon_transaction) {
   $campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
-  return _campagnodon_peut_convertir_transaction_en($campagnodon_transaction);
+  return array_keys(_campagnodon_peut_convertir_transaction_en($campagnodon_transaction));
 }
 
 function _campagnodon_peut_convertir_transaction_en($campagnodon_transaction) {
@@ -286,7 +286,7 @@ function _campagnodon_peut_convertir_transaction_en($campagnodon_transaction) {
     if (!in_array($campagnodon_transaction['statut_distant'], $options['statuts_distants'])) {
       continue;
     }
-    $result[] = $nouveau_type;
+    $result[$nouveau_type] = $options;
   }
 
   return $result;
@@ -305,10 +305,11 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
   }
 
   $peut_convertir_en = _campagnodon_peut_convertir_transaction_en($campagnodon_transaction);
-  if (!in_array($nouveau_type, $peut_convertir_en)) {
+  if (!array_key_exists($nouveau_type, $peut_convertir_en) || empty($peut_convertir_en[$nouveau_type])) {
     spip_log('On ne peut pas convertir la transaction: "'.$id_campagnodon_transaction.'" en: "'.$nouveau_type.'"', 'campagnodon'._LOG_ERREUR);
     return false;
   }
+  $peut_convertir_en_options = $peut_convertir_en[$nouveau_type];
 
   $mode = $campagnodon_transaction['mode'];
   $mode_options = campagnodon_mode_options($mode);
@@ -327,8 +328,10 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
     $nouveau_type_distant = $nouveau_type;
 	}
 
+  $parametres_api = array_key_exists('parametres_api', $peut_convertir_en_options) ? $peut_convertir_en_options['parametres_api'] ?? [] : [];
+
   // Appel de l'API de conversion.
-	$resultat = $fonction_convertir($mode_options, $campagnodon_transaction['transaction_distant'], $nouveau_type_distant);
+	$resultat = $fonction_convertir($mode_options, $campagnodon_transaction['transaction_distant'], $nouveau_type_distant, $parametres_api);
   $resultat_nouveau_type_distant = is_array($resultat) && array_key_exists('operation_type', $resultat) ? $resultat['operation_type'] : null;
 
   if (empty($resultat_nouveau_type_distant) || $resultat_nouveau_type_distant !== $nouveau_type_distant) {

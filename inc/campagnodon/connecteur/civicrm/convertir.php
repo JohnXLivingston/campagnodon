@@ -10,16 +10,23 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * La référence externe de la transaction
  * @param $nouveau_type
  * Le nouveau type.
+ * @param $parametres_api
+ * Des paramètres additionnels à passer à l'API.
  */
-function inc_campagnodon_connecteur_civicrm_convertir_dist($mode_options, $idx, $nouveau_type_distant) {
+function inc_campagnodon_connecteur_civicrm_convertir_dist($mode_options, $idx, $nouveau_type_distant, $parametres_api) {
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
   $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
 
-  $result = $civi_api->Campagnodon->convert(array(
-    'campagnodon_version' => 1,
-    'transaction_idx' => $idx,
-    'operation_type' => $nouveau_type_distant,
-  ));
+  $result = $civi_api->Campagnodon->convert(
+    array_merge(
+      array(
+        'campagnodon_version' => 1,
+        'transaction_idx' => $idx,
+        'operation_type' => $nouveau_type_distant,
+      ),
+      $parametres_api ?? []
+    )
+  );
   if (!$result) {
     throw new Exception("Erreur CiviCRM " . $civi_api->errorMsg());
   }

@@ -170,6 +170,18 @@ define('_CAMPAGNODON_MODES', array(
                         'adhesion' => array( // le type contribution de départ.
                                 'don' => array( // les types vers lesquels on peut convertir
                                         'statuts_distants' => array('double_membership'), // Les statuts distants pour lesquels on peut convertir.
+                                        'parametres_api' => array( // Optionnel. Des parametres additionnels à passer à l'API de conversion. Voir la doc coté CiviCRM.
+                                                'convert_financial_type' => [
+                                                        'Cotisation des membres' => [
+                                                                'new_financial_type' => 'Don',
+                                                                'membership' => null
+                                                        ],
+                                                        '5' => [
+                                                                'new_financial_type' => 'Don',
+                                                                'membership' => null
+                                                        ]
+                                                ]
+                                        )
                                         // TODO: as-t-on besoin de souscriptions_optionnelles et garder_souscriptions_optionnelles ?
                                         // 'souscriptions_optionnelles' => array(
                                         //         // Des souscriptions optionnelles à activer en cas de conversion.
