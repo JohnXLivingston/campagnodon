@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.6 (Not Released Yet)
+
+* Souscriptions optionelles: on passe l'attribut «name» à l'API.
+
 ## 0.0.5
 
 * Conversions adhésions/dons.

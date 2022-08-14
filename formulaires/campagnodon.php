@@ -587,6 +587,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
           continue;
         }
         $params['optional_subscriptions'][] = array(
+          'name' => $cle,
           'type' => $souscription_optionnelle['type'],
           'key' => $souscription_optionnelle['cle_distante'] ?? null,
           'when' => $souscription_optionnelle['when'] ?? 'init'
