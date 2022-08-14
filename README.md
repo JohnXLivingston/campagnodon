@@ -180,28 +180,22 @@ define('_CAMPAGNODON_MODES', array(
                                                                 'new_financial_type' => 'Don',
                                                                 'membership' => null
                                                         ]
-                                                ]
+                                                ],
+                                                // TODO?
+                                                // 'cancel_optional_subscription' => [
+                                                //         // Les noms (= la clé) des souscriptions optionnelles à retirer.
+                                                //         // Attention, celles-ci ne doivent pas déjà être exécutées. Donc elles doivent avoir 'when'='completed'.
+                                                //         // De plus, 'magazine_pdf' est un cas particulier qui ne sera pas pris en compte (mais pas grave, ça ne s'applique pas).
+                                                //         'newsletter'
+                                                // ]
                                         )
-                                        // TODO: as-t-on besoin de souscriptions_optionnelles et garder_souscriptions_optionnelles ?
-                                        // 'souscriptions_optionnelles' => array(
-                                        //         // Des souscriptions optionnelles à activer en cas de conversion.
-                                        //         // Voir la documentation plus haut (même syntaxe que pour les formulaires)
-                                        // )
-                                        // 'garder_souscriptions_optionnelles' => array(
-                                        //         // Les souscriptions optionnelles qu'il faut garder quand on utilise cette conversion.
-                                        //         // Celles qui ne sont pas listées ici seront annulée.
-                                        // )
                                 )
                         ),
                         // 'don' => array(
                         //         'adhesion' => array(
                         //                 // mêmes clés que plus haut
                         //                 'statuts_distants' => array['completed', ...]
-                        //                 'souscriptions_optionnelles' => array(),
-                        //                 'garder_souscriptions_optionnelles' => array(),
-
-                        //                 'conversion_type_operation'
-
+                        //                 ...
                         //         )
                         // )
                 )
