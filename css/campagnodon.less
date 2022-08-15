@@ -12,6 +12,7 @@
 
       label {
         display: inline;
+        white-space: nowrap;
       }
 
       input[type=radio] + span {
@@ -59,6 +60,8 @@
     .campagnodon_montant_ligne {
       display: flex;
       flex-direction: row;
+      flex-wrap: wrap;
+      row-gap: 20px;
       align-items: center;
 
       input[type=radio] {
@@ -97,6 +100,10 @@
         font-weight: bold;
         width: 70px;
       }
+
+      label {
+        white-space: nowrap;
+      }
     }
   }
 
@@ -113,7 +120,8 @@
     }
   }
 
-  label {
-     white-space: nowrap;
+  input[type=date] {
+    // Fix: il semblerait que bootstrap (ou spip?) définisse width=80% pour input[type=text], mais pas type=date.
+    width: 80%;
   }
 }

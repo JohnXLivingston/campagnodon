@@ -4,6 +4,7 @@
 
 * Souscriptions optionelles: on passe l'attribut «name» à l'API.
 * Import des campagnes: on passe par une API dédiée (sinon on a un problème de droits).
+* Fix des feuilles de styles, notamment pour les petits écrans.
 
 ## 0.0.5
 
