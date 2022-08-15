@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.6 (Not Released Yet)
+## 0.0.6
 
 * Souscriptions optionelles: on passe l'attribut «name» à l'API.
 * Import des campagnes: on passe par une API dédiée (sinon on a un problème de droits).
