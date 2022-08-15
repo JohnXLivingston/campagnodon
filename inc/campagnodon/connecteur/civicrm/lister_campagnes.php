@@ -12,14 +12,14 @@ function inc_campagnodon_connecteur_civicrm_lister_campagnes_dist($mode_options)
   /* Remontée des données de CiviCRM */
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
   $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
-  $result = $civi_api->Campaign->get([
+  $result = $civi_api->Campagnodon->campaign([
     // FIXME: faut-il une pagination plus fine ?
     'options' => array('limit' => 10000)
   ]);
-  // spip_log('Résultat CiviCRM->Campaign->get: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
+  // spip_log('Résultat CiviCRM->Campagnodon->campaign: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
 
   if (!$result) {
-    spip_log("Erreur CiviCRM->Campaign->get: " . $civi_api->errorMsg(), "campagnodon"._LOG_ERREUR);
+    spip_log("Erreur CiviCRM->Campagnodon->campaign: " . $civi_api->errorMsg(), "campagnodon"._LOG_ERREUR);
     return false;
   }
 

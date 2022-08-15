@@ -3,6 +3,7 @@
 ## 0.0.6 (Not Released Yet)
 
 * Souscriptions optionelles: on passe l'attribut «name» à l'API.
+* Import des campagnes: on passe par une API dédiée (sinon on a un problème de droits).
 
 ## 0.0.5
 
