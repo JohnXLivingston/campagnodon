@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7
+
+* Cette version est juste là pour garder la même version que le plugin Civicrm.
+
 ## 0.0.6
 
 * Souscriptions optionelles: on passe l'attribut «name» à l'API.
