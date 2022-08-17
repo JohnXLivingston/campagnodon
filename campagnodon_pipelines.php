@@ -64,6 +64,7 @@ function campagnodon_bank_dsp2_renseigner_facturation($flux) {
 		'nom' => 'last_name',
 		'prenom' => 'first_name',
 		'email' => 'email',
+		'telephone' => 'phone',
 		'adresse' => 'street_address',
 		'code_postal' => 'postal_code',
 		'ville' => 'city',

@@ -28,6 +28,7 @@ function inc_campagnodon_connecteur_test_dsp2_renseigner_facturation_dist($mode_
     'first_name' => $data['first_name'] ?? null,
     'email' => $data['email'] ?? null,
     'street_address' => $data['street_address'] ?? null,
+    'phone' => $data['phone'] ?? null,
     'supplemental_address_1' => $data['supplemental_address_1'] ?? null,
     'supplemental_address_2' => $data['supplemental_address_2'] ?? null,
     'postal_code' => $data['postal_code'] ?? null,

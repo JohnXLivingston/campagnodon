@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.14
+
+* Dsp2: on retourne aussi le téléphone.
+
 ## 0.0.7
 
 * Cette version est juste là pour garder la même version que le plugin Civicrm.

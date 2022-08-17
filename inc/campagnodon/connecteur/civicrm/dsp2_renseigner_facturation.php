@@ -27,6 +27,7 @@ function inc_campagnodon_connecteur_civicrm_dsp2_renseigner_facturation_dist($mo
       $data['first_name'] = $civi_infos->first_name;
       $data['email'] = $civi_infos->email;
       $data['street_address'] = $civi_infos->street_address;
+      $data['phone'] = $civi_infos->phone;
       $data['supplemental_address_1'] = $civi_infos->supplemental_address_1;
       $data['supplemental_address_2'] = $civi_infos->supplemental_address_2;
       $data['postal_code'] = $civi_infos->postal_code;
