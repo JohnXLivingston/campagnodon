@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0
+
+* Dons récurrents.
+* Générateur de balise Campagnodon: hauteur du champs, et ajout de retours à la ligne pour plus de lisibilité.
+
 ## 0.0.14
 
 * Dsp2: on retourne aussi le téléphone.

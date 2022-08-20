@@ -34,6 +34,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'campagne_invalide' => 'Erreur: campagne introuvable',
   'label_type_don' => 'Don',
   'label_type_adhesion' => 'Adhésion',
+  'label_activer_don_recurrent' => 'Permettre les dons récurrents',
   'label_montant_perso' => 'Montants personnalisés',
   'label_montant_libre' => 'Montant libre',
   'label_souscriptions_perso' => 'Personnaliser les souscriptions optionnelles'

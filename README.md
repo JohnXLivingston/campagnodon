@@ -42,6 +42,9 @@ define('_CAMPAGNODON_MONTANTS', array(
         'don' => array( // le type de formulaire. 'don' ou 'adhesion'
                 '30','50','100','200'
         ),
+        'don_recurrent' => array( // NB: ne s'applique que si _CAMPAGNODON_DON_RECURRENT est activé
+                '6', '15', '30', '50'
+        ),
         'adhesion' => array(
                 // une valeur entre [] indique une condition de revenu. 
                 // voir les phrases de localisation option_revenu_entre, option_revenu_en_dessous et option_revenu_au_dessus
@@ -56,6 +59,16 @@ define('_CAMPAGNODON_MONTANTS', array(
         )
 ));
 ```
+
+### _CAMPAGNODON_DON_RECURRENT
+
+Pour activer les dons récurrents:
+
+```php
+define('_CAMPAGNODON_DON_RECURRENT', true);
+```
+
+ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).
 
 ### _CAMPAGNODON_MODES
 

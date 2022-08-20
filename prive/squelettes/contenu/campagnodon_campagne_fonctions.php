@@ -43,5 +43,12 @@ function campagnodon_campagne_montants_par_defaut() {
   foreach (['don', 'adhesion'] as $type) {
     $r[$type] = implode(',', campagnodon_montants_par_defaut($type));
   }
+  if (campagnodon_campagne_don_recurrent()) {
+    $r['don_recurrent'] = implode(',', campagnodon_montants_par_defaut('don_recurrent'));
+  }
   return json_encode($r);
+}
+
+function campagnodon_campagne_don_recurrent () {
+  return defined('_CAMPAGNODON_DON_RECURRENT') && _CAMPAGNODON_DON_RECURRENT === true;
 }
