@@ -163,17 +163,23 @@ function liste_montants_campagne($type, $id_campagne, $arg_liste_montants, $arg_
  * @param $config_montants Correspond au retour de la fonction liste_montants_campagne
  */
 function get_form_montant($config_montants) {
-  $v_montant = _request('montant');
+  $suffix = ''; // pour les dons récurrents, on a un suffix au nom du champs.
+  if ($config_montants['don_recurrent'] === true) { // les dons récurrents sont bien activés sur ce formulaire
+    if (_request('don_recurrent') == '1') { // la case don récurrent est cochée
+      $suffix = '_recurrent';
+    }
+  }
+  $v_montant = _request('montant'.$suffix);
   if ($v_montant === 'libre') {
     if (!$config_montants['libre']) {
       return null;
     }
-    return trim(_request('montant_libre'));
+    return trim(_request('montant_libre'.$suffix));
   }
-  if (!array_key_exists($v_montant, $config_montants['propositions'])) {
+  if (!array_key_exists($v_montant, $config_montants['propositions'.$suffix])) {
     return null;
   }
-  return $v_montant;
+  return [$v_montant, $suffix !== ''];
 }
 
 
@@ -399,12 +405,12 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 		$erreurs['email'] = _T('campagnodon_form:erreur_email_invalide');
 	}
 
-  $montant = get_form_montant($config_montants);
+  list ($montant, $montant_est_recurrent) = get_form_montant($config_montants);
   if ($type !== 'adhesion' || $adhesion_avec_don) {
     if (empty($montant)) {
-      $erreurs['montant'] = _T('info_obligatoire');
+      $erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = _T('info_obligatoire');
     } else if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
-      $erreurs['montant'] = $erreur;
+      $erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = $erreur;
     }
   }
 
@@ -467,7 +473,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     $config_montants = liste_montants_campagne($type, $id_campagne, $arg_liste_montants, $arg_don_recurrent, $arg_liste_montants_recurrent);
     $recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
     $adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
-    $montant = ($type !== 'adhesion' || $adhesion_avec_don) ? get_form_montant($config_montants) : null;
+    list ($montant, $montant_est_recurrent) = ($type !== 'adhesion' || $adhesion_avec_don) ? get_form_montant($config_montants) : null;
     $montant_adhesion = ($type === 'adhesion') ? get_form_montant_adhesion($config_montants) : null;
 
     $montant_total = 0;
