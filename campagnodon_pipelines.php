@@ -171,3 +171,35 @@ function campagnodon_trig_bank_reglement_en_echec($flux) {
 	programmer_sync_bank_result($flux);
 	return $flux;
 }
+
+/**
+ * Decrire l'echeance d'une souscription mensuelle
+ * @param array $flux
+ * @return array
+ */
+function campagnodon_bank_abos_decrire_echeance($flux){
+	$id_transaction = $flux['args']['id_transaction'];
+	if (!$id_transaction) {
+		spip_log('campagnodon_bank_abos_decrire_echeance: id_transaction manquant dans le flux fourni.', 'campagnodon'._LOG_ERREUR);
+		return $flux;
+	}
+	$transaction = sql_fetsel('*', 'spip_transactions', 'id_transaction=' . intval($id_transaction));
+	if (!$transaction) {
+		spip_log("campagnodon_bank_abos_decrire_echeance: Transaction introuvable pour id_transaction=".$id_transaction, "campagnodon"._LOG_ERREUR);
+		return $flux;
+	}
+	if ($transaction['parrain'] !== 'campagnodon') {
+		// Ça ne concerne pas notre plugin.
+		spip_log('campagnodon_bank_abos_decrire_echeance: programmer_sync_bank_result: cette ligne n\'a pas campagnodon comme parrain, je saute.', 'campagnodon'._LOG_DEBUG);
+		return $flux;
+	}
+
+	$flux['data']['montant'] = $transaction['montant'];
+	$flux['data']['montant_init'] = 0;
+	$flux['data']['count_init'] = 0;
+	$flux['data']['count'] = 0;
+	$flux['data']['freq'] = 'monthly';
+	$flux['data']['date_start'] = '';
+	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true));
+	return $flux;
+}
