@@ -476,6 +476,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     list ($montant, $montant_est_recurrent) = ($type !== 'adhesion' || $adhesion_avec_don) ? get_form_montant($config_montants) : null;
     $montant_adhesion = ($type === 'adhesion') ? get_form_montant_adhesion($config_montants) : null;
 
+    $type_transaction = ($type === 'don' && $montant_est_recurrent) ? 'don_mensuel' : $type;
+
     $montant_total = 0;
     if ($montant) { $montant_total+= $montant; }
     if ($montant_adhesion) { $montant_total+= $montant_adhesion; }
@@ -495,7 +497,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
 
     $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
       'id_campagnodon_campagne' => $id_campagne,
-      'type_transaction' => $type,
+      'type_transaction' => $type_transaction,
       'mode' => $campagne['origine']
     ]);
     if (!($id_campagnodon_transaction > 0)) {
@@ -586,11 +588,18 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       throw new CampagnodonException("Type inconnu: '".$type."'");
     }
 
+    $distant_operation_type = $type_transaction;
+    switch ($type_transaction) {
+      case 'don': $distant_operation_type = 'donation'; break;
+      case 'adhesion': $distant_operation_type = 'membership'; break;
+      case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
+    }
+
     $params = array(
       'campagnodon_version' => '1', // numéro de version pour le format de donnée (pour s'assurer de la compatibilité des API)
       'email' => trim(_request('email')),
       'source' => $source,
-      'operation_type' => $type === 'don' ? 'donation' : 'membership',
+      'operation_type' => $distant_operation_type,
       'contributions' => $contributions,
       'campaign_id' => $campagne['id_origine'],
       'transaction_idx' => $transaction_idx_distant,
