@@ -194,12 +194,14 @@ function campagnodon_bank_abos_decrire_echeance($flux){
 		return $flux;
 	}
 
+	spip_log('campagnodon_bank_abos_decrire_echeance: campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+
 	$flux['data']['montant'] = $transaction['montant'];
 	$flux['data']['montant_init'] = 0;
 	$flux['data']['count_init'] = 0;
 	$flux['data']['count'] = 0;
 	$flux['data']['freq'] = 'monthly';
 	$flux['data']['date_start'] = '';
-	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true));
+	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true), 'campagnodon'._LOG_DEBUG);
 	return $flux;
 }
