@@ -65,9 +65,22 @@
       <fieldset si_adhesion_avec_don>
         [(#ENV{_type}|=={adhesion}|non)
           <legend><span><:campagnodon_form:je_donne:></span></legend>
+          [(#ENV{_don_recurrent}|oui)
+            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{don_recurrent}})]
+            <div class="editer editer_don_recurrent obligatoire [(#GET{erreurs}|oui)erreur]">
+              <label>
+                <input type="radio" name="don_recurrent" class="radio" required="required" id="don_recurrent_non" value="0" [(#ENV{don_recurrent}|!={1}|oui)checked="checked"] />
+                <span><:campagnodon_form:je_donne_une_fois:></span>
+              </label>
+              <label>
+                <input type="radio" name="don_recurrent" class="radio" required="required" id="don_recurrent_oui" value="1" [(#ENV{don_recurrent}|=={1}|oui)checked="checked"] />
+                <span><:campagnodon_form:je_donne_recurrent:></span>
+              </label>
+            </div>
+          ]
         ]
 
-        <div class="row-fluid">
+        <div class="row-fluid" si_pas_don_recurrent>
           <div class="form-group span12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
             <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
@@ -118,6 +131,62 @@
             </div>
           </div>
         </div>
+
+        [(#REM) Si on a activé les dons récurrents, voici les montants specifiques:]
+        <BOUCLE_don_recurrent_montants(CONDITION){si #ENV{_don_recurrent}|oui}>
+          <div class="row-fluid" si_don_recurrent>
+            <div class="form-group span12">
+              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_recurrent}})]
+              <div class="editer editer_montant_recurrent obligatoire [(#GET{erreurs}|oui)erreur]">
+                [<span class='erreur_message'>(#GET{erreurs})</span>]
+                <div class="campagnodon_montant">
+
+                  [(#REM) Sauf si on ne met que des montants de don libre, on affiche la liste des montants présélectionnés.]
+                  <BOUCLE_liste_montants_recurrent(CONDITION){si #ENV{_montants_propositions_uniquement_libre}|non}>
+                    <div class="campagnodon_montant_ligne">
+                      <BOUCLE_montants_recurrent(POUR){tableau #ENV{_montants_propositions_recurrent}}>
+                        #SET{val,#CLE}
+                        <label>
+                          <input type="radio" name="montant_recurrent" class="radio" required="required" id="montant_recurrent_#GET{val}" value="#GET{val}" [(#ENV{montant_recurrent}|=={#GET{val}}|oui)checked="checked"] />
+                          <span>#VALEUR</span>
+                        </label>
+                      </BOUCLE_montants_recurrent>
+                    </div>
+                  </BOUCLE_liste_montants_recurrent>
+
+                  [(#REM) On affiche la saisie de montant libre si activée.]
+                  [(#ENV{_montants_proposition_libre_recurrent}|oui)
+                    [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre_recurrent}})]
+                    [<span class='erreur_message'>(#GET{erreurs})</span>]
+                    <div class="campagnodon_montant_ligne">
+
+                      [(#REM) Si on n'a que le montant libre, le champs 'montant_recurrent' est caché, sinon c'est un bouton radio.]
+                      [(#ENV{_montants_propositions_uniquement_libre_recurrent}|oui)
+                        <input type="hidden" name="montant_recurrent" value="libre" />
+                      ]
+                      [(#ENV{_montants_propositions_uniquement_libre_recurrent}|non)
+                        #SET{val,libre}
+                        <label>
+                          <input type="radio" name="montant_recurrent" class="radio" required="required" id="montant_recurrent_#GET{val}" value="#GET{val}" [(#ENV{montant_recurrent}|=={#GET{val}}|oui)checked="checked"] />
+                          <span><:campagnodon_form:montant_libre:></span>
+                        </label>
+                      ]
+                      <label>
+                        <input
+                          type="number" name="montant_libre_recurrent"
+                          class="text" value="#ENV*{montant_libre_recurrent}"
+                          id="champ_montant_libre_recurrent"
+                          [(#ENV{_montants_propositions_uniquement_libre_recurrent}|non)disabled="disabled"]
+                        />&nbsp;€
+                      </label>
+                    </div>
+                  ]
+                </div>
+              </div>
+            </div>
+          </div>
+        </BOUCLE_don_recurrent_montants>
+
         [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Sa position dépend du type de formulaire.]
         [(#ENV{_type}|=={adhesion}|oui)
           <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">

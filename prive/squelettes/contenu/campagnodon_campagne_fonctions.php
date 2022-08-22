@@ -50,5 +50,6 @@ function campagnodon_campagne_montants_par_defaut() {
 }
 
 function campagnodon_campagne_don_recurrent () {
-  return defined('_CAMPAGNODON_DON_RECURRENT') && _CAMPAGNODON_DON_RECURRENT === true;
+  include_spip('inc/campagnodon.utils');
+  return campagnodon_don_recurrent_active();
 }

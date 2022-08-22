@@ -15,13 +15,30 @@ function campagnodon_formulaire(formSelector) {
     campagnodon_formulaire_montant_libre($form, false, true);
     campagnodon_formulaire_explications($form);
   });
+  $form.on('click', 'input[type=radio][name=montant_recurrent]', () => {
+    campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
+    campagnodon_formulaire_explications($form);
+  });
+
+  $form.on('click', 'input[type=radio][name=don_recurrent]', () => {
+    campagnodon_formulaire_don_recurrent($form, false);
+    campagnodon_formulaire_montant_libre($form, false, true, '');
+    campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
+    campagnodon_formulaire_explications($form);
+  });
 
   $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
   $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
   $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
 
+  $form.on('keyup', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
+  $form.on('change', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
+  $form.on('click', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
+
   $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
   campagnodon_formulaire_montant_libre($form, true);
+  campagnodon_formulaire_montant_libre($form, true, false, '_recurrent');
+  campagnodon_formulaire_don_recurrent($form, true);
   campagnodon_formulaire_explications($form);
 }
 
@@ -30,9 +47,10 @@ function campagnodon_formulaire(formSelector) {
  * @param {jQuery} $form Le conteneur jQuery du formulaire
  * @param {boolean} permier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
  * @param {boolean} est_click Vrai si c'est un click.
+ * @param {string} suffix Suffix pour les noms de champs. Permet de gérer les montants pour les dons récurrents.
  */
-function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_click = false) {
-  const $radio_montant_libre = $form.find('input[name=montant][value=libre]');
+function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_click = false, suffix = '') {
+  const $radio_montant_libre = $form.find('input[name=montant'+suffix+'][value=libre]');
   if (!$radio_montant_libre.length) {
     // Le montant libre n'est pas activé
     return;
@@ -42,7 +60,7 @@ function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_
     return;
   }
   const montant_libre = $radio_montant_libre.is(':checked');
-  const $input_montant_libre = $form.find('input[name=montant_libre]');
+  const $input_montant_libre = $form.find('input[name=montant_libre'+suffix+']');
   $input_montant_libre.attr('disabled', !montant_libre);
   $input_montant_libre.attr('required', montant_libre);
 
@@ -125,20 +143,24 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
  */
 function campagnodon_formulaire_recu_fiscal_explication($form) {
   let montant_est_libre = false;
-  if ($form.find('input[name=montant][type=hidden][value=libre]').length) {
+  suffix = ''; // Suffix pour les noms de champs. Permet de gérer les montants pour les dons récurrents.
+  if ($form.find('input[name=don_recurrent][value=1]').is(':checked')) {
+    suffix = '_recurrent';
+  }
+  if ($form.find('input[name=montant'+suffix+'][type=hidden][value=libre]').length) {
     // Le champ est hidden => il n'y a que du montant libre
     montant_est_libre = true;
-  } else if ($form.find('input[type=radio][name=montant][value=libre]:checked').length) {
+  } else if ($form.find('input[type=radio][name=montant'+suffix+'][value=libre]:checked').length) {
     montant_est_libre = true;
   }
 
   let montant;
   if (montant_est_libre) {
-    const $montant_libre = $form.find('input[name=montant_libre]');
+    const $montant_libre = $form.find('input[name=montant_libre'+suffix+']');
     montant = $montant_libre.prop('value');
     montant = parseInt(montant);
   } else {
-    const $montant = $form.find('input[type=radio][name=montant]:checked');
+    const $montant = $form.find('input[type=radio][name=montant'+suffix+']:checked');
     if ($montant.length) {
       montant = parseInt($montant.attr('value'));
     }
@@ -196,4 +218,33 @@ function campagnodon_formulaire_adhesion_explication($form) {
 function campagnodon_formulaire_explications($form) {
   campagnodon_formulaire_recu_fiscal_explication($form);
   campagnodon_formulaire_adhesion_explication($form);
+}
+
+/**
+ * Cette fonction gère la bascule entre don unique et don récurrent
+ * @param {jQuery} $form Le conteneur jQuery du formulaire
+ * @param {boolean} permier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
+ */
+function campagnodon_formulaire_don_recurrent($form, premier_appel = false) {
+  const $radio_don_recurrent = $form.find('input[name=don_recurrent][value=1]');
+  if (!$radio_don_recurrent.length) {
+    // Le don récurrent n'est pas activé sur ce formulaire
+    return;
+  }
+
+  let suffix_enabled = '';
+  let suffix_disabled = '';
+  if ($radio_don_recurrent.is(':checked')) {
+    suffix_enabled = '_recurrent';
+    $form.find('[si_pas_don_recurrent]').hide();
+    $form.find('[si_don_recurrent]').show();
+  } else {
+    suffix_disabled = '_recurrent';
+    $form.find('[si_pas_don_recurrent]').show();
+    $form.find('[si_don_recurrent]').hide();
+  }
+  $form.find('input[name=montant'+suffix_enabled+']').attr('disabled', false).attr('required', true);
+  $form.find('input[name=montant'+suffix_disabled+']').attr('disabled', true).attr('required', false);
+  $form.find('input[name=montant_libre'+suffix_enabled+']').attr('disabled', false); // required is handled by campagnodon_formulaire_montant_libre
+  $form.find('input[name=montant_libre'+suffix_disabled+']').attr('disabled', true); // required is handled by campagnodon_formulaire_montant_libre
 }

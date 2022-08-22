@@ -213,6 +213,9 @@ function campagnodon_montants_par_defaut($type) {
   if ($type === 'don') {
     return ['30','50','100','200'];
   }
+  if ($type === 'don_recurrent') {
+    return ['6','15','30','50'];
+  }
   if ($type === 'adhesion') {
     return [
       '13[-450]',
@@ -225,8 +228,6 @@ function campagnodon_montants_par_defaut($type) {
       '160[4000-]'
     ];
   }
-  // TODO
-  // Montants dons mensuels par défaut : 6, 15, 30, 50
 
   return ['10', '20', '40'];
 }
@@ -245,6 +246,9 @@ function campagnodon_calcul_libelle_source($mode_options, $campagne) {
   return $s;
 }
 
+function campagnodon_don_recurrent_active() {
+  return defined('_CAMPAGNODON_DON_RECURRENT') && _CAMPAGNODON_DON_RECURRENT === true;
+}
 
 /**
  * Retourne une liste de types de contributions vers lesquels on peut convertir la transaction.
