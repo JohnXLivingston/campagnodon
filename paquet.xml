@@ -35,6 +35,10 @@
   <pipeline nom="trig_bank_reglement_en_attente" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="trig_bank_reglement_en_echec" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="bank_abos_decrire_echeance"  inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_activer_abonnement" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_preparer_echeance" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_renouveler_abonnement" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_resilier" inclure="campagnodon_pipelines.php"/>
 
   <menu
     nom="campagnodon_transactions"
