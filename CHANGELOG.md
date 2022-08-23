@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-* Dons récurrents.
+* Dons récurrents WIP (développement mis en pause).
 * Générateur de balise Campagnodon: hauteur du champs, et ajout de retours à la ligne pour plus de lisibilité.
 
 ## 0.0.14

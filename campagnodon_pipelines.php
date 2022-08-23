@@ -222,206 +222,206 @@ function campagnodon_trig_bank_reglement_en_echec($flux) {
 	return $flux;
 }
 
-/**
- * Decrire l'echeance d'une souscription mensuelle
- * @param array $flux
- * @return array
- */
-function campagnodon_bank_abos_decrire_echeance($flux){
-	// NB: ne pas tester $flux['data'] ici, c'est pré-rempli par SPIP Bank
+// /**
+//  * Decrire l'echeance d'une souscription mensuelle
+//  * @param array $flux
+//  * @return array
+//  */
+// function campagnodon_bank_abos_decrire_echeance($flux){
+// 	// NB: ne pas tester $flux['data'] ici, c'est pré-rempli par SPIP Bank
 
-	$id_transaction = $flux['args']['id_transaction'];
-	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
-	if (!$transaction) { return $flux; }
+// 	$id_transaction = $flux['args']['id_transaction'];
+// 	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
+// 	if (!$transaction) { return $flux; }
 
-	spip_log('campagnodon_bank_abos_decrire_echeance: campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+// 	spip_log('campagnodon_bank_abos_decrire_echeance: campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
 
-	$flux['data']['montant'] = $transaction['montant'];
-	$flux['data']['montant_init'] = $transaction['montant'];
-	$flux['data']['count_init'] = 0;
-	$flux['data']['count'] = 0;
-	$flux['data']['freq'] = 'monthly';
-	$flux['data']['date_start'] = '';
-	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true), 'campagnodon'._LOG_DEBUG);
-	return $flux;
-}
+// 	$flux['data']['montant'] = $transaction['montant'];
+// 	$flux['data']['montant_init'] = $transaction['montant'];
+// 	$flux['data']['count_init'] = 0;
+// 	$flux['data']['count'] = 0;
+// 	$flux['data']['freq'] = 'monthly';
+// 	$flux['data']['date_start'] = '';
+// 	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true), 'campagnodon'._LOG_DEBUG);
+// 	return $flux;
+// }
 
-/**
- * Activer la souscription abonnee
- * @param $flux
- * @return mixed
- */
-function campagnodon_bank_abos_activer_abonnement($flux) {
-	if ($flux['data']) {
-		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
-		return $flux;
-	}
-	$id_transaction = $flux['args']['id_transaction'];
-	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
-	if (!$transaction) { return $flux; }
+// /**
+//  * Activer la souscription abonnee
+//  * @param $flux
+//  * @return mixed
+//  */
+// function campagnodon_bank_abos_activer_abonnement($flux) {
+// 	if ($flux['data']) {
+// 		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
+// 		return $flux;
+// 	}
+// 	$id_transaction = $flux['args']['id_transaction'];
+// 	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
+// 	if (!$transaction) { return $flux; }
 
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+// 	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
 
-	// Arguments fournis dans $flux:
-	// 'id_transaction' => $id_transaction,
-	// 'abo_uid' => $abo_uid,
-	// 'mode_paiement' => $mode_paiement,
-	// 'validite' => $validite,
-	// 'id_auteur' => $id_auteur,
-	// Doit retourner: id_abonnement
-	// TODO.
-	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
-}
-
-
-/**
- * preparer_echeance: on doit créer la transaction Campagnodon qui va accueillir une nouvelle mensualité.
- *
- * @param array
- * @return bool|int id_transaction L'id de la transaction spip bank créée.
- */
-function campagnodon_bank_abos_preparer_echeance($flux) {
-	if ($flux['data']) {
-		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
-		return $flux;
-	}
-
-	// Note: ici $flux['args']['id'] est de la forme uid:xxx !
-	$abo_uid = $flux['args']['id'];
-
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
-
-	// On doit commencer par chercher la transaction spip_bank originelle, puis on regarde si ça concerne campagnodon.
-	$transaction_parent = _campagnodon_get_bank_transaction_by_abo($abo_uid, __FUNCTION__);
-	if (!$transaction_parent) {
-		return $flux;
-	}
-
-	$campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_transaction=' . intval($transaction_parent['id_transaction']));
-	if (!$campagnodon_transaction_parent) {
-		spip_log(__FUNCTION__.': Transaction Campagnodon parent introuvable pour id_transaction='.$transaction_parent['id_transaction'], 'campagnodon'._LOG_ERREUR);
-		return $flux;
-	}
-
-	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction'];
-
-	$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
-		'id_campagnodon_campagne' => $campagnodon_transaction_parent['id_campagnodon_campagne'],
-		'type_transaction' => 'don_mensuel_echeance',
-		'mode' => $campagnodon_transaction_parent['mode'],
-		'id_campagnodon_transaction_parent' => $id_campagnodon_transaction_parent
-	]);
-	if (!$id_campagnodon_transaction) {
-		spip_log(__FUNCTION__.': Impossible de créer la transaction campagnodon', 'campagnodon'._LOG_ERREUR);
-		return $flux;
-	}
-
-	$inserer_transaction = charger_fonction('inserer_transaction', 'bank');
-	$transaction_options = [
-		// 'auteur' => _request('email'), // FIXME: peut-on se passer de cette info ?
-		'parrain' => 'campagnodon',
-		'tracking_id' => $id_campagnodon_transaction,
-		'force' => true
-	];
-	$montant_total = $transaction_parent['montant']; // Le montant des échéances est le même que la transaction initiale.
-  $id_transaction = $inserer_transaction($montant_total, $transaction_options);
-	if (!$id_transaction) {
-		spip_log(__FUNCTION__.': Impossible de créer la transaction SPIP Bank', 'campagnodon'._LOG_ERREUR);
-		return $flux;
-	}
-
-	include_spip('inc/campagnodon.utils');
-	$transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction, $id_campagnodon_transaction_parent);
-	if (false === sql_updateq(
-		'spip_campagnodon_transactions',
-		[
-			'id_transaction' => $id_transaction,
-			'transaction_distant' => $transaction_idx_distant
-		],
-		'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
-	)) {
-		spip_log(__FUNCTION__.': Erreur à la modification de la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
-		return $flux;
-	}
-
-	// Note: on ne créé pas tout de suite la transaction sur le système distant.
-	// Car en panne de celui-ci, on pourrait rater des choses.
-	// On va plutôt marquer la ligne à synchroniser, et c'est la synchro qui détectera qu'il faut créé l'échéance.
-	include_spip('inc/campagnodon.utils');
-	campagnodon_queue_synchronisation($id_campagnodon_transaction);
-
-	$flux['data'] = $id_transaction;
-	return $flux;
-}
+// 	// Arguments fournis dans $flux:
+// 	// 'id_transaction' => $id_transaction,
+// 	// 'abo_uid' => $abo_uid,
+// 	// 'mode_paiement' => $mode_paiement,
+// 	// 'validite' => $validite,
+// 	// 'id_auteur' => $id_auteur,
+// 	// Doit retourner: id_abonnement
+// 	// TODO.
+// 	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
+// }
 
 
-/**
- * renouveler_abonnement: Cette fonction est appelée lorsque le plugin est notifié d’un paiement récurrent réussi.
- *
- * @param array
- * @return array
- */
-function campagnodon_bank_abos_renouveler_abonnement($flux) {
-	if ($flux['data']) {
-		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
-		return $flux;
-	}
+// /**
+//  * preparer_echeance: on doit créer la transaction Campagnodon qui va accueillir une nouvelle mensualité.
+//  *
+//  * @param array
+//  * @return bool|int id_transaction L'id de la transaction spip bank créée.
+//  */
+// function campagnodon_bank_abos_preparer_echeance($flux) {
+// 	if ($flux['data']) {
+// 		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
+// 		return $flux;
+// 	}
+
+// 	// Note: ici $flux['args']['id'] est de la forme uid:xxx !
+// 	$abo_uid = $flux['args']['id'];
+
+// 	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+
+// 	// On doit commencer par chercher la transaction spip_bank originelle, puis on regarde si ça concerne campagnodon.
+// 	$transaction_parent = _campagnodon_get_bank_transaction_by_abo($abo_uid, __FUNCTION__);
+// 	if (!$transaction_parent) {
+// 		return $flux;
+// 	}
+
+// 	$campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_transaction=' . intval($transaction_parent['id_transaction']));
+// 	if (!$campagnodon_transaction_parent) {
+// 		spip_log(__FUNCTION__.': Transaction Campagnodon parent introuvable pour id_transaction='.$transaction_parent['id_transaction'], 'campagnodon'._LOG_ERREUR);
+// 		return $flux;
+// 	}
+
+// 	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction'];
+
+// 	$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
+// 		'id_campagnodon_campagne' => $campagnodon_transaction_parent['id_campagnodon_campagne'],
+// 		'type_transaction' => 'don_mensuel_echeance',
+// 		'mode' => $campagnodon_transaction_parent['mode'],
+// 		'id_campagnodon_transaction_parent' => $id_campagnodon_transaction_parent
+// 	]);
+// 	if (!$id_campagnodon_transaction) {
+// 		spip_log(__FUNCTION__.': Impossible de créer la transaction campagnodon', 'campagnodon'._LOG_ERREUR);
+// 		return $flux;
+// 	}
+
+// 	$inserer_transaction = charger_fonction('inserer_transaction', 'bank');
+// 	$transaction_options = [
+// 		// 'auteur' => _request('email'), // FIXME: peut-on se passer de cette info ?
+// 		'parrain' => 'campagnodon',
+// 		'tracking_id' => $id_campagnodon_transaction,
+// 		'force' => true
+// 	];
+// 	$montant_total = $transaction_parent['montant']; // Le montant des échéances est le même que la transaction initiale.
+//   $id_transaction = $inserer_transaction($montant_total, $transaction_options);
+// 	if (!$id_transaction) {
+// 		spip_log(__FUNCTION__.': Impossible de créer la transaction SPIP Bank', 'campagnodon'._LOG_ERREUR);
+// 		return $flux;
+// 	}
+
+// 	include_spip('inc/campagnodon.utils');
+// 	$transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction, $id_campagnodon_transaction_parent);
+// 	if (false === sql_updateq(
+// 		'spip_campagnodon_transactions',
+// 		[
+// 			'id_transaction' => $id_transaction,
+// 			'transaction_distant' => $transaction_idx_distant
+// 		],
+// 		'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
+// 	)) {
+// 		spip_log(__FUNCTION__.': Erreur à la modification de la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
+// 		return $flux;
+// 	}
+
+// 	// Note: on ne créé pas tout de suite la transaction sur le système distant.
+// 	// Car en panne de celui-ci, on pourrait rater des choses.
+// 	// On va plutôt marquer la ligne à synchroniser, et c'est la synchro qui détectera qu'il faut créé l'échéance.
+// 	include_spip('inc/campagnodon.utils');
+// 	campagnodon_queue_synchronisation($id_campagnodon_transaction);
+
+// 	$flux['data'] = $id_transaction;
+// 	return $flux;
+// }
 
 
-	$id_transaction = $flux['args']['id_transaction'];
-	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
-	if (!$transaction) { return $flux; }
+// /**
+//  * renouveler_abonnement: Cette fonction est appelée lorsque le plugin est notifié d’un paiement récurrent réussi.
+//  *
+//  * @param array
+//  * @return array
+//  */
+// function campagnodon_bank_abos_renouveler_abonnement($flux) {
+// 	if ($flux['data']) {
+// 		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
+// 		return $flux;
+// 	}
 
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
 
-	// TODO.
-	// Arguments recu dans $flux:
-	// 'id_transaction' => $id_transaction,
-	// 'abo_uid' => $abo_uid,
-	// 'mode_paiement' => $mode_paiement,
-	// 'validite' => $validite,
-	// Dois retourner: id_abonnement
-	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
-	return $flux;
-}
+// 	$id_transaction = $flux['args']['id_transaction'];
+// 	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
+// 	if (!$transaction) { return $flux; }
 
-/**
- * Prendre en charge la resiliation demandee par le client
- *
- * @param array $flux
- * @return array
- */
-function campagnodon_bank_abos_resilier($flux) {
-	if ($flux['data']) {
-		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
-		return $flux;
-	}
+// 	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
 
-	// FIXME: ici pas de id_transaction, mais id (qui doit être de la forme uid:, à vérifier)
-	// $id_transaction = $flux['args']['id_transaction'];
-	// $transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
-	// if (!$transaction) { return $flux; }
+// 	// TODO.
+// 	// Arguments recu dans $flux:
+// 	// 'id_transaction' => $id_transaction,
+// 	// 'abo_uid' => $abo_uid,
+// 	// 'mode_paiement' => $mode_paiement,
+// 	// 'validite' => $validite,
+// 	// Dois retourner: id_abonnement
+// 	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
+// 	return $flux;
+// }
 
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+// /**
+//  * Prendre en charge la resiliation demandee par le client
+//  *
+//  * @param array $flux
+//  * @return array
+//  */
+// function campagnodon_bank_abos_resilier($flux) {
+// 	if ($flux['data']) {
+// 		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
+// 		return $flux;
+// 	}
 
-	// Arguments recu dans $flux:
-	// $args = array(
-	// 	'id' => $id,
-	// 	'message' => $options['message'],
-	// 	'notify_bank' => $options['notify_bank'],
-	// 	'erreur' => $options['erreur'],
-	// );
-	// $now = date('Y-m-d H:i:s');
-	// if ($options['immediat']){
-	// 	$args['statut'] = 'resilie';
-	// 	$args['date_fin'] = $now;
-	// 	$args['date_echeance'] = $now;
-	// } else {
-	// 	$args['date_fin'] = "date_echeance";
-	// }
+// 	// FIXME: ici pas de id_transaction, mais id (qui doit être de la forme uid:, à vérifier)
+// 	// $id_transaction = $flux['args']['id_transaction'];
+// 	// $transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
+// 	// if (!$transaction) { return $flux; }
 
-	// Dois retourner: $ok.
-	// TODO: on doit probablement appeler abos_resilier_notify_bank le cas échéant.
-	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
-	return $flux;
-}
+// 	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+
+// 	// Arguments recu dans $flux:
+// 	// $args = array(
+// 	// 	'id' => $id,
+// 	// 	'message' => $options['message'],
+// 	// 	'notify_bank' => $options['notify_bank'],
+// 	// 	'erreur' => $options['erreur'],
+// 	// );
+// 	// $now = date('Y-m-d H:i:s');
+// 	// if ($options['immediat']){
+// 	// 	$args['statut'] = 'resilie';
+// 	// 	$args['date_fin'] = $now;
+// 	// 	$args['date_echeance'] = $now;
+// 	// } else {
+// 	// 	$args['date_fin'] = "date_echeance";
+// 	// }
+
+// 	// Dois retourner: $ok.
+// 	// TODO: on doit probablement appeler abos_resilier_notify_bank le cas échéant.
+// 	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
+// 	return $flux;
+// }
