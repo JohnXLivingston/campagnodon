@@ -63,6 +63,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
     'date' => 'date_transaction',
     'field' => [
       'id_campagnodon_transaction' => 'bigint(21) NOT NULL',
+      'id_campagnodon_transaction_parent' => 'bigint(21) DEFAULT NULL', // Id de la campagnodon_transaction parente le cas échéant (pour les paiements récurrents)
       'id_transaction' => 'bigint(21) DEFAULT NULL', // Id de la transaction SPIP Bank
       'date_transaction' => 'datetime NOT NULL DEFAULT NOW()',
       'type_transaction' => "varchar(20) NOT NULL DEFAULT 'don'", // 'don', 'adhesion'
@@ -79,7 +80,8 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'KEY campagnodon_statut_synchronisation' => 'statut_synchronisation',
       'KEY campagnodon_transaction_distant' => 'transaction_distant',
       'KEY campagnodon_statut_distant' => 'statut_distant',
-      'UNIQUE campagnodon_id_transaction' => 'id_transaction'
+      'UNIQUE campagnodon_id_transaction' => 'id_transaction',
+      'KEY campagnodon_id_campagnodon_transaction_parent' => 'id_campagnodon_transaction_parent'
     ],
     'champs_editables' => [],
     'rechercher_champs' => [

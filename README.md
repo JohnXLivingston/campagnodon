@@ -133,7 +133,9 @@ define('_CAMPAGNODON_MODES', array(
                 'type_contribution' => array(
                         'don' => 'Don', // «identifiant campagnodon» => «nom du financial type CiviCRM» (ou ID numérique pour ne pas être dépendant d'un changement de libellé)
                         'adhesion' => 'Cotisation des membres',
-                        'adhesion_magazine' => '5'
+                        'adhesion_magazine' => '5',
+                        'don_mensuel' => '6',
+                        'don_mensuel_echeance' => '6'
                 ),
                 // `type_paiement`: la correspondance entre le «mode» de SPIP Bank, et le mode de paiement coté CiviCRM
                 // S'il manque la valeur courante, elle sera envoyée telle qu'elle à CiviCRM, qui va probablement rejeter la requête.

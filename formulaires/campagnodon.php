@@ -540,7 +540,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     if ($type === 'don') {
       $contributions = [
         [
-          'financial_type' => traduit_financial_type($mode_options, 'don'),
+          'financial_type' => traduit_financial_type($mode_options, $montant_est_recurrent ? 'don_mensuel' : 'don'),
           'amount' => $montant,
           'currency' => 'EUR',
           'source' => $source
@@ -593,6 +593,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       case 'don': $distant_operation_type = 'donation'; break;
       case 'adhesion': $distant_operation_type = 'membership'; break;
       case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
+      // NB: et on a ce cas, qui est initié ailleurs dans le code
+      // case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_echeance'; break;
     }
 
     $params = array(

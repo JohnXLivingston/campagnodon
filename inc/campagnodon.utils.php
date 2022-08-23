@@ -5,7 +5,7 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
 /**
  * Cette fonction retourne l'identifiant à placer dans le champs transaction_idx de CiviCRM.
  */
-function get_transaction_idx_distant($mode_options, $id_campagnodon_transaction) {
+function get_transaction_idx_distant($mode_options, $id_campagnodon_transaction, $id_campagnodon_transaction_parent=null) {
   if (
     is_array($mode_options)
     && array_key_exists('prefix', $mode_options)
@@ -14,6 +14,9 @@ function get_transaction_idx_distant($mode_options, $id_campagnodon_transaction)
       $prefix = $mode_options['prefix'];
   } else {
     $prefix = 'campagnodon';
+  }
+  if ($id_campagnodon_transaction_parent) {
+    $prefix.= '/' . $id_campagnodon_transaction_parent;
   }
   return $prefix . '/' . $id_campagnodon_transaction;
 }
