@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+* Fix typo dans une phrase
+
 ## 0.1.0
 
 * Dons récurrents WIP (développement mis en pause).
