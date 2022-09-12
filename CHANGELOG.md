@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+* Fix régression montant libre sur les dons.
+
 ## 0.1.1
 
 * Fix typo dans une phrase

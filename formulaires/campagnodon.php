@@ -169,15 +169,18 @@ function get_form_montant($config_montants) {
       $suffix = '_recurrent';
     }
   }
+  spip_log('get_form_montant: le suffixe est "'.$suffix.'"', 'campagnodon'._LOG_DEBUG);
   $v_montant = _request('montant'.$suffix);
   if ($v_montant === 'libre') {
-    if (!$config_montants['libre']) {
+    if (!$config_montants['libre'.$suffix]) {
+      spip_log('Le champs est sur libre, mais la fonction n\'est pas active.', 'campagnodon'._LOG_DEBUG);
       return null;
     }
-    return trim(_request('montant_libre'.$suffix));
-  }
-  if (!array_key_exists($v_montant, $config_montants['propositions'.$suffix])) {
-    return null;
+    $v_montant = trim(_request('montant_libre'.$suffix));
+  } else {
+    if (!array_key_exists($v_montant, $config_montants['propositions'.$suffix])) {
+      return null;
+    }
   }
   return [$v_montant, $suffix !== ''];
 }
