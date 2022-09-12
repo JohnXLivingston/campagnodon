@@ -27,7 +27,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'adhesion_explication' => 'Pour une adhésion de _MONTANT_ADHESION_€, cela ne vous coûte réellement que _COUT_ADHESION_€ après déduction fiscale.',
   'adhesion_magazine_explication' =>
     "La montant de l'adhésion comprend l'abonnement de _MAGAZINE_PRIX_€ au magazine. "
-    ."Sur les _RESTANT_ADHESION_€ restant, 66% sont déductible des impôts, dans la limite de 20% de vos revenus imposables. "
+    ."Sur les _RESTANT_ADHESION_€ restants, 66% sont déductibles des impôts, dans la limite de 20% de vos revenus imposables. "
     ."Ainsi, votre adhésion ne vous coûtera que _COUT_ADHESION_€ après déduction fiscale.",
   'recu_fiscal_champs_supplementaires' => 'Ces informations sont nécessaires en vue de l\'établissement du reçu qui vous sera envoyé permettant une déduction fiscale',
   'valider' => 'Je valide et je procède au don',

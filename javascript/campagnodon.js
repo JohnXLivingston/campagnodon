@@ -195,14 +195,14 @@ function campagnodon_formulaire_adhesion_explication($form) {
       adhesion_magazine_prix = 0;
     }
     if (montant_adhesion !== undefined && !isNaN(montant_adhesion)) {
-      let cout_adhesion = Math.round((montant_adhesion - adhesion_magazine_prix) * .34);
-      let restant_adhesion = montant_adhesion - cout_adhesion;
+      let adhesion_sans_magazine = montant_adhesion - adhesion_magazine_prix;
+      let cout_adhesion = Math.round(adhesion_magazine_prix + (adhesion_sans_magazine * 0.34));
 
       let text = explication.attr('adhesion_explication');
       text = text.replace(/_MONTANT_ADHESION_/g, montant_adhesion);
       text = text.replace(/_COUT_ADHESION_/g, cout_adhesion);
       text = text.replace(/_MAGAZINE_PRIX_/g, adhesion_magazine_prix);
-      text = text.replace(/_RESTANT_ADHESION_/g, restant_adhesion);
+      text = text.replace(/_RESTANT_ADHESION_/g, adhesion_sans_magazine);
       explication.text(text);
       explication.show();
     } else {
