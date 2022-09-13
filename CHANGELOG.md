@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+* Fix dépendance manquante à lesscss.
+
 ## 0.1.2
 
 * Fix régression montant libre sur les dons.
