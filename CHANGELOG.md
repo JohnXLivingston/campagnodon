@@ -1,9 +1,10 @@
 # Changelog
 
-## 0.1.2
+## 0.1.2 (Not released yet)
 
 * Fix régression montant libre sur les dons.
 * Fix calcul déduction des impôts, et grammaire du message.
+* Mise en forme de la page de paiement.
 
 ## 0.1.1
 
