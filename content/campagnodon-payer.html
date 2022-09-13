@@ -1,6 +1,6 @@
 <BOUCLE_payer(TRANSACTIONS){id_transaction}{transaction_hash}>
   <BOUCLE_campagnodon_transactions(CAMPAGNODON_TRANSACTIONS){id_transaction}>
-    <h1>
+    <h1 class="campagnodon_payer">
       [(#TYPE_TRANSACTION|switchcase{adhesion,<:campagnodon_form:titre_page_payer_adhesion:>,<:campagnodon_form:titre_page_payer_don:>})]
     </h1>
     <div class="campagnodon_payer_formulaire">
@@ -18,9 +18,13 @@
       .payer_mode {margin:1em 0;border-bottom: 1px solid #eee;}
       .payer_mode .boutons {margin-bottom: 1.5em;}
       .payer_mode .boutons>form,.payer_mode .boutons>form>div {display: inline}
+      .campagnodon_payer {
+        margin: 5px;
+      }
       .campagnodon_payer_formulaire {
         background-color: inherit;
         border: 1px dotted #000;
+        margin: 5px;
         padding: 10px;
       }
     </style>
