@@ -3,6 +3,7 @@
 ## 0.1.4 (Not Released Yet)
 
 * Fix libellé du bouton submit du formulaire d'adhésion.
+* Formulaire d'adhésion: on ne met qu'une phrase d'explication pour la déduction des impôts.
 
 ## 0.1.3
 

@@ -6,7 +6,10 @@
 function campagnodon_formulaire(formSelector) {
   const $form = $(formSelector);
 
-  $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => campagnodon_formulaire_adhesion_avec_don($form));
+  $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => {
+    campagnodon_formulaire_adhesion_avec_don($form);
+    campagnodon_formulaire_explications($form);
+  });
   $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form));
   campagnodon_formulaire_adhesion_avec_don($form, true);
   campagnodon_formulaire_recu_fiscal($form, true);
@@ -138,10 +141,10 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
 }
 
 /**
- * Cette fonction met à jour le texte explicatif sous le champ «don».
+ * Retourne le montant du don le cas échéant.
  * @param {jQuery} $form
  */
-function campagnodon_formulaire_recu_fiscal_explication($form) {
+function campagnodon_lire_montant_don($form) {
   let montant_est_libre = false;
   suffix = ''; // Suffix pour les noms de champs. Permet de gérer les montants pour les dons récurrents.
   if ($form.find('input[name=don_recurrent][value=1]').is(':checked')) {
@@ -166,8 +169,18 @@ function campagnodon_formulaire_recu_fiscal_explication($form) {
     }
   }
 
+  return montant;
+}
+
+/**
+ * Cette fonction met à jour le texte explicatif sous le champ «don».
+ * @param {jQuery} $form
+ */
+function campagnodon_formulaire_recu_fiscal_explication($form) {
+  const montant = campagnodon_lire_montant_don($form);
+
   const explication = $form.find('[recu_fiscal_explication]');
-  if (montant !== undefined && !isNaN(montant)) {
+  if (explication.length && montant !== undefined && !isNaN(montant)) {
     let text = explication.attr('recu_fiscal_explication');
     text = text.replace(/_MONTANT_/g, montant);
     text = text.replace(/_COUT_/g, Math.round(montant * .34));
@@ -195,7 +208,14 @@ function campagnodon_formulaire_adhesion_explication($form) {
       adhesion_magazine_prix = 0;
     }
     if (montant_adhesion !== undefined && !isNaN(montant_adhesion)) {
-      let adhesion_sans_magazine = montant_adhesion - adhesion_magazine_prix;
+      let montant_don = 0;
+      if ($form.find('input[type=checkbox][name=adhesion_avec_don]:checked').length) {
+        montant_don = campagnodon_lire_montant_don($form);
+        if (montant_don === undefined || isNaN(montant_don)) {
+          montant_don = 0;
+        }
+      }
+      let adhesion_sans_magazine = montant_adhesion - adhesion_magazine_prix + montant_don;
       let cout_adhesion = Math.round(adhesion_magazine_prix + (adhesion_sans_magazine * 0.34));
 
       let text = explication.attr('adhesion_explication');
