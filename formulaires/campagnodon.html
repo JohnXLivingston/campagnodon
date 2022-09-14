@@ -389,7 +389,12 @@
       </p>
 
       <p class="boutons">
-        <input type="submit" class="submit" value="<:campagnodon_form:valider:>" />
+        [(#ENV{_type}|=={adhesion}|non)
+          <input type="submit" class="submit" value="<:campagnodon_form:valider_don:>" />
+        ]
+        [(#ENV{_type}|=={adhesion}|oui)
+          <input type="submit" class="submit" value="<:campagnodon_form:valider_adhesion:>" />
+        ]
       </p>
     </form>
   </BOUCLE_editable>

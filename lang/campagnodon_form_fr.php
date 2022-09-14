@@ -30,7 +30,8 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
     ."Sur les _RESTANT_ADHESION_€ restants, 66% sont déductibles des impôts, dans la limite de 20% de vos revenus imposables. "
     ."Ainsi, votre adhésion ne vous coûtera que _COUT_ADHESION_€ après déduction fiscale.",
   'recu_fiscal_champs_supplementaires' => 'Ces informations sont nécessaires en vue de l\'établissement du reçu qui vous sera envoyé permettant une déduction fiscale',
-  'valider' => 'Je valide et je procède au don',
+  'valider_don' => 'Je valide et je procède au don',
+  'valider_adhesion' => 'Je valide et j\'adhère',
   'champ_obligatoire' => 'Champs obligatoires',
   'erreur_email_invalide' => 'Adresse email invalide',
   'erreur_civilite_invalide' => 'Civilité invalide',

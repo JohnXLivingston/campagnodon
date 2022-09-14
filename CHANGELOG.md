@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 (Not Released Yet)
+
+* Fix libellé du bouton submit du formulaire d'adhésion.
+
 ## 0.1.3
 
 * Fix dépendance manquante à lesscss.
