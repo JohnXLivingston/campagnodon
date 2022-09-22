@@ -66,11 +66,13 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'id_campagnodon_transaction_parent' => 'bigint(21) DEFAULT NULL', // Id de la campagnodon_transaction parente le cas échéant (pour les paiements récurrents)
       'id_transaction' => 'bigint(21) DEFAULT NULL', // Id de la transaction SPIP Bank
       'date_transaction' => 'datetime NOT NULL DEFAULT NOW()',
-      'type_transaction' => "varchar(20) NOT NULL DEFAULT 'don'", // 'don', 'adhesion'
+      'type_transaction' => "varchar(20) NOT NULL DEFAULT 'don'", // 'don', 'adhesion', 'don_mensuel'
+      'statut_recurrence' => "varchar(20) DEFAULT NULL", // Si c'est un don_mensuel, on a ici le statut de l'abonnement. Valeurs: 'attente', 'encours', 'termine'.
       'id_campagnodon_campagne' => 'bigint(21) DEFAULT NULL',
       'mode' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // Dans quel système externe est traité cette transaction. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'transaction_distant' => 'varchar(255) DEFAULT NULL', // L'ID de transaction qu'on renseigne dans CiviCRM. De la forme: campagnodon/123456789.
       'statut_distant' => 'varchar(255) DEFAULT NULL', // Dernier statut connu dans le système distant. Attention, peut ne pas être à jour en cas d'erreur de synchronisation.
+      'statut_recurrence_distant' => 'varchar(255) DEFAULT NULL', // Dernier statut récurrent connu dans le système distant. Attention, peut ne pas être à jour en cas d'erreur de synchronisation.
       'statut_synchronisation' => "varchar(20) NOT NULL DEFAULT 'jamais'", // Statut de la dernière synchronisation. 'ok', 'echec', 'attente', 'attente_rejoue'.
       'date_synchronisation' => 'datetime DEFAULT NULL', // Date de la dernière synchro (ou tentative de synchro).
       'maj' => 'TIMESTAMP'

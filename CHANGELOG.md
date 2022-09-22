@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0 (Not Released Yet)
+
+* Dons récurrents.
+
 ## 0.1.4
 
 * Fix libellé du bouton submit du formulaire d'adhésion.

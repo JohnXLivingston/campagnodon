@@ -1,12 +1,12 @@
 <paquet 
   prefix="campagnodon"
   categorie="communication"
-  version="0.1.4"
+  version="1.0.0"
   etat="test"
   compatibilite="[3.2.0;4.0.*]"
   logo="campagnodon.svg"
   documentation="https://code.globenet.org/attacfr/campagnodon"
-  schema="0.1.4"
+  schema="1.0.0"
 >
  
   <nom>Campagnodon</nom>
@@ -35,6 +35,11 @@
 	<pipeline nom="bank_traiter_remboursement" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="trig_bank_reglement_en_attente" inclure="campagnodon_pipelines.php"/>
   <pipeline nom="trig_bank_reglement_en_echec" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_decrire_echeance"  inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_activer_abonnement" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_preparer_echeance" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_renouveler_abonnement" inclure="campagnodon_pipelines.php"/>
+  <pipeline nom="bank_abos_resilier" inclure="campagnodon_pipelines.php"/>
 
   <menu
     nom="campagnodon_transactions"

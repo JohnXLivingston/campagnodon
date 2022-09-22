@@ -12,6 +12,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_statut_campagne' => 'Statut de la campagne',
   'label_balise' => 'Balise à insérer dans les articles',
   'label_statut' => 'Statut',
+  'label_statut_recurrence' => 'Statut récurrence',
   'label_montant' => 'Montant',
   'label_date_transaction' => 'Date',
   'label_type_transaction' => 'Type de transaction',

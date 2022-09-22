@@ -501,7 +501,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
       'id_campagnodon_campagne' => $id_campagne,
       'type_transaction' => $type_transaction,
-      'mode' => $campagne['origine']
+      'mode' => $campagne['origine'],
+      'statut_recurrence' => $montant_est_recurrent ? 'attente' : null
     ]);
     if (!($id_campagnodon_transaction > 0)) {
       throw new CampagnodonException("Erreur à la création de la transaction campagnodon.", "campagnodon:erreur_sauvegarde");
@@ -613,6 +614,9 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'optional_subscriptions' => array()
       // 'payment_method' => 'transfer' // FIXME: use the correct value
     );
+    if ($montant_est_recurrent) {
+      $params['is_recurring'] = true;
+    }
     if ($recu_fiscal || $adhesion_avec_don) {
       // FIXME: je n'ai pas réussi à faire marcher la phase de normalisation ci-dessous.
       // $date_naissance = _request('date_naissance');
@@ -662,7 +666,8 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       $resultat = $fonction_nouvelle_contribution($mode_options, $params);
       if(is_array($resultat) && array_key_exists('status', $resultat)) {
         sql_update('spip_campagnodon_transactions', array(
-          'statut_distant' => sql_quote($resultat['status'])
+          'statut_distant' => sql_quote($resultat['status']),
+          'statut_recurrence_distant' => sql_quote($resultat['statut_recurrence'])
         ), 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
       }
     } catch (Exception $e) {

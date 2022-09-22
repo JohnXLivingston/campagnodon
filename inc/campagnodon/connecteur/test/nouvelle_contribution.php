@@ -19,6 +19,7 @@ function inc_campagnodon_connecteur_test_nouvelle_contribution_dist($mode_option
     throw new Exception('Failed');
   }
   return array(
-    'status' => 'init'
+    'status' => 'init',
+    'statut_recurrence' => $params['is_recurring'] ? 'init' : null
   );
 }

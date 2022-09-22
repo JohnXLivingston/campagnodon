@@ -22,6 +22,7 @@ function inc_campagnodon_connecteur_civicrm_nouvelle_contribution_dist($mode_opt
     throw new Exception("Erreur CiviCRM, je ne trouve pas de ligne dans le résultat.");
   }
   return array(
-    'status' => $line->status
+    'status' => $line->status,
+    'statut_recurrence' => property_exists($line, 'recurring_status') ? $line->recurring_status : null
   );
 }

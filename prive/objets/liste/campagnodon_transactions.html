@@ -13,6 +13,7 @@
 			<th class="id" scope="col">[(#TRI{id_campagnodon_transaction,<:info_numero_abbreviation:>,ajax})]</th>
 			<th class="date_transaction" scope="col">[(#TRI{date_transaction,<:campagnodon:label_date_transaction:>,ajax})]</th>
 			<th class="type_transaction" scope="col"><:campagnodon:label_type_transaction:></th>
+			<th class='statut' scope='col'>[(#TRI{statut_recurrence,<:campagnodon:label_statut_recurrence:>,ajax})]</th>
 			<th class="id_transaction" scope="col">[(#TRI{id_transaction,<:campagnodon:label_transaction:>})]</th>
 			<th class='statut' scope='col'>[(#TRI{statut,<:bank:label_tri_statut:>,ajax})]</th>
 			<th class='transaction_mode' scope='col'><:bank:label_tri_mode:></th>
@@ -43,6 +44,7 @@
 			</td>
 			<td class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</td>
       <td class="type_transaction">#TYPE_TRANSACTION</td>
+			<td class="statut_recurrence">[(#STATUT_RECURRENCE)]</td>
 			<td class="id_transaction" scope="col"><a href="[(#ID_TRANSACTION|generer_url_entite{transaction})]"
 				title="<:info_numero_abbreviation|attribut_html:> #ID_TRANSACTION">#ID_TRANSACTION</a>
 			</td>
@@ -67,7 +69,7 @@
 				]
 			</td>
 			<td class="statut_distant">
-				[(#STATUT_DISTANT)]
+				[(#STATUT_DISTANT)][/(#STATUT_RECURRENCE_DISTANT)]
 				<div class="actions">
 					<BOUCLE_convertir(DATA){source table, #ID_CAMPAGNODON_TRANSACTION|campagnodon_peut_convertir_en}>
 						[(#AUTORISER{campagnodon_synchroniser,campagnodon_transactions}|oui)

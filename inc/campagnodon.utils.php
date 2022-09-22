@@ -67,13 +67,16 @@ function _traduit_type_paiement($mode_options, $type) {
   return $type;
 }
 
-function campagnodon_maj_sync_statut($id_campagnodon_transaction, $statut_synchronisation, $statut_distant = null) {
+function campagnodon_maj_sync_statut($id_campagnodon_transaction, $statut_synchronisation, $statut_distant = null, $statut_recurrence_distant = null) {
   $params = [
     'statut_synchronisation' => sql_quote($statut_synchronisation),
     'date_synchronisation' => 'NOW()'
   ];
   if (null !== $statut_distant) {
     $params['statut_distant'] = sql_quote($statut_distant);
+  }
+  if (null !== $statut_recurrence_distant) {
+    $params['statut_recurrence_distant'] = sql_quote($statut_recurrence_distant);
   }
   sql_update('spip_campagnodon_transactions', $params, 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
 }
@@ -179,14 +182,16 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 
   $failed = false;
   $nouveau_statut_distant = null;
+  $nouveau_statut_recurrence_distant = null;
   try {
-    $resultat = $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $mode_paiement_distant);
+    $resultat = $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $mode_paiement_distant, $campagnodon_transaction['statut_recurrence']);
     if (false === $resultat) {
       spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
       $failed = true;
     } else {
       spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', le connecteur a réussi à mettre à jour.', 'campagnodon'._LOG_DEBUG);
-      $nouveau_statut_distant = is_array($resultat) && array_key_exists('status', $resultat) ? $resultat['status'] : null;
+      $nouveau_statut_distant = is_array($resultat) && array_key_exists('statut', $resultat) ? $resultat['statut'] : null;
+      $nouveau_statut_recurrence_distant = is_array($resultat) && array_key_exists('statut_recurrence', $resultat) ? $resultat['statut_recurrence'] : null;
     }
   } catch (Exception $e) {
     spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.": ".$e->getMessage(), "campagnodon"._LOG_ERREUR);
@@ -199,7 +204,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   }
 
   spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', tout est ok.', 'campagnodon'._LOG_DEBUG);
-  campagnodon_maj_sync_statut($id_campagnodon_transaction, 'ok', $nouveau_statut_distant ?? '???');
+  campagnodon_maj_sync_statut($id_campagnodon_transaction, 'ok', $nouveau_statut_distant ?? '???', $nouveau_statut_recurrence_distant);
   return 1;
 }
 
