@@ -123,22 +123,78 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
  * @param $id_campagnodon_transaction
  */
 function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_tentatives = 0) {
-  spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.'.', 'campagnodon'._LOG_DEBUG);
+  spip_log(__FUNCTION__.' Appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.'.', 'campagnodon'._LOG_DEBUG);
 
   $campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
   if (!$campagnodon_transaction) {
-    spip_log("spip_campagnodon_transactions introuvable: ".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+    spip_log(__FUNCTION__." spip_campagnodon_transactions introuvable: ".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
     return 0;
   }
   $transaction = sql_fetsel('*', 'spip_transactions', 'id_transaction=' . intval($campagnodon_transaction['id_transaction']));
   if (!$transaction) {
-    spip_log("Transaction introuvable pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+    spip_log(__FUNCTION__." Transaction introuvable pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
     return 0;
   }
 
   $mode = $campagnodon_transaction['mode'];
   $mode_options = campagnodon_mode_options($mode);
+
+  if ($campagnodon_transaction['type_transaction'] === 'don_mensuel_echeance') {
+    if ($campagnodon_transaction['statut_distant'] === null) {
+      spip_log(
+        __FUNCTION__.' La transaction campagnodon '.$id_campagnodon_transaction
+        .' est une echeance de don mensuel, et n\'a pas encore été synchronisée avec le système distant.'
+        .' Il est temps d\'appeler le connecteur garantir_echeance_existe pour la créer si nécessaire.',
+        'campagnodon'._LOG_DEBUG
+      );
+      // NB: si jamais on a des exécutions parallèles de cette fonction pour une même transaction,
+      // on compte sur le système distant pour gérer
+      // (et éventuellement échouer l'une des execution avec une erreur de type «duplicate key»).
+      $fonction_garantir_echeance_existe = campagnodon_fonction_connecteur($mode, 'garantir_echeance_existe');
+      if (!$fonction_garantir_echeance_existe) {
+        spip_log(__FUNCTION__.' Campagnodon mal configuré, impossible de trouver le connecteur garantir_echeance_existe pour le mode: '.$mode, "campagnodon"._LOG_ERREUR);
+        campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+        return 0;
+      }
+
+      if (!$campagnodon_transaction['id_campagnodon_transaction_parent']) {
+        spip_log(__FUNCTION.' La transaction campagnodon '.$id_campagnodon_transaction.' est une echeance mensuelle et n\'a pas d\'ID de parent, ce n\'est pas normal.', "campagnodon"._LOG_ERREUR);
+        campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+        return 0;
+      }
+
+      $campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($campagnodon_transaction['id_campagnodon_transaction_parent']));
+      if (!$campagnodon_transaction_parent) {
+        spip_log(__FUNCTION__." spip_campagnodon_transactions parent introuvable: ".$campagnodon_transaction['id_campagnodon_transaction_parent'], "campagnodon"._LOG_ERREUR);
+        return 0;
+      }
+
+      try {
+        $resultat = $fonction_garantir_echeance_existe($mode_options, $campagnodon_transaction_parent['transaction_distant'], $campagnodon_transaction['transaction_distant']);
+        if (false === $resultat) {
+          spip_log(
+            __FUNCTION__." Il semblerait que l\'appel au connecteur garantir_echeance_existe a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction
+            . ', il faut reprogrammer la synchronisation. '
+            . 'NB: Si l\'erreur est de type «duplicate key», il se peut que ce soit dû à des executions parallèles, et Campagnodon devrait retomber sur ses pieds.',
+            "campagnodon"._LOG_ERREUR
+          );
+          campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+          return 0;
+        }
+      } catch (Exception $e) {
+        spip_log(
+          __FUNCTION__
+          . " Il semblerait que la garantir_echeance_existe ait échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction
+          . '. NB: Si l\'erreur est de type «duplicate key», il se peut que ce soit dû à des executions parallèles, et Campagnodon devrait retomber sur ses pieds.'
+          . " L\'erreur: ".$e->getMessage(),
+          "campagnodon"._LOG_ERREUR
+        );
+        campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+        return 0;
+      }
+    }
+  }
 
   $statut = $transaction['statut'];
   $statut_distant = null;
@@ -156,7 +212,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   } else if (strncmp($statut, 'rembourse', 8) == 0) {
     $statut_distant = 'rembourse';
   } else {
-    spip_log("Je ne sais pas synchroniser le statut '".$statut."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+    spip_log(__FUNCTION__." Je ne sais pas synchroniser le statut '".$statut."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
     return 0;
   }
@@ -168,14 +224,14 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   } elseif (preg_match('/^([^\/]*)/', $mode_paiement, $matches)) {
     $mode_paiement_distant = _traduit_type_paiement($mode_options, $matches[1]);
   } else {
-    spip_log("Je ne sais pas synchroniser le mode '".$mode_paiement."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+    spip_log(__FUNCTION__." Je ne sais pas synchroniser le mode '".$mode_paiement."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
     return 0;
   }
 
   $fonction_maj_statut = campagnodon_fonction_connecteur($mode, 'maj_statut');
   if (!$fonction_maj_statut) {
-    spip_log('Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '.$mode, "campagnodon"._LOG_ERREUR);
+    spip_log(__FUNCTION__.' Campagnodon mal configuré, impossible de trouver le connecteur maj_statut pour le mode: '.$mode, "campagnodon"._LOG_ERREUR);
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
     return 0;
   }
@@ -186,15 +242,15 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   try {
     $resultat = $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $mode_paiement_distant, $campagnodon_transaction['statut_recurrence']);
     if (false === $resultat) {
-      spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+      spip_log(__FUNCTION__." Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
       $failed = true;
     } else {
-      spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', le connecteur a réussi à mettre à jour.', 'campagnodon'._LOG_DEBUG);
+      spip_log(__FUNCTION__.' Appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', le connecteur a réussi à mettre à jour.', 'campagnodon'._LOG_DEBUG);
       $nouveau_statut_distant = is_array($resultat) && array_key_exists('statut', $resultat) ? $resultat['statut'] : null;
       $nouveau_statut_recurrence_distant = is_array($resultat) && array_key_exists('statut_recurrence', $resultat) ? $resultat['statut_recurrence'] : null;
     }
   } catch (Exception $e) {
-    spip_log("Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.": ".$e->getMessage(), "campagnodon"._LOG_ERREUR);
+    spip_log(__FUNCTION__." Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction.": ".$e->getMessage(), "campagnodon"._LOG_ERREUR);
     $failed = true;
   }
 
@@ -203,7 +259,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     return 0;
   }
 
-  spip_log('campagnodon_synchroniser_transaction: appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', tout est ok.', 'campagnodon'._LOG_DEBUG);
+  spip_log(__FUNCTION__. ' Appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', tout est ok.', 'campagnodon'._LOG_DEBUG);
   campagnodon_maj_sync_statut($id_campagnodon_transaction, 'ok', $nouveau_statut_distant ?? '???', $nouveau_statut_recurrence_distant);
   return 1;
 }

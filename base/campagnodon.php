@@ -141,6 +141,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
         'id_campagnodon_testdata' => 'bigint(21) NOT NULL',
         'idx' => 'varchar(255) DEFAULT NULL',
         'statut' => "varchar(20) NOT NULL DEFAULT 'init'",
+        'statut_recurrence' => "varchar(20) DEFAULT NULL",
         'mode_paiement' => 'varchar(20) DEFAULT NULL',
         'data' => 'text',
         'date' => 'datetime NOT NULL DEFAULT NOW()',
