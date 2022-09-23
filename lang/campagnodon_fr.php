@@ -25,6 +25,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_statut_distant' => 'Statut distant',
   'bouton_synchroniser' => 'Synchroniser',
   'bouton_declencher_mensualite' => '/!\\ Déclencher une mensualité /!\\',
+  'bouton_declencher_mensualite_confirmation' => 'Êtes-vous sûr de vouloir déclencher une mensualité pour cette transaction ?',
   'bouton_convertir' => 'Convertir',
   'bouton_convertir_confirmation' => 'Êtes-vous sûr de vouloir convertir cette transaction ?',
   'label_filtre_statut_synchronisation_' => 'Toutes',
