@@ -57,6 +57,9 @@ function autoriser_campagnodon_declencher_mensualite_dist($faire, $type, $id, $q
 		if ($campagnodon_transaction['id_campagnodon_transaction_parent']) {
 			return false;
 		}
+		if ($campagnodon_transaction['statut_recurrence'] !== 'encours') {
+			return false;
+		}
 	}
 	return autoriser('webmestre');
 }
