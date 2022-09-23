@@ -19,6 +19,10 @@
       <td><div class="type_transaction">[(#TYPE_TRANSACTION)]</div></td>
     </tr>
     <tr>
+      <td><:campagnodon:label_statut_recurrence:></td>
+      <td><div class="statut_recurrence">[(#STATUT_RECURRENCE)]</div></td>
+    </tr>
+    <tr>
       <td><:campagnodon:label_transaction:></td>
       <td><div class="">
         <BOUCLE_transaction(TRANSACTIONS){id_transaction}>
@@ -55,7 +59,7 @@
     <tr>
       <td><:campagnodon:label_statut_distant:></td>
       <td>
-        <div class="statut_distant">[(#STATUT_DISTANT)]</div>
+        <div class="statut_distant">[(#STATUT_DISTANT)][/(#STATUT_RECURRENCE_DISTANT)]</div>
         <div class="actions">
 					<BOUCLE_convertir(DATA){source table, #ID_CAMPAGNODON_TRANSACTION|campagnodon_peut_convertir_en}>
 						[(#AUTORISER{campagnodon_synchroniser,campagnodon_transactions}|oui)
