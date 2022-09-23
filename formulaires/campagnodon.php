@@ -502,7 +502,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       'id_campagnodon_campagne' => $id_campagne,
       'type_transaction' => $type_transaction,
       'mode' => $campagne['origine'],
-      'statut_recurrence' => $montant_est_recurrent ? 'attente' : null
+      'statut_recurrence' => $montant_est_recurrent ? 'initialisation' : null
     ]);
     if (!($id_campagnodon_transaction > 0)) {
       throw new CampagnodonException("Erreur à la création de la transaction campagnodon.", "campagnodon:erreur_sauvegarde");

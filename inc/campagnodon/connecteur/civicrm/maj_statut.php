@@ -34,7 +34,8 @@ function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx,
   $statut_recurrence_distant = null;
   if ($statut_recurrence) {
     switch($statut_recurrence) {
-      case 'attente': $statut_recurrence_distant = 'init'; break;
+      case 'initialisation': $statut_recurrence_distant = 'init'; break;
+      case 'attente': $statut_recurrence_distant = 'waiting'; break;
       case 'encours': $statut_recurrence_distant = 'ongoing'; break;
       case 'termine': $statut_recurrence_distant = 'ended'; break;
       default:
