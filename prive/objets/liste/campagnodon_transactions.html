@@ -45,8 +45,12 @@
 			<td class="date_transaction">[(#DATE_TRANSACTION|affdate{Y-m-d H:i:s})]</td>
       <td class="type_transaction">#TYPE_TRANSACTION</td>
 			<td class="statut_recurrence">[(#STATUT_RECURRENCE)]</td>
-			<td class="id_transaction" scope="col"><a href="[(#ID_TRANSACTION|generer_url_entite{transaction})]"
-				title="<:info_numero_abbreviation|attribut_html:> #ID_TRANSACTION">#ID_TRANSACTION</a>
+			<td class="id_transaction" scope="col">
+				<a href="[(#ID_TRANSACTION|generer_url_entite{transaction})]"
+					title="<:info_numero_abbreviation|attribut_html:> #ID_TRANSACTION">
+					#ID_TRANSACTION
+				</a>
+				[<br>(#ABO_UID)]
 			</td>
 			<td class="statut">[(#STATUT|match{echec|ok|rembourse}|et{#MESSAGE|trim|strlen}|?{[<abbr title="[(#MESSAGE|attribut_html)[ - (#ERREUR|attribut_html)]]">(#STATUT)</abbr>],#STATUT})]</td>
 			<td class="transaction_mode">[(#TRANSACTION_MODE|bank_afficher_mode)]</td>

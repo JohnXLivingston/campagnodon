@@ -33,6 +33,7 @@
             [(#ID_TRANSACTION)]
           </a>
           <br>
+          [(#ABO_UID)<br>]
           [(#STATUT|match{echec|ok|rembourse}|et{#MESSAGE|trim|strlen}|?{[<abbr title="[(#MESSAGE|attribut_html)[ - (#ERREUR|attribut_html)]]">(#STATUT)</abbr>],#STATUT})]
           <br>
           [(#REM) Il faudrait remplacer affiche_monnaie par bank_affiche_montant quand SPIP Bank sera à jour chez Attac. ]
