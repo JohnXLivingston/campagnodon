@@ -250,6 +250,8 @@ function campagnodon_bank_abos_decrire_echeance($flux){
 
 /**
  * Activer la souscription abonnee
+ * Attention, cette fonction peut être appelée 2 fois en cas d'encaissement différé,
+ * une fois «en attente de paiement», une fois «payée».
  * @param $flux
  * @return mixed
  */
@@ -262,8 +264,13 @@ function campagnodon_bank_abos_activer_abonnement($flux) {
 	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
 	if (!$transaction) { return $flux; }
 
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
 	$id_campagnodon_transaction = $transaction['tracking_id'];
+	spip_log(__FUNCTION__.': campagnodon doit gérer la transaction='.$id_transaction.', transaction campagnodon=' . $id_campagnodon_transaction, 'campagnodon'._LOG_DEBUG);
+
+	if (strncmp($transaction['statut'], 'ok', 2) != 0) {
+		spip_log(__FUNCTION__.': la transaction campagnodon '.$id_campagnodon_transaction.' n\'est pas encore en statut ok, je n\'active pas encore', 'campagnodon'._LOG_DEBUG);
+		return $flux;
+	}
 
 	// Arguments fournis dans $flux:
 	// 'id_transaction' => $id_transaction,
@@ -273,6 +280,7 @@ function campagnodon_bank_abos_activer_abonnement($flux) {
 	// 'id_auteur' => $id_auteur,
 	// Doit retourner: id_abonnement (qui n'a pas l'air utilisé par SPIP Bank)
 
+	spip_log(__FUNCTION__.': Je passe le statut de récurrence à encours pour la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon'._LOG_DEBUG);
 	if (false === sql_updateq(
 		'spip_campagnodon_transactions',
 		[
@@ -286,6 +294,9 @@ function campagnodon_bank_abos_activer_abonnement($flux) {
 
 	include_spip('inc/campagnodon.utils');
 	campagnodon_queue_synchronisation($id_campagnodon_transaction);
+
+	$flux['data'] = $id_campagnodon_transaction; // SPIP Bank ne semble pas utiliser la valeur de retour, mais on va quand même mettre quelquechose.
+	return $flux;
 }
 
 
