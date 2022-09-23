@@ -70,6 +70,18 @@ define('_CAMPAGNODON_DON_RECURRENT', true);
 
 ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).
 
+Dans un **environnement de test**, il est possible d'activer une fonction de debug `déclencher une mensualité`.
+
+Pour cela, ajouter:
+```php
+define('_CAMPAGNODON_DON_RECURRENT_DEBUG', true);
+```
+
+On aura alors un bouton sur chaque transaction parent.
+Ce bouton appelle `abos_preparer_echeance` (de SPIP Bank), pour créer une nouvelle mensualité.
+À noter que celle-ci n'est pas notée automatiquement comme payée.
+Il faut alors passer par les écrans de SPIP Bank pour valider le paiement.
+
 ### _CAMPAGNODON_MODES
 
 Cette variable décrit le (ou les) modes disponibles pour campagnodon.
