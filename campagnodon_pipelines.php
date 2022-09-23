@@ -319,13 +319,13 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 	// Note: ici $flux['args']['id'] est de la forme uid:xxx !
 	$abo_uid = $flux['args']['id'];
 
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
-
 	// On doit commencer par chercher la transaction spip_bank originelle, puis on regarde si ça concerne campagnodon.
 	$transaction_parent = _campagnodon_get_bank_transaction_by_abo($abo_uid, __FUNCTION__);
 	if (!$transaction_parent) {
 		return $flux;
 	}
+
+	spip_log(__FUNCTION__.': campagnodon doit gérer l\'abonnement='.$abo_uid, 'campagnodon'._LOG_DEBUG);
 
 	$campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_transaction=' . intval($transaction_parent['id_transaction']));
 	if (!$campagnodon_transaction_parent) {
