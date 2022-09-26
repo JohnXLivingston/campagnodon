@@ -38,35 +38,80 @@ function _campagnodon_get_bank_transaction($id_transaction, $caller) {
 }
 
 /**
- * Cette fonction retourne la transaction SPIP Bank à l'origine d'un paiement récurrent, sous réserve que son parrain soit bien Campagnodon.
+ * Cette fonction retourne la transaction SPIP Bank et la transaction Campagnodon à l'origine d'un paiement récurrent,
+ * sous réserve que le parrain soit bien Campagnodon.
  * @param $abo_uid
  * @param $caller Nom de la fonction appellante. Sert pour les logs générés.
  * @return $transaction
  */
-function _campagnodon_get_bank_transaction_by_abo($abo_uid, $caller) {
+function _campagnodon_get_abo_transactions($abo_uid, $caller) {
 	if (!$abo_uid) {
-		spip_log('_campagnodon_get_bank_transaction_by_abo: $abo_uid est falsey. Caller='.$caller, 'campagnodon'._LOG_ERREUR);
-		return null;
+		spip_log(__FUNCTION__.': $abo_uid est falsey. Caller='.$caller, 'campagnodon'._LOG_ERREUR);
+		return [null, null];
 	}
 	if (strncmp($abo_uid,"uid:",4)!==0){
-		spip_log('_campagnodon_get_bank_transaction_by_abo: $abo_uid ne commence pas par uid:, je ne sais pas traiter. abo_uid="'.$abo_uid.'"Caller='.$caller, 'campagnodon'._LOG_ERREUR);
-		return null;
+		spip_log(__FUNCTION__.': $abo_uid ne commence pas par uid:, je ne sais pas traiter. abo_uid="'.$abo_uid.'"Caller='.$caller, 'campagnodon'._LOG_ERREUR);
+		return [null, null];
 	}
 	$abo_uid = substr($abo_uid,4);
 
-	$transaction = sql_fetsel('*', 'spip_transactions', 'abo_uid=' . sql_quote($abo_uid));
-	// FIXME: est-on sûr qu'il n'y en a qu'une ? Celles de la récurrence n'ont pas aussi cet id?
-	// FIXME: peut être faire comme souscription, et passer en fait par les campagnodon_transaction ??
-	if (!$transaction) {
-		spip_log("_campagnodon_get_bank_transaction_by_abo: Transaction introuvable pour abo_uid=".$abo_uid.'. Caller='.$caller, "campagnodon"._LOG_ERREUR);
-		return null;
+	// On va chercher une transaction liée à cet abonnement.
+	// Attention, les transactions correspondantes aux mensualités aussi peuvent avoir l'abo_uid.
+	// Je n'ai aucune garantie sur celle qui sera retournée par la requête ci-dessous.
+	// Mais elle me permettra de remonter jusqu'à la transaction initiale (et jusqu'à la transaction campagnodon initiale).
+	// NB: pour maximiser les chances d'arriver directement sur la bonne, on va trier par id_transaction.
+	$transaction_quelconque = sql_fetsel(
+		'*',
+		'spip_transactions',
+		'abo_uid=' . sql_quote($abo_uid),
+		'',
+		'id_transaction ASC'
+	);
+	if (!$transaction_quelconque) {
+		spip_log(__FUNCTION__.': Transaction introuvable pour abo_uid='.$abo_uid.'. Caller='.$caller, "campagnodon"._LOG_ERREUR);
+		return [null, null];
 	}
-	if ($transaction['parrain'] !== 'campagnodon') {
+	if ($transaction_quelconque['parrain'] !== 'campagnodon') {
 		// Ça ne concerne pas notre plugin.
-		spip_log('_campagnodon_get_bank_transaction_by_abo: programmer_sync_bank_result: cette ligne n\'a pas campagnodon comme parrain. Caller='.$caller, 'campagnodon'._LOG_DEBUG);
-		return null;
+		spip_log(__FUNCTION__.': cette ligne n\'a pas campagnodon comme parrain. Caller='.$caller, 'campagnodon'._LOG_DEBUG);
+		return [null, null];
 	}
-	return $transaction;
+
+	$campagnodon_transaction_quelconque = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_transaction=' . intval($transaction_quelconque['id_transaction']));
+	if (!$campagnodon_transaction_quelconque) {
+		spip_log(__FUNCTION__.': Transaction Campagnodon introuvable pour id_transaction='.$transaction_parent['id_transaction'].'. Caller='.$caller, 'campagnodon'._LOG_ERREUR);
+		return [null, null];
+	}
+
+	while ($campagnodon_transaction_quelconque && ($campagnodon_transaction_quelconque['id_campagnodon_transaction_parent'] !== null)) {
+		$id = $campagnodon_transaction_quelconque['id_campagnodon_transaction_parent'];
+		$campagnodon_transaction_quelconque = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction=' . intval($id));
+		if (!$campagnodon_transaction_quelconque) {
+			spip_log(__FUNCTION__.': Transaction Campagnodon introuvable id_campagnodon_transaction='.$id, 'campagnodon'._LOG_ERREUR);
+			return [null, null];
+		}
+	}
+
+	$campagnodon_transaction = $campagnodon_transaction_quelconque;
+	if ($transaction_quelconque['tracking_id'] == $campagnodon_transaction['id_campagnodon_transaction']) {
+		// on avait déjà la bonne !
+		$transaction = $transaction_quelconque;
+	} else {
+		$transaction = sql_fetsel(
+			'*',
+			'spip_transactions',
+			['parrain=' . sql_quote('campagnodon'), 'tracking_id='.sql_quote($campagnodon_transaction['id_campagnodon_transaction'])],
+			'',
+			'id_transaction ASC'
+		);
+		if (!$transaction) {
+			spip_log(__FUNCTION__.': Transaction introuvable pour parrain=campagnodon & tracking_id='.$campagnodon_transaction['id_campagnodon_transaction'].'. Caller='.$caller, "campagnodon"._LOG_ERREUR);
+			return [null, null];
+		}
+	}
+
+
+	return [$transaction, $campagnodon_transaction];
 }
 
 /**
@@ -320,18 +365,13 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 	$abo_uid = $flux['args']['id'];
 
 	// On doit commencer par chercher la transaction spip_bank originelle, puis on regarde si ça concerne campagnodon.
-	$transaction_parent = _campagnodon_get_bank_transaction_by_abo($abo_uid, __FUNCTION__);
-	if (!$transaction_parent) {
+	list ($transaction_parent, $campagnodon_transaction_parent) = _campagnodon_get_abo_transactions($abo_uid, __FUNCTION__);
+	if (!$transaction_parent || !$campagnodon_transaction_parent) {
+		spip_log(__FUNCTION__.': il semblerait que je n\'ai pas à traiter abo_uid='.$abo_uid, 'campagnodon'._LOG_DEBUG);
 		return $flux;
 	}
 
 	spip_log(__FUNCTION__.': campagnodon doit gérer l\'abonnement='.$abo_uid, 'campagnodon'._LOG_DEBUG);
-
-	$campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_transaction=' . intval($transaction_parent['id_transaction']));
-	if (!$campagnodon_transaction_parent) {
-		spip_log(__FUNCTION__.': Transaction Campagnodon parent introuvable pour id_transaction='.$transaction_parent['id_transaction'], 'campagnodon'._LOG_ERREUR);
-		return $flux;
-	}
 
 	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction'];
 
@@ -352,6 +392,7 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 		'parrain' => 'campagnodon',
 		'tracking_id' => $id_campagnodon_transaction,
 		'force' => true
+		// FIXME: faut-il ajouter ceci ? 'abo_uid' => $abo_uid
 	];
 	$montant_total = $transaction_parent['montant']; // Le montant des échéances est le même que la transaction initiale.
   $id_transaction = $inserer_transaction($montant_total, $transaction_options);
