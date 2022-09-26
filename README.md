@@ -82,6 +82,10 @@ Ce bouton appelle `abos_preparer_echeance` (de SPIP Bank), pour créer une nouve
 À noter que celle-ci n'est pas notée automatiquement comme payée.
 Il faut alors passer par les écrans de SPIP Bank pour valider le paiement.
 
+Attention, le processus de don récurrent de SPIP Bank est complexe,
+et la procédure ci-dessus n'est pas strictement équivalente à recevoir un paiement récurrent.
+Il y a des pipelines qui ne seront pas appelés (voir les FIXME dans le code).
+
 ### _CAMPAGNODON_MODES
 
 Cette variable décrit le (ou les) modes disponibles pour campagnodon.

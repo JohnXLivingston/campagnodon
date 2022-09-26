@@ -397,21 +397,24 @@ function campagnodon_bank_abos_renouveler_abonnement($flux) {
 		return $flux;
 	}
 
-
 	$id_transaction = $flux['args']['id_transaction'];
 	$transaction = _campagnodon_get_bank_transaction($id_transaction, __FUNCTION__);
 	if (!$transaction) { return $flux; }
 
-	spip_log(__FUNCTION__.': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+	$id_campagnodon_transaction = $transaction['tracking_id'];
+	spip_log(__FUNCTION__.': campagnodon doit gérer id_campagnodon_transaction='.$id_campagnodon_transaction, 'campagnodon'._LOG_DEBUG);
 
-	// TODO.
 	// Arguments recu dans $flux:
 	// 'id_transaction' => $id_transaction,
 	// 'abo_uid' => $abo_uid,
 	// 'mode_paiement' => $mode_paiement,
 	// 'validite' => $validite,
-	// Dois retourner: id_abonnement
-	spip_log('NOT IMPLEMENTED YET '.__FUNCTION__, 'campagnodon'._LOG_ERREUR);
+	// Dois retourner: id_abonnement (qui n'a pas l'air utilisé par SPIP Bank)
+
+	include_spip('inc/campagnodon.utils');
+	campagnodon_queue_synchronisation($id_campagnodon_transaction);
+
+	$flux['data'] = $id_campagnodon_transaction; // SPIP Bank ne semble pas utiliser la valeur de retour, mais on va quand même mettre quelquechose.
 	return $flux;
 }
 
