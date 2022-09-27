@@ -22,6 +22,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_transaction' => 'SPIP Bank',
   'label_campagne' => 'Campagne',
   'label_transaction_distant' => 'ID',
+  'label_transaction_distant_parent' => 'Transaction parente',
   'label_statut_distant' => 'Statut distant',
   'bouton_synchroniser' => 'Synchroniser',
   'bouton_declencher_mensualite' => '/!\\ Déclencher une mensualité /!\\',

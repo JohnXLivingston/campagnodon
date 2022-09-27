@@ -2,6 +2,20 @@
 <BOUCLE_campagnodon_transaction(CAMPAGNODON_TRANSACTIONS){id_campagnodon_transaction}>
   <h1 class="grostitre"><:campagnodon:label_campagnodon_transaction:> ##ID_CAMPAGNODON_TRANSACTION</h1>
   <table>
+    [
+      <tr>
+        <td><:campagnodon:label_transaction_distant_parent:></td>
+        <td><div class="">
+          <a
+            href="#URL_ECRIRE{campagnodon_transaction,id_campagnodon_transaction=#ID_CAMPAGNODON_TRANSACTION_PARENT}"
+            class="popin"
+            title="#TRANSACTION_DISTANT"
+          >
+            (#ID_CAMPAGNODON_TRANSACTION_PARENT)
+          </a>
+        </div></td>
+      </tr>
+    ]
     <tr>
       <td><:campagnodon:label_transaction_distant:></td>
       <td><div class="titre">[(#TRANSACTION_DISTANT)]</div></td>
