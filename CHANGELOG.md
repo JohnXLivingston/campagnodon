@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.1 (Not Released Yet)
+## 1.0.1
 
 * idx: option idx_id_length pour spécifier le nombre de chiffres minimum à utiliser.
 * Fix: l'idx pour les transactions «don_mensuel_echeance» n'utilisait pas le bon préfixe.
