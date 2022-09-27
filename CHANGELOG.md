@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (Not Released Yet)
+## 1.0.0
 
 * Dons récurrents.
 
