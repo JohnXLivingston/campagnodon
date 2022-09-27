@@ -145,6 +145,8 @@ define('_CAMPAGNODON_MODES', array(
                 ),
                 // `prefix`: préfixe utililisé dans les identifiants Campagnodon. Si on a plusieurs SPIP différents qui pointent sur le même CiviCRM (par ex si on a plusieurs env de test), on pourra utiliser ce préfixe pour différencier ce qui vient des différents sytèmes.
                 'prefix' => 'campagnodon',
+                // idx_id_length: optionnel. La longueur minimale à utiliser pour les id numériques dans la construction des identifiants Campagnodon.
+                'idx_id_length' => 8,
                 // `type_contribution`: la correspondance «type de contribution» pour le système distant. Si cette variable est manquante, ou si certains types manquent, ils seront envoyé tel quel au système distant (avec le risque d'être refusé si invalide).
                 'type_contribution' => array(
                         'don' => 'Don', // «identifiant campagnodon» => «nom du financial type CiviCRM» (ou ID numérique pour ne pas être dépendant d'un changement de libellé)
