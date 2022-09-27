@@ -117,6 +117,19 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
   }
 }
 
+
+function campagnodon_traduit_financial_type($mode_options, $type) {
+  if (
+    is_array($mode_options)
+    && array_key_exists('type_contribution', $mode_options)
+    && is_array($mode_options['type_contribution'])
+    && array_key_exists($type, $mode_options['type_contribution'])
+  ) {
+    return $mode_options['type_contribution'][$type];
+  }
+  return $type;
+}
+
 /**
  * Synchronise une transaction avec le système distant.
  * En cas d'échec (système injoignable par ex), replanifie une synchronisation.
@@ -170,8 +183,24 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
         return 0;
       }
 
+      $distant_operation_type = $campagnodon_transaction['type_transaction'];
+      // TODO: mutualiser ce code. NB: ici normalement seul le cas don_mensuel_echeance est utile.
+      switch ($campagnodon_transaction['type_transaction']) {
+        case 'don': $distant_operation_type = 'donation'; break;
+        case 'adhesion': $distant_operation_type = 'membership'; break;
+        case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
+        case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
+      }
+      $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
+      $params_garantir = [
+        // 'payment_url' => $url_paiement, TODO?
+        'transaction_url' => $url_transaction,
+        'operation_type' => $distant_operation_type,
+        'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don_mensuel_echeance')
+      ];
+
       try {
-        $resultat = $fonction_garantir_echeance_existe($mode_options, $campagnodon_transaction_parent['transaction_distant'], $campagnodon_transaction['transaction_distant']);
+        $resultat = $fonction_garantir_echeance_existe($mode_options, $campagnodon_transaction_parent['transaction_distant'], $campagnodon_transaction['transaction_distant'], $params_garantir);
         if (false === $resultat) {
           spip_log(
             __FUNCTION__." Il semblerait que l\'appel au connecteur garantir_echeance_existe a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction

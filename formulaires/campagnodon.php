@@ -256,18 +256,6 @@ function liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptio
   return $r;
 }
 
-function traduit_financial_type($mode_options, $type) {
-  if (
-    is_array($mode_options)
-    && array_key_exists('type_contribution', $mode_options)
-    && is_array($mode_options['type_contribution'])
-    && array_key_exists($type, $mode_options['type_contribution'])
-  ) {
-    return $mode_options['type_contribution'][$type];
-  }
-  return $type;
-}
-
 function traduit_adhesion_type($mode_options, $type) {
   if (
     is_array($mode_options)
@@ -544,7 +532,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     if ($type === 'don') {
       $contributions = [
         [
-          'financial_type' => traduit_financial_type($mode_options, $montant_est_recurrent ? 'don_mensuel' : 'don'),
+          'financial_type' => campagnodon_traduit_financial_type($mode_options, $montant_est_recurrent ? 'don_mensuel' : 'don'),
           'amount' => $montant,
           'currency' => 'EUR',
           'source' => $source
@@ -554,7 +542,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       $contributions = [];
       if ($adhesion_magazine_prix > 0) {
         $contribution_magazine = [
-          'financial_type' => traduit_financial_type($mode_options, 'adhesion_magazine'),
+          'financial_type' => campagnodon_traduit_financial_type($mode_options, 'adhesion_magazine'),
           'amount' => strval($adhesion_magazine_prix),
           'currency' => 'EUR',
           'membership' => traduit_adhesion_type($mode_options, 'magazine'),
@@ -573,7 +561,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       }
 
       $contributions[] = [
-        'financial_type' => traduit_financial_type($mode_options, 'adhesion'),
+        'financial_type' => campagnodon_traduit_financial_type($mode_options, 'adhesion'),
         'amount' => strval(intval($montant_adhesion) - intval($adhesion_magazine_prix)),
         'currency' => 'EUR',
         'membership' => traduit_adhesion_type($mode_options, 'adhesion'),
@@ -582,7 +570,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
 
       if ($adhesion_avec_don) {
         $contributions[] = [
-          'financial_type' => traduit_financial_type($mode_options, 'don'),
+          'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don'),
           'amount' => $montant,
           'currency' => 'EUR',
           'source' => $source
@@ -598,7 +586,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       case 'adhesion': $distant_operation_type = 'membership'; break;
       case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
       // NB: et on a ce cas, qui est initié ailleurs dans le code
-      // case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_echeance'; break;
+      // case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
     }
 
     $params = array(

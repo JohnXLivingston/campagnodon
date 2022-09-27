@@ -513,7 +513,7 @@ function campagnodon_bank_abos_resilier($flux) {
 		}
 	}
 
-	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction']
+	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction'];
 	$statut_recurrence = 'termine';
 	spip_log(__FUNCTION__.': Je passe le statut de récurrence à '.$statut_recurrence.' pour la transaction campagnodon '.$id_campagnodon_transaction_parent, 'campagnodon'._LOG_DEBUG);
 	if (false === sql_updateq(

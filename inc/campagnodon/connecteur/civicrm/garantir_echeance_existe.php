@@ -17,13 +17,21 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  *  Les données à envoyer.
  *  TODO: documenter le format de ces données.
  */
-function inc_campagnodon_connecteur_test_garantir_echeance_existe_dist($mode_options, $parent_idx, $idx, $params) {
-  $id = sql_insertq('spip_campagnodon_testdata', [
-    'idx' => $idx,
-    'data' => json_encode(array_merge(['parent_idx' => $parent_idx], $params))
+function inc_campagnodon_connecteur_civicrm_garantir_echeance_existe_dist($mode_options, $parent_idx, $idx, $params) {
+  $params = array_merge($params, [
+    'transaction_idx' => $idx,
+    'parent_transaction_idx' => $parent_idx,
   ]);
-  if (!$id) {
-    throw new Exception('Failed');
+
+  include_spip('inc/campagnodon/connecteur/civicrm/class.api');
+  $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
+  $result = $civi_api->Campagnodon->recurrence($params);
+
+  // spip_log('Résultat CiviCRM recurrence: ' . json_encode($civi_api->lastResult), 'campagnodon'._LOG_DEBUG);
+
+  if (!$result) {
+    throw new Exception("Erreur CiviCRM " . $civi_api->errorMsg());
   }
+
   return true;
 }
