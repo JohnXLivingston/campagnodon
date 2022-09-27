@@ -402,6 +402,7 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 	}
 
 	include_spip('inc/campagnodon.utils');
+	$mode_options = campagnodon_mode_options($campagnodon_transaction_parent['mode']);
 	$transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction, $id_campagnodon_transaction_parent);
 	if (false === sql_updateq(
 		'spip_campagnodon_transactions',

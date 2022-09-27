@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1 (Not Released Yet)
+
+* Fix: l'idx pour les transactions «don_mensuel_echeance» n'utilisait pas le bon préfixe.
+
 ## 1.0.0
 
 * Dons récurrents.
