@@ -68,14 +68,15 @@ Pour activer les dons récurrents:
 define('_CAMPAGNODON_DON_RECURRENT', true);
 ```
 
-Si vous souhaitez définir une date personnalisée pour les dons récurrents (par ex, chez Attac, ça se fait les 5 du mois),
-vous pouvez definir cette variable optionnelle:
+ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).
+
+NB: _CAMPAGNODON_DON_RECURRENT_JOUR ne fonctionne pas comme souhaité. Il semblerait que ce soit une limitation de SPIP Bank.
+~~Si vous souhaitez définir une date personnalisée pour les dons récurrents (par ex, chez Attac, ça se fait les 5 du mois),
+vous pouvez definir cette variable optionnelle:~~
 
 ```php
-define('_CAMPAGNODON_DON_RECURRENT_JOUR', 5); // le 5 du mois
+define('_CAMPAGNODON_DON_RECURRENT_JOUR', 6); // le 5 du mois. NB: un bug non identifié fait que cette valeur va être décrémentée.
 ```
-
-ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).
 
 Dans un **environnement de test**, il est possible d'activer une fonction de debug `déclencher une mensualité`.
 

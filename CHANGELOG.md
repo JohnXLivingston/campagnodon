@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+* Maj mineure.
+
 ## 1.0.2
 
 * Option pour définir la date de début des «abonnements» (dons récurrents).
