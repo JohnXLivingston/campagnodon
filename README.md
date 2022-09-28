@@ -60,6 +60,18 @@ define('_CAMPAGNODON_MONTANTS', array(
 ));
 ```
 
+### _CAMPAGNODON_DON_MINIMUM et _CAMPAGNODON_DON_MAXIMUM
+
+Ces variables **optionnelles** permettent de définir un montant minimum et un montant maximum.
+Si pas fourni, sera à 1€ et 10000000€.
+
+NB: il est possible de n'en définir qu'une.
+
+```php
+define('_CAMPAGNODON_DON_MINIMUM', 5);
+define('_CAMPAGNODON_DON_MAXIMUM', 5000);
+```
+
 ### _CAMPAGNODON_DON_RECURRENT
 
 Pour activer les dons récurrents:

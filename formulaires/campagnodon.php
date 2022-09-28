@@ -398,9 +398,11 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 
   list ($montant, $montant_est_recurrent) = get_form_montant($config_montants);
   if ($type !== 'adhesion' || $adhesion_avec_don) {
+    $don_min = defined('_CAMPAGNODON_DON_MIN') && is_numeric(_CAMPAGNODON_DON_MIN) ? _CAMPAGNODON_DON_MIN : 1;
+    $don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM) ? _CAMPAGNODON_DON_MAXIMUM : 10000000;
     if (empty($montant)) {
       $erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = _T('info_obligatoire');
-    } else if ($erreur = $verifier($montant, 'entier', array('min' => 1, 'max' => 10000000))) {
+    } else if ($erreur = $verifier($montant, 'entier', array('min' => $don_min, 'max' => $don_max))) {
       $erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = $erreur;
     }
   }

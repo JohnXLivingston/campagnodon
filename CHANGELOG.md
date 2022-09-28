@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+* Paramètre pour définir les dons min et max autorisés.
+
 ## 1.0.3
 
 * Maj mineure.
