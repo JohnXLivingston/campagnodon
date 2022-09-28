@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+* Option pour définir la date de début des «abonnements» (dons récurrents).
+
 ## 1.0.1
 
 * idx: option idx_id_length pour spécifier le nombre de chiffres minimum à utiliser.

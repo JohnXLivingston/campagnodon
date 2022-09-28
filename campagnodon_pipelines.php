@@ -289,6 +289,14 @@ function campagnodon_bank_abos_decrire_echeance($flux){
 	$flux['data']['count'] = 0;
 	$flux['data']['freq'] = 'monthly';
 	$flux['data']['date_start'] = '';
+	if (defined('_CAMPAGNODON_DON_RECURRENT_JOUR') && is_numeric(_CAMPAGNODON_DON_RECURRENT_JOUR)) {
+		$day = intval(_CAMPAGNODON_DON_RECURRENT_JOUR);
+		$date_start = new DateTime('now');
+		$date_start->setDate($date_start->format('Y'), $date_start->format('m'), _CAMPAGNODON_DON_RECURRENT_JOUR);
+		$date_start->modify('+1 month');
+		$date_start = $date_start->format('Y-m-d');
+		$flux['data']['date_start'] = $date_start;
+	}
 	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true), 'campagnodon'._LOG_DEBUG);
 	return $flux;
 }
