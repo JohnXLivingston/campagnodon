@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+* Fix typo.
+
 ## 1.1.0
 
 * Gestion du type de paiement SEPA, en se basant sur refcb (SPIP Bank).

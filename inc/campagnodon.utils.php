@@ -85,6 +85,7 @@ function _traduit_type_paiement($mode_options, $type, $refcb) {
     if (array_key_exists($type, $mode_options['type_paiement'])) {
       return $mode_options['type_paiement'][$type];
     }
+  }
   return $type;
 }
 
