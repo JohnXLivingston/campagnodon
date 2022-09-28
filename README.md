@@ -72,7 +72,7 @@ Si vous souhaitez définir une date personnalisée pour les dons récurrents (pa
 vous pouvez definir cette variable optionnelle:
 
 ```php
-defined ('_CAMPAGNODON_DON_RECURRENT_JOUR', 5); // le 5 du mois
+define('_CAMPAGNODON_DON_RECURRENT_JOUR', 5); // le 5 du mois
 ```
 
 ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).

@@ -295,6 +295,7 @@ function campagnodon_bank_abos_decrire_echeance($flux){
 		$date_start->setDate($date_start->format('Y'), $date_start->format('m'), _CAMPAGNODON_DON_RECURRENT_JOUR);
 		$date_start->modify('+1 month');
 		$date_start = $date_start->format('Y-m-d');
+		spip_log(__FUNCTION__.' La date de début pour le paiement mensuel sera: '.$date_start);
 		$flux['data']['date_start'] = $date_start;
 	}
 	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true), 'campagnodon'._LOG_DEBUG);
