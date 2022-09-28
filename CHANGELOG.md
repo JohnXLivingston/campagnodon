@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+* Gestion du type de paiement SEPA, en se basant sur refcb (SPIP Bank).
+
 ## 1.0.5
 
 * Fix limite min des dons + message d'erreur mieux adapté.

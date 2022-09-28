@@ -71,15 +71,20 @@ function campagnodon_mode_options($mode) {
   return _CAMPAGNODON_MODES[$mode];
 }
 
-function _traduit_type_paiement($mode_options, $type) {
+function _traduit_type_paiement($mode_options, $type, $refcb) {
   if (
     is_array($mode_options)
     && array_key_exists('type_paiement', $mode_options)
     && is_array($mode_options['type_paiement'])
-    && array_key_exists($type, $mode_options['type_paiement'])
   ) {
-    return $mode_options['type_paiement'][$type];
-  }
+    if (strncmp($refcb, 'SEPA', 4)===0) {
+      if (array_key_exists('sepa_'.$type, $mode_options['type_paiement'])) {
+        return $mode_options['type_paiement']['sepa_'.$type];
+      }
+    }
+    if (array_key_exists($type, $mode_options['type_paiement'])) {
+      return $mode_options['type_paiement'][$type];
+    }
   return $type;
 }
 
@@ -267,7 +272,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     // on peut ne pas encore avoir de mode de paiement, auquel cas on ne le synchronise pas.
     $mode_paiement_distant = null;
   } elseif (preg_match('/^([^\/]*)/', $mode_paiement, $matches)) {
-    $mode_paiement_distant = _traduit_type_paiement($mode_options, $matches[1]);
+    $mode_paiement_distant = _traduit_type_paiement($mode_options, $matches[1], $transaction['refcb']);
   } else {
     spip_log(__FUNCTION__." Je ne sais pas synchroniser le mode '".$mode_paiement."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
     campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');

@@ -179,7 +179,10 @@ define('_CAMPAGNODON_MODES', array(
                 // S'il manque la valeur courante, elle sera envoyée telle qu'elle à CiviCRM, qui va probablement rejeter la requête.
                 'type_paiement' => array(
                         'cheque' => 'Check', // ou l'ID numérique 4
-                        'payzen' => 'Debit Card'
+                        'payzen' => 'Debit Card',
+                        // Cas particulier: si la clé est de la forme «sepa_xxx», alors si mode=xxx, et refcb commence par SEPA (SPIP Bank),
+                        // on utilisera ce mode de paiement ci.
+                        'sepa_payzen' => 'SEPA',
                 ),
                 // `souscriptions_optionnelles` décrit les case à cocher qu'on peut ajouter en fin de formulaire.
                 'souscriptions_optionnelles' => array(
