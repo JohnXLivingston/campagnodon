@@ -398,11 +398,15 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne=NULL, $arg_li
 
   list ($montant, $montant_est_recurrent) = get_form_montant($config_montants);
   if ($type !== 'adhesion' || $adhesion_avec_don) {
-    $don_min = defined('_CAMPAGNODON_DON_MIN') && is_numeric(_CAMPAGNODON_DON_MIN) ? _CAMPAGNODON_DON_MIN : 1;
+    $don_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM) ? _CAMPAGNODON_DON_MINIMUM : 1;
     $don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM) ? _CAMPAGNODON_DON_MAXIMUM : 10000000;
     if (empty($montant)) {
       $erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = _T('info_obligatoire');
-    } else if ($erreur = $verifier($montant, 'entier', array('min' => $don_min, 'max' => $don_max))) {
+    } else if (
+      $erreur = $verifier($montant, 'entier', array('min' => $don_min))
+      OR // on teste en 2 fois, pour que le message d'erreur n'affiche qu'une seule borne.
+      $erreur = $verifier($montant, 'entier', array('max' => $don_max))
+    ) {
       $erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = $erreur;
     }
   }

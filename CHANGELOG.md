@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+* Fix limite min des dons + message d'erreur mieux adapté.
+
 ## 1.0.4
 
 * Paramètre pour définir les dons min et max autorisés.
