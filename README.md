@@ -281,34 +281,3 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'j_adhere' => "J'adhère à Attac pour l'année civile en version un montant de :",
 );
 ```
-
-## TODO Dons récurrents
-
-2022-08-23: je met en pause le développement des dons récurrents.
-
-Ce qu'il va rester à faire:
-
-Réactiver les pipelines:
-
-```xml
-<pipeline nom="bank_abos_decrire_echeance"  inclure="campagnodon_pipelines.php"/>
-<pipeline nom="bank_abos_activer_abonnement" inclure="campagnodon_pipelines.php"/>
-<pipeline nom="bank_abos_preparer_echeance" inclure="campagnodon_pipelines.php"/>
-<pipeline nom="bank_abos_renouveler_abonnement" inclure="campagnodon_pipelines.php"/>
-<pipeline nom="bank_abos_resilier" inclure="campagnodon_pipelines.php"/>
-```
-
-Dé-commenter le code des fonctions associées dans campagnodon_pipelines.php.
-
-Dans la synchro des transactions, si c'est une transaction «enfant», il faudra appeler un nouveau connecteur.
-Ce connecteur va appeler une API pour créer une transaction enfant.
-
-Il faudra penser à y préciser cette variable:
-
-```php
-$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
-```
-
-Il faudra utiliser le financial type 'don_mensuel_echeance' pour les contributions.
-
-Il faut coder les pipelines manquants.
