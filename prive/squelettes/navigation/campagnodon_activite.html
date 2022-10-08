@@ -4,3 +4,8 @@
     <li class="item[(#ENV{exec}|=={campagnodon_campagnes}|oui)on]">[(#URL_ECRIRE{campagnodon_campagnes}|lien_ou_expose{<:campagnodon:titre_campagnes:>,#ENV{exec}|=={campagnodon_campagnes}})]</li>
   </ul>
 </div>
+[(#REM|campagnodon_peut_migration_souscription_don_recurrent|oui)
+  [(#AUTORISER{campagnodon_migration}|oui)
+    [(#BOUTON_ACTION{<:campagnodon:bouton_migration_souscription_don_recurrent:>,#URL_ACTION_AUTEUR{campagnodon_migration,souscription_don_recurrent,#SELF},ajax, <:campagnodon:bouton_migration_confirmation:>})]
+  ]
+]

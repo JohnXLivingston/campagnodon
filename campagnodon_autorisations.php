@@ -41,6 +41,10 @@ function autoriser_campagnodon_convertir_dist($faire, $type, $id, $qui, $opt) {
 	return autoriser('webmestre');
 }
 
+function autoriser_campagnodon_migration_dist($faire, $type, $id, $qui, $opt) {
+	return autoriser('webmestre');
+}
+
 function autoriser_campagnodon_declencher_mensualite_dist($faire, $type, $id, $qui, $opt) {
 	if (!defined('_CAMPAGNODON_DON_RECURRENT_DEBUG') || !_CAMPAGNODON_DON_RECURRENT_DEBUG) {
 		return false;

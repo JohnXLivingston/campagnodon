@@ -75,6 +75,8 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'statut_recurrence_distant' => 'varchar(255) DEFAULT NULL', // Dernier statut récurrent connu dans le système distant. Attention, peut ne pas être à jour en cas d'erreur de synchronisation.
       'statut_synchronisation' => "varchar(20) NOT NULL DEFAULT 'jamais'", // Statut de la dernière synchronisation. 'ok', 'echec', 'attente', 'attente_rejoue'.
       'date_synchronisation' => 'datetime DEFAULT NULL', // Date de la dernière synchro (ou tentative de synchro).
+      'migre_de' => 'varchar(50) DEFAULT NULL', // Si cette ligne vient d'une migration (par ex du plugin Souscription), contient le nom du plugin. Pour retrouver les infos du plugin d'origine, on passera par id_transaction
+      'statut_migration_distant' => "varchar(20) DEFAULT NULL", // si cette ligne vient d'une migration, indique le statut de la migration distante. 'ok', 'ko', 'attente'.
       'maj' => 'TIMESTAMP'
     ],
     'key' => [

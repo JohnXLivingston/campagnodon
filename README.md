@@ -281,3 +281,33 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'j_adhere' => "J'adhère à Attac pour l'année civile en version un montant de :",
 );
 ```
+
+## Migration des dons récurrents initiés sous SPIP Souscription
+
+On peut choisir de migrer des dons qui ont déjà été effectués avec un autre plugin SPIP (ex: Souscription),
+Et qui ont déjà été importés sur le système distant.
+C'est par ex le cas pour Attac France qui utilisait un script manuel pour importer les dons du plugin Souscription.
+
+Pour activer cette fonctionnalité, il faut le paramètre suivant dans le fichier `config/mes_options.php` de SPIP:
+
+```php
+define('_CAMPAGNODON_MIGRATION', [
+        // En clé, le nom du plugin à migrer. Pour l'instant on ne supporte que Souscription.
+        'souscription' => [
+                // En clé, le type de don à migrer. Pour l'instant on ne supporte que les dons récurrents.
+                'don_recurrent' => [
+                        // Le format de l'idx. On a le droit à certains placeholders:
+                        // - {ID_SOUSCRIPTION}
+                        // - {ID_TRANSACTION}
+                        // - {PAY_ID}
+                        // L'idx ainsi calculé va servir à chercher la contribution déjà existante sur le système distant.
+                        'idx_format' => 'SPIP/{ID_SOUSCRIPTION}/DonRecur/{ID_TRANSACTION}/{PAY_ID}',
+                        'mode' => 'civicrm_1' // le nom du mode à utiliser
+                ]
+        ]
+]);
+```
+
+On pourra lancer la migration via un bouton dans l'application Campagnodon.
+
+Une fois la migration faite, pour retirer le bouton, il suffit de commenter la configuration ci-dessus.

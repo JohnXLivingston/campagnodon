@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 (not released yet)
+
+* Migration des dons récurrents du plugin Souscription.
+
 ## 1.1.1
 
 * Fix typo.
