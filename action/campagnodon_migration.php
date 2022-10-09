@@ -193,9 +193,6 @@ function action_campagnodon_migration_dist(){
 			)) {
 				spip_log("Erreur à la modification du parrain/tracking_id pour id_transaction=".$id_transaction, 'campagnodon'._LOG_ERREUR);
 			}
-
-			// $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$transaction['id_transaction'], 'transaction_hash'=>$transaction['transaction_hash']), false, false);
-			// $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 		}
 	}
 

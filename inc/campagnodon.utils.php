@@ -175,6 +175,102 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
   $mode = $campagnodon_transaction['mode'];
   $mode_options = campagnodon_mode_options($mode);
 
+  // Si c'est une ligne migree, on commence par la migrer si nécessaire.
+  if (!empty($campagnodon_transaction['migre_de']) && $campagnodon_transaction['statut_migration_distant'] === 'attente') {
+    // On doit tenter de migrer la ligne.
+    spip_log(
+      __FUNCTION__.' La transaction campagnodon '.$id_campagnodon_transaction
+      .' est migree d\'un ancien plugin, et n\'a pas encore été synchronisée avec le système distant.'
+      .' Je dois appeler le connecteur migrer_contribution.',
+      'campagnodon'._LOG_DEBUG
+    );
+    $fonction_migrer_contribution = campagnodon_fonction_connecteur($mode, 'migrer_contribution');
+    if (!$fonction_migrer_contribution) {
+      spip_log(__FUNCTION__.' Campagnodon mal configuré, impossible de trouver le connecteur migrer_contribution pour le mode: '.$mode, "campagnodon"._LOG_ERREUR);
+      campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+      return 0;
+    }
+
+    $campagnodon_transaction_parent = null;
+    if (!empty($campagnodon_transaction['id_campagnodon_transaction_parent'])) {
+      $campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($campagnodon_transaction['id_campagnodon_transaction_parent']));
+      if (!$campagnodon_transaction_parent) {
+        spip_log(__FUNCTION__." spip_campagnodon_transactions parent introuvable: ".$campagnodon_transaction['id_campagnodon_transaction_parent'], "campagnodon"._LOG_ERREUR);
+        campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+        return 0;
+      }
+    }
+
+    $distant_operation_type = $campagnodon_transaction['type_transaction'];
+    // TODO: mutualiser ce code. NB: ici normalement seul le cas don_mensuel_echeance est utile.
+    switch ($campagnodon_transaction['type_transaction']) {
+      case 'don': $distant_operation_type = 'donation'; break;
+      case 'adhesion': $distant_operation_type = 'membership'; break;
+      case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
+      case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
+    }
+    $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
+    $params_migrer_contribution = [
+      'transaction_idx' => $campagnodon_transaction['transaction_distant'],
+      'parent_transaction_idx' => $campagnodon_transaction_parent ? $campagnodon_transaction_parent['transaction_distant'] : null,
+      'date' => $campagnodon_transaction['date_transaction'],
+      // 'payment_url' => $url_paiement, FIXME?
+      'transaction_url' => $url_transaction,
+      'operation_type' => $distant_operation_type
+    ];
+
+    try {
+      $resultat = $fonction_migrer_contribution($mode_options, $params_migrer_contribution);
+      if (false === $resultat) {
+        spip_log(
+          __FUNCTION__." Il semblerait que l\'appel au connecteur migrer_contribution a échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction
+          . ', il faut reprogrammer la synchronisation. ',
+          "campagnodon"._LOG_ERREUR
+        );
+        campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+        return 0;
+      }
+
+      // TODO: sur quel critere mettre un statut_migration_distant à 'ko' ?
+      if (false === sql_updateq(
+        'spip_campagnodon_transactions',
+        [
+          'statut_migration_distant' => 'ok'
+        ],
+        'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
+      )) {
+        spip_log("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
+        campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+        return 0;
+      }
+    } catch (Exception $e) {
+      spip_log(
+        __FUNCTION__
+        . " Il semblerait que la migrer_contribution ait échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction
+        . '. NB: Si l\'erreur est de type «duplicate key», il se peut que ce soit dû à des executions parallèles, et Campagnodon devrait retomber sur ses pieds.'
+        . " L\'erreur: ".$e->getMessage(),
+        "campagnodon"._LOG_ERREUR
+      );
+      campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+      return 0;
+    }
+
+    // Je recharge la ligne
+    $campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
+    if (!$campagnodon_transaction) {
+      spip_log(__FUNCTION__." spip_campagnodon_transactions introuvable (après avoir migré): ".$id_campagnodon_transaction, "campagnodon"._LOG_ERREUR);
+      campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+      return 0;
+    }
+  }
+
+  // Si on n'a pas réussi à migrer... on laisse tomber.
+  if (!empty($campagnodon_transaction['migre_de']) && $campagnodon_transaction['statut_migration_distant'] !== 'ok') {
+    spip_log(__FUNCTION__." Je ne peux synchro ".$id_campagnodon_transaction." car le statut de migration est: ".$campagnodon_transaction['statut_migration_distant'], "campagnodon"._LOG_ERREUR);
+    campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+    return 0;
+  }
+
   if ($campagnodon_transaction['type_transaction'] === 'don_mensuel_echeance') {
     if ($campagnodon_transaction['statut_distant'] === null) {
       spip_log(
@@ -202,6 +298,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
       $campagnodon_transaction_parent = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($campagnodon_transaction['id_campagnodon_transaction_parent']));
       if (!$campagnodon_transaction_parent) {
         spip_log(__FUNCTION__." spip_campagnodon_transactions parent introuvable: ".$campagnodon_transaction['id_campagnodon_transaction_parent'], "campagnodon"._LOG_ERREUR);
+        campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
         return 0;
       }
 
