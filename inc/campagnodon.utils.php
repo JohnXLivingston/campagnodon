@@ -103,7 +103,7 @@ function campagnodon_maj_sync_statut($id_campagnodon_transaction, $statut_synchr
   sql_update('spip_campagnodon_transactions', $params, 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
 }
 
-function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives = 0) {
+function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives = 0, $delais_additionnel = 0) {
   $id_job = null;
   if ($nb_tentatives > 10) {
     spip_log("J'ai dépassé le nombre de tentatives max pour spip_campagnodon_transactions=".$id_campagnodon_transaction.", je ne replanifie rien.", "campagnodon"._LOG_ERREUR);
@@ -130,7 +130,7 @@ function campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tent
       [$id_campagnodon_transaction],
       'inc/campagnodon.utils',
       false, // on autorise la création, de tâches duplicate. Vaut mieux synchroniser plus que nécessaire, pour éviter les effets de bords.
-      0 // on execute tout de suite
+      $delais_additionnel ? (time() + $delais_additionnel) : 0 // on execute tout de suite, ou après le délais précisé en option.
     );
   }
 

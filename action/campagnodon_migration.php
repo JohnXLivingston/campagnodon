@@ -83,11 +83,11 @@ function action_campagnodon_migration_dist(){
 	$where.= " AND (abo_statut = ".sql_quote('commande')." OR abo_statut = ".sql_quote('ok').") ";
 	$order = 'id_souscription ASC';
 
-	spip_log(
-		'On va lancer une migration à partir de la requête sql: '
-		. 'SELECT '.$select.' FROM '.$from. ' WHERE '.$where. ' ORDER BY '.$order,
-		'campagnodon'._LOG_INFO
-	);
+	// spip_log(
+	// 	'On va lancer une migration à partir de la requête sql: '
+	// 	. 'SELECT '.$select.' FROM '.$from. ' WHERE '.$where. ' ORDER BY '.$order,
+	// 	'campagnodon'._LOG_INFO
+	// );
 	$res = sql_select($select, $from, $where, null, $order);
 
 	$cpt_souscription = 0;
@@ -176,8 +176,23 @@ function action_campagnodon_migration_dist(){
 			if (!$id_campagnodon_transaction_parent) {
 				// C'est la première... c'est le parent
 				$id_campagnodon_transaction_parent = $id_campagnodon_transaction;
+				campagnodon_queue_synchronisation($id_campagnodon_transaction);
+			} else {
+				// il faut synchroniser les enfants un peu plus tard, pour être sûr que tout les parents ont été synchronisés.
+				campagnodon_queue_synchronisation($id_campagnodon_transaction, 0, 5*60);
 			}
-			campagnodon_queue_synchronisation($id_campagnodon_transaction);
+
+			// Je dois aussi changer le parrain/tracking_id sur la transaction.
+			if (false === sql_updateq(
+				'spip_transactions',
+				[
+					'parrain' => 'campagnodon',
+					'tracking_id' => $id_campagnodon_transaction
+				],
+				'id_transaction='.sql_quote($id_transaction)
+			)) {
+				spip_log("Erreur à la modification du parrain/tracking_id pour id_transaction=".$id_transaction, 'campagnodon'._LOG_ERREUR);
+			}
 
 			// $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$transaction['id_transaction'], 'transaction_hash'=>$transaction['transaction_hash']), false, false);
 			// $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
