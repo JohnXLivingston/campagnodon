@@ -148,7 +148,6 @@ function action_campagnodon_migration_dist(){
 			$est_echeance = !empty($id_campagnodon_transaction_parent);
 
 			$insert = array(
-				'idx' => $idx,
 				'id_campagnodon_campagne' => null, // FIXME: remonter la campagne depuis le système distant ?
 				'mode' => $migration_config['mode'],
 				'id_campagnodon_transaction_parent' => $id_campagnodon_transaction_parent,
