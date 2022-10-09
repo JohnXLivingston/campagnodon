@@ -143,7 +143,7 @@ function action_campagnodon_migration_dist(){
 			$idx = preg_replace('/\{ID_SOUSCRIPTION\}/', $souscription['id_souscription'], $idx);
 			$idx = preg_replace('/\{ID_TRANSACTION\}/', $transaction['id_transaction'], $idx);
 			$idx = preg_replace('/\{PAY_ID\}/', $transaction['pay_id'], $idx);
-			spip_log('Il faut créer une migration avec idx="'.$idx.'".', 'campagnodon'._LOG_DEBUG);
+			// spip_log('Il faut créer une migration avec idx="'.$idx.'".', 'campagnodon'._LOG_DEBUG);
 
 			$est_echeance = !empty($id_campagnodon_transaction_parent);
 
@@ -166,18 +166,19 @@ function action_campagnodon_migration_dist(){
 			}
 
 
-			spip_log(json_encode($insert), 'campagnodon'._LOG_DEBUG);
+			// spip_log(json_encode($insert), 'campagnodon'._LOG_DEBUG);
 
-			// $id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', $insert);
-			// if (!($id_campagnodon_transaction > 0)) {
-			// 	spip_log("Erreur à la création de la transaction campagnodon idx='".$idx."'", "campagnodon"._LOG_ERREUR);
-			// 	continue;
-			// }
+			$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', $insert);
+			if (!($id_campagnodon_transaction > 0)) {
+				spip_log("Erreur à la création de la transaction campagnodon idx='".$idx."'", "campagnodon"._LOG_ERREUR);
+				continue;
+			}
 			$cpt_transaction_migree++;
 			if (!$id_campagnodon_transaction_parent) {
 				// C'est la première... c'est le parent
 				$id_campagnodon_transaction_parent = $id_campagnodon_transaction;
 			}
+			campagnodon_queue_synchronisation($id_campagnodon_transaction);
 
 			// $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$transaction['id_transaction'], 'transaction_hash'=>$transaction['transaction_hash']), false, false);
 			// $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
