@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 (not released yet)
+## 1.2.0
 
 * Migration des dons récurrents du plugin Souscription.
 
