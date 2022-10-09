@@ -247,7 +247,6 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
       spip_log(
         __FUNCTION__
         . " Il semblerait que la migrer_contribution ait échoué pour spip_campagnodon_transactions=".$id_campagnodon_transaction
-        . '. NB: Si l\'erreur est de type «duplicate key», il se peut que ce soit dû à des executions parallèles, et Campagnodon devrait retomber sur ses pieds.'
         . " L\'erreur: ".$e->getMessage(),
         "campagnodon"._LOG_ERREUR
       );
