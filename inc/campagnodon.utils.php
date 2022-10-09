@@ -213,7 +213,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     $params_migrer_contribution = [
       'transaction_idx' => $campagnodon_transaction['transaction_distant'],
       'parent_transaction_idx' => $campagnodon_transaction_parent ? $campagnodon_transaction_parent['transaction_distant'] : null,
-      'date' => $campagnodon_transaction['date_transaction'],
+      'start_date' => $campagnodon_transaction['date_transaction'],
       // 'payment_url' => $url_paiement, FIXME?
       'transaction_url' => $url_transaction,
       'operation_type' => $distant_operation_type
