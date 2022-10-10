@@ -314,7 +314,9 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
         // 'payment_url' => $url_paiement, TODO?
         'transaction_url' => $url_transaction,
         'operation_type' => $distant_operation_type,
-        'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don_mensuel_echeance')
+        'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don_mensuel_echeance'),
+        'currency' => 'EUR',
+        'amount' => $transaction['montant']
       ];
 
       try {
