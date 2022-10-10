@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.0 (Not released yet)
+## 1.3.0
 
 * Simplification de l'API de récurrence: c'est le système d'origine qui spécifie le montant, on ne cherche plus à dériver de la transaction parent.
 
