@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+* Par soucis de clarification fonctionnelle, on déclenche une synchro juste après la création d'une transaction.
+
 ## 1.3.0
 
 * Simplification de l'API de récurrence: c'est le système d'origine qui spécifie le montant, on ne cherche plus à dériver de la transaction parent.

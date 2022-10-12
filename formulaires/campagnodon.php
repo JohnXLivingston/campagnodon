@@ -677,6 +677,9 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     //   throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction." (insertion infos CiviCRM)", "campagnodon:erreur_sauvegarde");
     // }
 
+    include_spip('inc/campagnodon.utils');
+	  campagnodon_queue_synchronisation($id_campagnodon_transaction);
+
     return [
       'redirect' => $url_paiement,
       'editable' => false,
