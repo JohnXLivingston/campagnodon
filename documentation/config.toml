@@ -1,0 +1,29 @@
+# baseURL = "."
+languageCode = "fr-fr"
+defaultContentLanguage = "fr"
+title = "Documentation Campagnodon"
+theme = "hugo-theme-learn"
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[params]
+  author = "John Livingston"
+  description = "Documentation du module SPIP Campagnodon et de son écosystème"
+  showVisitedLinks = true
+  disableSearch = false
+  disableLandingPageButton = false
+  themeVariant = "red"
+  landingPageURL = "/"
+  landingPageName = "<i class='fas fa-home'></i> Accueil"
+
+
+[[menu.shortcuts]] 
+name = "<i class='fab fa-git'></i> Dépot Globenet"
+url = "https://code.globenet.org/attacfr/campagnodon"
+weight = 10
+
+[[menu.shortcuts]] 
+name = "<i class='fab fa-github'></i> Dépot Github"
+url = "https://github.com/JohnXLivingston/campagnodon"
+weight = 20

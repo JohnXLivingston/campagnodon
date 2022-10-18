@@ -1,7 +1,7 @@
-# Utilisation de Campagnodon avec CiviCRM
-
-Campagnodon est conçu de sorte à permettre de facilement changer le backend dans lequel les données personnes vont être stockées.
-Pour l'instant, il est calqué sur l'usage que Attac France en fait, avec CiviCRM en backend.
++++
+title="CiviCRM"
+chapter=false
++++
 
 Le présent document indique comment installer un environnement de développement/test conforme à ce qu'utilise Attac.
 
