@@ -16,4 +16,4 @@ Dans le cas d'[Attac France](https://france.attac.org), ces données sont stock�
 Pour l'instant, le code est conçu pour répondre aux besoins d'Attac France, et est notamment lié à CiviCRM (voir la [documentation](documentation/civicrm.md)).
 Toutefois, le code essaie d'être le plus générique possible, et fait en sorte d'être face à étendre.
 
-Pour la liste des versions disponibles, merci de vous référer au [CHANGELOG](CHANGELOG.md).
+Pour la liste des versions disponibles, merci de vous référer au fichier `CHANGELOG.md` présent dans le dépot.
