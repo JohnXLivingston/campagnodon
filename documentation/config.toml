@@ -14,7 +14,7 @@ home = [ "HTML", "RSS", "JSON"]
   disableSearch = false
   disableLandingPageButton = false
   themeVariant = "red"
-  landingPageURL = "/"
+  landingPageURL = "./"
   landingPageName = "<i class='fas fa-home'></i> Accueil"
 
 
