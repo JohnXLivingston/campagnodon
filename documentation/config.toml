@@ -12,9 +12,8 @@ home = [ "HTML", "RSS", "JSON"]
   description = "Documentation du module SPIP Campagnodon et de son écosystème"
   showVisitedLinks = true
   disableSearch = false
-  disableLandingPageButton = false
+  disableLandingPageButton = true
   themeVariant = "red"
-  landingPageURL = "./"
   landingPageName = "<i class='fas fa-home'></i> Accueil"
 
 
@@ -27,3 +26,8 @@ weight = 10
 name = "<i class='fab fa-github'></i> Dépot Github"
 url = "https://github.com/JohnXLivingston/campagnodon"
 weight = 20
+
+[[menu.shortcuts]] 
+name = "<i class=''></i> Soutenir l'auteur"
+url = "https://liberapay.com/JohnLivingston"
+weight = 30

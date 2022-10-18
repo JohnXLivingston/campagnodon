@@ -7,6 +7,8 @@ Le présent document indique comment installer un environnement de développemen
 
 ## Installation de CiviCRM
 
+[CiviCRM](https://civicrm.org/)
+
 ### buildkit
 
 CiviCRM fourni l'outils [buildkit](https://docs.civicrm.org/dev/en/latest/tools/buildkit/) qui met à disposition un ensemble d'outils pour faciliter le déploiement d'instances CiviCRM sur une machine de développement.
@@ -37,8 +39,9 @@ Note: ce type d'installation vient avec des données d'exemple.
 
 Le mode de fonctionnement pour Attac suppose les configurations ci-dessous.
 
-1) activer le composant «civicampaign» (`Administrer > Paramètres système > Composants`)
-2) installer l'extension [proca](https://github.com/fixthestatusquo/proca-civicrm/) (télécharger dans le dossier des extensions, puis activer dans `Administrer > Paramètres système > Extensions`)
+1) Activer le composant «civicampaign» (`Administrer > Paramètres système > Composants`).
+2) Il faut activer l'extension php-curl sur le serveur qui fait tourner le système d'origine (SPIP).
+3) Il est possible d'utiliser le composant «CiviRules» pour envoyer des mails.
 
 ### Installer l'extension CiviCRM Campagnodon
 

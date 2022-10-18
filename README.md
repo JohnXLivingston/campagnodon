@@ -7,7 +7,7 @@ Ce plugin s'interface avec le plugin [Bank](https://github.com/nursit/bank>), et
 Ce plugin a été développé pour les besoins d'[Attac France](https://france.attac.org), en remplacement du plugin [souscription](https://plugins.spip.net/souscription.html).
 
 Contrairement au plugin [souscription](https://plugins.spip.net/souscription.html), le stockage et le traitement des données personnelles se fait dans un système distant, pour des raisons de compartimentation et de sécurisation.
-Dans le cas d'[Attac France](https://france.attac.org), ces données sont stockées et traitées via une instance CiviCRM (non accessible publiquement).
+Dans le cas d'[Attac France](https://france.attac.org), ces données sont stockées et traitées via une instance [CiviCRM](https://civicrm.org/) (non accessible publiquement).
 
 Pour l'instant, le code est conçu pour répondre aux besoins d'Attac France, et est notamment lié à CiviCRM (voir la [documentation](documentation/civicrm.md)).
 Toutefois, le code essaie d'être le plus générique possible, et fait en sorte d'être face à étendre.
@@ -17,6 +17,21 @@ Pour la liste des versions disponibles, merci de vous référer au [CHANGELOG](C
 ## Licence
 
 Ce projet est sous licence [AGPLv3 licence](LICENSE).
+
+## Documentation
+
+La documentation est disponible ici:
+
+* https://johnxlivingston.github.io/campagnodon/
+
+Il est également possible de la générer à partir de ce dépot de code, en utilisant [hugo](https://gohugo.io/).
+Pour cela, il vous suffit d'installer `hugo`, puis depuis le dossier où vous avez récupéré le code de Campagnodon:
+
+```bash
+hugo server -s documentation
+```
+
+Puis ouvrez votre navigateur web sur le page `http://localhost:1313`.
 
 ## Configuration
 

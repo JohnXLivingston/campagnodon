@@ -1,7 +1,10 @@
 +++
 title="Systèmes distants"
 chapter=true
+weight = 20
 +++
+
+# Systèmes distants
 
 Campagnodon s'interface avec un (ou plusieurs) système(s) distant(s).
 
@@ -11,4 +14,4 @@ distant dans lequel les données personnelles vont être stockées.
 Les données personnelles ne seront pas stockées sur le système d'origine (SPIP).
 
 À la date de rédaction de la présente page, Attac France se sert de Campagnodon
-avec CiviCRM en backend.
+avec [CiviCRM](./civicrm) en backend.
