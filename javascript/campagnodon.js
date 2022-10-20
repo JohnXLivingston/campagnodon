@@ -6,6 +6,20 @@
 function campagnodon_formulaire(formSelector) {
   const $form = $(formSelector);
 
+  // On empêche de soumettre le formulaire rapidement 2 fois de suite (pour bloquer les doubles clicks)
+  $form.on('click', 'input[type=submit]', function (ev) {
+    if ($form.hasClass('campagnodon-prevent-double-click')) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev.stopImmediatePropagation();
+      return false;
+    }
+    $form.addClass('campagnodon-prevent-double-click');
+    setTimeout(() => {
+      $form.removeClass('campagnodon-prevent-double-click');
+    }, 500)
+  });
+
   $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => {
     campagnodon_formulaire_adhesion_avec_don($form);
     campagnodon_formulaire_explications($form);

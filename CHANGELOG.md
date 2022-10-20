@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+* On empêche de soumettre rapidement 2 fois le formulaire (pour bloquer les doubles clicks).
+
 ## 1.3.1
 
 * Par soucis de clarification fonctionnelle, on déclenche une synchro juste après la création d'une transaction.
