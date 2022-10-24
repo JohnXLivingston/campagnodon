@@ -63,19 +63,25 @@ function _campagnodon_get_abo_transactions($abo_uid, $caller) {
 	$transaction_quelconque = sql_fetsel(
 		'*',
 		'spip_transactions',
-		'abo_uid=' . sql_quote($abo_uid),
+		[
+			'abo_uid=' . sql_quote($abo_uid),
+			// NB: en cas de migration depuis un plugin antérieur (Souscriptions),
+			// il se peut qu'il y ai des transactions liées qui n'ont pas parrain=campagnodon. On les ignore.
+			'parrain=' . sql_quote('campagnodon')
+		]
 		'',
 		'id_transaction ASC'
 	);
 	if (!$transaction_quelconque) {
-		spip_log(__FUNCTION__.': Transaction introuvable pour abo_uid='.$abo_uid.'. Caller='.$caller, "campagnodon"._LOG_ERREUR);
+		spip_log(__FUNCTION__.': Transaction campagnodon introuvable pour abo_uid='.$abo_uid.'. Caller='.$caller, "campagnodon"._LOG_ERREUR);
 		return [null, null];
 	}
-	if ($transaction_quelconque['parrain'] !== 'campagnodon') {
-		// Ça ne concerne pas notre plugin.
-		spip_log(__FUNCTION__.': cette ligne n\'a pas campagnodon comme parrain. Caller='.$caller, 'campagnodon'._LOG_DEBUG);
-		return [null, null];
-	}
+	// 2022-10-24: je commente le code ci-dessous, et met le critère dans le sql_fetsel, pour être compatible avec la migration depuis Souscriptions
+	// if ($transaction_quelconque['parrain'] !== 'campagnodon') {
+	// 	// Ça ne concerne pas notre plugin.
+	// 	spip_log(__FUNCTION__.': cette ligne n\'a pas campagnodon comme parrain. Caller='.$caller, 'campagnodon'._LOG_DEBUG);
+	// 	return [null, null];
+	// }
 
 	$campagnodon_transaction_quelconque = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_transaction=' . intval($transaction_quelconque['id_transaction']));
 	if (!$campagnodon_transaction_quelconque) {
