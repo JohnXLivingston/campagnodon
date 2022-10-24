@@ -76,6 +76,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'statut_synchronisation' => "varchar(20) NOT NULL DEFAULT 'jamais'", // Statut de la dernière synchronisation. 'ok', 'echec', 'attente', 'attente_rejoue'.
       'date_synchronisation' => 'datetime DEFAULT NULL', // Date de la dernière synchro (ou tentative de synchro).
       'migre_de' => 'varchar(50) DEFAULT NULL', // Si cette ligne vient d'une migration (par ex du plugin Souscription), contient le nom du plugin. Pour retrouver les infos du plugin d'origine, on passera par id_transaction
+      'migre_cle' => 'varchar(255) DEFAULT NULL', // La clé qui doit servir à trouver la contribution distante
       'statut_migration_distant' => "varchar(20) DEFAULT NULL", // si cette ligne vient d'une migration, indique le statut de la migration distante. 'ok', 'ko', 'attente'.
       'maj' => 'TIMESTAMP'
     ],

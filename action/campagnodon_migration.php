@@ -54,26 +54,11 @@ function action_campagnodon_migration_dist(){
 	}
 
 	include_spip('inc/campagnodon.utils');
-
-
-	// $select = "S.id_souscription, S.abo_statut,"
-	// 	. "T.id_transaction, T.pay_id, T.transaction_hash, T.date_transaction ";
-
-	// $from = " spip_souscriptions AS S "
-	// 	. " LEFT JOIN spip_souscriptions_liens AS L ON (L.id_souscription=S.id_souscription) "
-	// 	. " LEFT JOIN spip_transactions AS T ON (T.id_transaction=L.id_objet AND objet='transaction') ";
-	// // On joint à spip_campagnodon_transactions, pour ensuite pouvoir retirer ce qui a déjà été migré:
-	// $from.= " LEFT OUTER JOIN spip_campagnodon_transactions as CT ON (CT.id_transaction = T.id_transaction AND CT.mode = ".sql_quote($migration_config['mode']).") ";
-
-	// $where = " type_souscription = ".sql_quote('don')." ";
-	// $where.= " AND T.pay_id ";
-	// // abo_statut peut valoir: 'ok', 'resilie', 'command', 'non'. On prend juste ce qui est en cours (commande et ok)
-	// $where.= " AND (abo_statut = ".sql_quote('commande')." OR abo_statut = ".sql_quote('ok').") ";
-	// // on enlève ce qui a déjà été migré :
-	// $where.= " AND CT.id_campagnodon_transaction IS NULL ";
-
-	// // on trie par date_paiement, pour migrer dans l'ordre.
-	// $order.= " date_paiement ASC ";
+	$mode_options = campagnodon_mode_options($migration_config['mode']);
+	if (!$mode_options) {
+		spip_log('Mode invalide dans la configuration de la migration');
+		return;
+	}
 
 	// On va remonter toutes les souscriptions en cours (abo_statut sert à la fois à trouver les paiements récurrents et ceux en cours)
 	$select = 'id_souscription';
@@ -83,11 +68,6 @@ function action_campagnodon_migration_dist(){
 	$where.= " AND (abo_statut = ".sql_quote('commande')." OR abo_statut = ".sql_quote('ok').") ";
 	$order = 'id_souscription ASC';
 
-	// spip_log(
-	// 	'On va lancer une migration à partir de la requête sql: '
-	// 	. 'SELECT '.$select.' FROM '.$from. ' WHERE '.$where. ' ORDER BY '.$order,
-	// 	'campagnodon'._LOG_INFO
-	// );
 	$res = sql_select($select, $from, $where, null, $order);
 
 	$cpt_souscription = 0;
@@ -97,11 +77,11 @@ function action_campagnodon_migration_dist(){
 	while($souscription = sql_fetch($res)) {
 		$cpt_souscription++;
 
-		// Il faut maintenant chercher pour cette souscription toutes les transactions.
-		// On va les remonter dans l'ordre.
-		// On va migrer toutes celles qui ne l'ont pas encore été
+		// On va maintenant migrer la transaction la plus récente pour cette souscription.
+		// Attention, si une transaction précédente a déjà été migrée, on ne doit rien faire
 		// (de sorte qu'on puisse relancer ce script plusieurs fois sans risque).
-		// La première sera la transaction campagnodon parent.
+		// Pour vérifier cela, on va faire simple... On parcours tout, et on note si on trouve quelque chose de migré.
+		// On va donc remonter les transactions dans l'ordre de leurs ID.
 		$res_transactions = sql_select(
 			'id_objet',
 			'spip_souscriptions_liens',
@@ -109,7 +89,8 @@ function action_campagnodon_migration_dist(){
 			null,
 			'id_objet ASC'
 		);
-		$id_campagnodon_transaction_parent = null;
+		$transaction = null;
+		$deja_migre = false;
 		while($id_transaction_ligne = sql_fetch($res_transactions)) {
 			$cpt_transaction++;
 			$id_transaction = $id_transaction_ligne['id_objet'];
@@ -131,13 +112,12 @@ function action_campagnodon_migration_dist(){
 			);
 			if ($campagnodon_transaction) {
 				$cpt_transaction_deja_migre++;
-				// Si c'est la première, on a notre parent !
-				if (!$id_campagnodon_transaction_parent) {
-					$id_campagnodon_transaction_parent = $campagnodon_transaction['id_campagnodon_transaction'];
-				}
-				continue;
+				$deja_migre = true;
+				break; // on arrête de parcourir les transactions de la souscription courante.
 			}
-
+		}
+		
+		if ($transaction && !$deja_migre) {
 
 			$idx = $migration_config['idx_format'];
 			$idx = preg_replace('/\{ID_SOUSCRIPTION\}/', $souscription['id_souscription'], $idx);
@@ -145,25 +125,19 @@ function action_campagnodon_migration_dist(){
 			$idx = preg_replace('/\{PAY_ID\}/', $transaction['pay_id'], $idx);
 			// spip_log('Il faut créer une migration avec idx="'.$idx.'".', 'campagnodon'._LOG_DEBUG);
 
-			$est_echeance = !empty($id_campagnodon_transaction_parent);
-
 			$insert = array(
 				'id_campagnodon_campagne' => null, // FIXME: remonter la campagne depuis le système distant ?
 				'mode' => $migration_config['mode'],
-				'id_campagnodon_transaction_parent' => $id_campagnodon_transaction_parent,
-				'transaction_distant' => $idx,
+				'id_campagnodon_transaction_parent' => null, // Cette transaction devient le parent des suivantes.
+				'transaction_distant' => null,
+				'type_transaction' => 'don_mensuel_migre',
 				'id_transaction' => $transaction['id_transaction'],
+				'statut_recurrence' => $souscription['abo_statut'] === 'commande' ? 'attente' : 'encours',
 				'migre_de' => $plugin_name,
+				'migre_cle' => $idx,
 				'statut_migration_distant' => 'attente',
 				'date_transaction' => $transaction['date_transaction']
 			);
-			if ($est_echeance) {
-				$insert['type_transaction'] = 'don_mensuel_echeance';
-			} else {
-				$insert['type_transaction'] = 'don_mensuel';
-				$insert['statut_recurrence'] = $souscription['abo_statut'] === 'commande' ? 'attente' : 'encours';
-			}
-
 
 			// spip_log(json_encode($insert), 'campagnodon'._LOG_DEBUG);
 
@@ -172,15 +146,20 @@ function action_campagnodon_migration_dist(){
 				spip_log("Erreur à la création de la transaction campagnodon idx='".$idx."'", "campagnodon"._LOG_ERREUR);
 				continue;
 			}
-			$cpt_transaction_migree++;
-			if (!$id_campagnodon_transaction_parent) {
-				// C'est la première... c'est le parent
-				$id_campagnodon_transaction_parent = $id_campagnodon_transaction;
-				campagnodon_queue_synchronisation($id_campagnodon_transaction);
-			} else {
-				// il faut synchroniser les enfants un peu plus tard, pour être sûr que tout les parents ont été synchronisés.
-				campagnodon_queue_synchronisation($id_campagnodon_transaction, 0, 5*60);
+			$transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction);
+			if (false === sql_updateq(
+				'spip_campagnodon_transactions',
+				[
+					'transaction_distant' => $transaction_idx_distant
+				],
+				'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
+			)) {
+				spip_log(__FUNCTION__.': Erreur à la modification de la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
+				continue;
 			}
+
+			$cpt_transaction_migree++;
+			campagnodon_queue_synchronisation($id_campagnodon_transaction);
 
 			// Je dois aussi changer le parrain/tracking_id sur la transaction.
 			if (false === sql_updateq(

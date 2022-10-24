@@ -202,15 +202,17 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
     }
 
     $distant_operation_type = $campagnodon_transaction['type_transaction'];
-    // TODO: mutualiser ce code. NB: ici normalement seul le cas don_mensuel_echeance est utile.
+    // TODO: mutualiser ce code.
     switch ($campagnodon_transaction['type_transaction']) {
       case 'don': $distant_operation_type = 'donation'; break;
       case 'adhesion': $distant_operation_type = 'membership'; break;
       case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
       case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
+      case 'don_mensuel_migre': $distant_operation_type = 'monthly_donation_migrated'; break;
     }
     $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
     $params_migrer_contribution = [
+      'trxn_id' => $campagnodon_transaction['migre_cle'],
       'transaction_idx' => $campagnodon_transaction['transaction_distant'],
       'parent_transaction_idx' => $campagnodon_transaction_parent ? $campagnodon_transaction_parent['transaction_distant'] : null,
       'start_date' => $campagnodon_transaction['date_transaction'],
@@ -235,7 +237,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
       if (false === sql_updateq(
         'spip_campagnodon_transactions',
         [
-          'statut_migration_distant' => 'ok'
+          'statut_migration_distant' => 'ok',
         ],
         'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
       )) {
@@ -308,6 +310,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
         case 'adhesion': $distant_operation_type = 'membership'; break;
         case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
         case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
+        case 'don_mensuel_migre': $distant_operation_type = 'monthly_donation_migrated'; break;
       }
       $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
       $params_garantir = [

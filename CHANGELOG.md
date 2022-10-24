@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.3 (Not Released Yet)
+
+* Modifications sur le script de migration des dons récurrents.
+
 ## 1.3.2
 
 * On empêche de soumettre rapidement 2 fois le formulaire (pour bloquer les doubles clicks).

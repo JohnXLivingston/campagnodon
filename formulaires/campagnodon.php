@@ -593,6 +593,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
       case 'don_mensuel': $distant_operation_type = 'monthly_donation'; break;
       // NB: et on a ce cas, qui est initié ailleurs dans le code
       // case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
+      // case 'don_mensuel_migre'...
     }
 
     $params = array(
