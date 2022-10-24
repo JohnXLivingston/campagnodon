@@ -68,7 +68,7 @@ function _campagnodon_get_abo_transactions($abo_uid, $caller) {
 			// NB: en cas de migration depuis un plugin antérieur (Souscriptions),
 			// il se peut qu'il y ai des transactions liées qui n'ont pas parrain=campagnodon. On les ignore.
 			'parrain=' . sql_quote('campagnodon')
-		]
+		],
 		'',
 		'id_transaction ASC'
 	);
