@@ -32,10 +32,10 @@ function inc_campagnodon_connecteur_civicrm_lister_campagnes_dist($mode_options)
   $result = [];
   foreach ($lignes_distantes as $key => $ligne_distante) {
     array_push($result, array(
-      'titre' => $ligne_distante->title,
-      'texte' => $ligne_distante->description,
-      'id_origine' => $ligne_distante->id,
-      'date' => $ligne_distante->start_date,
+      'titre' => property_exists($ligne_distante, 'title') ? $ligne_distante->title : null,
+      'texte' => property_exists($ligne_distante, 'description') ? $ligne_distante->description : null,
+      'id_origine' => property_exists($ligne_distante, 'id') ? $ligne_distante->id : null,
+      'date' => property_exists($ligne_distante, 'start_date') ? $ligne_distante->start_date : null,
       'statut' => 'publie' // TODO: Reprendre le statut de CiviCRM.
     ));
   }

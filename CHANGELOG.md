@@ -4,6 +4,7 @@
 
 * Modifications sur le script de migration des dons récurrents.
 * Modification du pipeline d'abonnement pour être compatible avec la modification sur la migration.
+* Fix warnings sur la synchronisation des campagnes.
 
 ## 1.3.2
 
