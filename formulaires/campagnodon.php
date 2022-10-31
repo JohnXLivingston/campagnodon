@@ -518,18 +518,15 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
 
     $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash), false, false);
     $url_paiement_redirect = $url_paiement;
-    if (defined('_CAMPAGNODON_TRANSMETTRE_PARAMETRES') && is_array(_CAMPAGNODON_TRANSMETTRE_PARAMETRES)) {
-      $transmettre_parametres = array();
-      foreach (_CAMPAGNODON_TRANSMETTRE_PARAMETRES as $tp) {
-        $tpv = _request($tp, $_GET);
-        if (!empty($tpv)) {
-          $transmettre_parametres[$tp] = $tpv;
-        }
-      }
-      if (count($transmettre_parametres)>0) {
-        $url_paiement_redirect = generer_url_public('campagnodon-payer', array_merge(
-          array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash),
-          $transmettre_parametres
+    if (defined('_CAMPAGNODON_GERER_WIDGETS') && _CAMPAGNODON_GERER_WIDGETS === true) {
+      // On est ici dans un code hautement expérimental. Voir la doc de _CAMPAGNODON_GERER_WIDGETS.
+      $widget_mode = _request('mode', $_GET);
+      if ($widget_mode === 'frame') {
+        $url_paiement_redirect = generer_url_public('widget', array(
+          'id_transaction'=>$id_transaction,
+          'transaction_hash'=>$hash,
+          'mode' => $widget_mode,
+          'type' => 'campagnodon-payer'
         ), false, false);
       }
     }

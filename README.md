@@ -46,18 +46,15 @@ Cette variable **optionnelle** indiquant le code ISO du pays à renseigner par d
 define('_CAMPAGNODON_PAYS_DEFAULT', 'FR');
 ```
 
-### _CAMPAGNODON_TRANSMETTRE_PARAMETRES
+### _CAMPAGNODON_GERER_WIDGETS
 
-Cette variable **optionnelle** permet de définir des paramètres (GET) qu'il faut transmettre (si présent) à la page de paiement.
+Cette variable **optionnelle** permet d'activer la compatibilité avec le plugin
+[Attac Widgets](https://code.globenet.org/attacfr/attac_widgets/).
 
-Cela est par exemple utile pour Attac France, pour inclure le formulaire de paiement dans un «widget»
-(voir le code du plugin [Attac Widgets](https://code.globenet.org/attacfr/attac_widgets/), et on transmet ici les paramètres `mode` et `type`).
-
-Note: les paramètres sont transmis uniquement lors de la navigation. L'url de paiement qui peut être utilisée à postériori
-(lors d'une relance par mail par exemple) ne contiendra pas ces paramètres.
+Note: ce mode est hautement expérimental, et il est déconseillé d'utiliser ce mode.
 
 ```php
-define('_CAMPAGNODON_TRANSMETTRE_PARAMETRES', array('mode', 'type'));
+define('_CAMPAGNODON_GERER_WIDGETS', true);
 ```
 
 ### _CAMPAGNODON_MONTANTS
