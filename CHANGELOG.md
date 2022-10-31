@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.3 (Not Released Yet)
+## 1.4.0
 
 * Paramètre optionnel _CAMPAGNODON_TRANSMETTRE_PARAMETRES.
 * Modifications sur le script de migration des dons récurrents.
