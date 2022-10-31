@@ -2,6 +2,7 @@
 
 ## 1.3.3 (Not Released Yet)
 
+* Paramètre optionnel _CAMPAGNODON_TRANSMETTRE_PARAMETRES.
 * Modifications sur le script de migration des dons récurrents.
 * Modification du pipeline d'abonnement pour être compatible avec la modification sur la migration.
 * Fix warnings sur la synchronisation des campagnes.

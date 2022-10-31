@@ -517,6 +517,22 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
     }
 
     $url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash), false, false);
+    $url_paiement_redirect = $url_paiement;
+    if (defined('_CAMPAGNODON_TRANSMETTRE_PARAMETRES') && is_array(_CAMPAGNODON_TRANSMETTRE_PARAMETRES)) {
+      $transmettre_parametres = array();
+      foreach (_CAMPAGNODON_TRANSMETTRE_PARAMETRES as $tp) {
+        $tpv = _request($tp, $_GET);
+        if (!empty($tpv)) {
+          $transmettre_parametres[$tp] = $tpv;
+        }
+      }
+      if (count($transmettre_parametres)>0) {
+        $url_paiement_redirect = generer_url_public('campagnodon-payer', array_merge(
+          array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash),
+          $transmettre_parametres
+        ), false, false);
+      }
+    }
     $url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 
     include_spip('inc/campagnodon.utils');
@@ -682,7 +698,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
 	  campagnodon_queue_synchronisation($id_campagnodon_transaction);
 
     return [
-      'redirect' => $url_paiement,
+      'redirect' => $url_paiement_redirect,
       'editable' => false,
     ];
   } catch (CampagnodonException $e) {
