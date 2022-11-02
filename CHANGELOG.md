@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3
+
+* Tentative de faire marcher attac_widgets.
+
 ## 1.4.2
 
 * Fix niveau de log dans les pipelines de paiement récurrents, quand la transaction n'est pas liée à campagnodon.
