@@ -73,7 +73,7 @@ function _campagnodon_get_abo_transactions($abo_uid, $caller) {
 		'id_transaction ASC'
 	);
 	if (!$transaction_quelconque) {
-		spip_log(__FUNCTION__.': Transaction campagnodon introuvable pour abo_uid='.$abo_uid.'. Caller='.$caller, "campagnodon"._LOG_ERREUR);
+		spip_log(__FUNCTION__.': Transaction campagnodon introuvable pour abo_uid='.$abo_uid.'. Caller='.$caller, "campagnodon"._LOG_DEBUG);
 		return [null, null];
 	}
 	// 2022-10-24: je commente le code ci-dessous, et met le critère dans le sql_fetsel, pour être compatible avec la migration depuis Souscriptions

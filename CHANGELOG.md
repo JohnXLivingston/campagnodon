@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2
+
+* Fix niveau de log dans les pipelines de paiement récurrents, quand la transaction n'est pas liée à campagnodon.
+
 ## 1.4.1
 
 * _CAMPAGNODON_TRANSMETTRE_PARAMETRES remplacé par _CAMPAGNODON_GERER_WIDGETS.
