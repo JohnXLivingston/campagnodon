@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.4
+
+* Tentative de faire marcher attac_widgets (bis).
+
 ## 1.4.3
 
 * Tentative de faire marcher attac_widgets.
