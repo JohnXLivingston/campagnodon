@@ -1,0 +1,16 @@
+[(#REM) Prend en paramètres d'env: objectif, recolte]
+[(#ENV{objectif}|oui)
+  [(#SET{pourcentage_objectif,#ENV{recolte}|div{#ENV{objectif}}|mult{100}|round{2}})]
+  [(#SET{width_pourcentage_objectif,#GET{pourcentage_objectif}})]
+  [(#GET{pourcentage_objectif}|>={100}|oui)
+    [(#REM) Quand on a dépassé 100%, la largeur de l'avancement n'est plus le % récolté, mais l'objectif d'origine par rappor à ce qui est récolté]
+    [(#SET{width_pourcentage_objectif,#ENV{objectif}|div{#ENV{recolte}}|mult{100}|round{2}})]
+  ]
+  <div class="campagnodon_objectif_barre [(#GET{pourcentage_objectif}|>={100}|oui) campagnodon_objectif_barre_atteint ]">
+    <div class="campagnodon_objectif_barre_avancement " style="width:[(#GET{width_pourcentage_objectif}|round{2})]%;"></div>
+    <div class="campagnodon_objectif_barre_libelle">
+      <div>[(#ENV{recolte}|round{2})]€ / [(#ENV{objectif}|round{2})]€</div>
+      <div>[(#GET{pourcentage_objectif})]%</div>
+    </div>
+  </div>
+]

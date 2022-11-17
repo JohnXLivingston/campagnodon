@@ -1,0 +1,17 @@
+[<link rel="stylesheet" href="(#CSS{css/campagnodon_objectif.css})" type="text/css" />]
+<B_campagne>
+<BOUCLE_campagne(CAMPAGNODON_CAMPAGNES){id_origine=#ENV{id}}{origine=#ENV{origine}}>
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=#OBJECTIF,recolte=#RECOLTE}
+</BOUCLE_campagne>
+[(#ENV{debug_objectif}|=={1}|oui)
+  [(#REM) Avec le mode debug_objectif, on affiche quelques exemples clés]
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=1000.00,recolte=0.00}
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=1000.00,recolte=203.20}
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=1000.00,recolte=500}
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=1000.00,recolte=1000}
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=1000.00,recolte=1250.10}
+  #INCLURE{fond=inclure/campagnodon/objectif-campagne,objectif=1000.00,recolte=2000}
+]
+</B_campagne>
+	<:campagnodon:campagne_invalide:>
+<//B_campagne>

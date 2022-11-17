@@ -16,6 +16,12 @@
     ]
     [
       <tr>
+        <td><:campagnodon:label_recolte_campagne:> / <:campagnodon:label_objectif_campagne:></td>
+        <td><div class="texte">#RECOLTE / (#OBJECTIF)</td>
+      </tr>
+    ]
+    [
+      <tr>
         <td><:campagnodon:label_date_campagne:></td>
         <td><div class="date">(#DATE|affdate_heure)</td>
       </tr>
@@ -51,37 +57,45 @@
                 <input type="radio" name="type" class="type" value="adhesion" />
                 <:campagnodon:label_type_adhesion:>
               </label>
+              [(#OBJECTIF|oui)
+                <label>
+                  <input type="radio" name="type" class="type" value="objectif" />
+                  <:campagnodon:label_objectif_campagne:>
+                </label>
+              ]
             </div>
-            [(#REM|campagnodon_campagne_don_recurrent|oui)
+            <div id="campagnodon_balise_form_options">
+              [(#REM|campagnodon_campagne_don_recurrent|oui)
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="don_recurrent"
+                      class="don_recurrent"
+                      disabled="disabled"
+                    />
+                    <:campagnodon:label_activer_don_recurrent:>
+                  </label>
+                </div>
+              ]
               <div>
                 <label>
-                  <input
-                    type="checkbox"
-                    name="don_recurrent"
-                    class="don_recurrent"
-                    disabled="disabled"
-                  />
-                  <:campagnodon:label_activer_don_recurrent:>
+                  <input type="checkbox" name="montant_perso" class="montant_libre" />
+                  <:campagnodon:label_montant_perso:>
                 </label>
               </div>
-            ]
-            <div>
-              <label>
-                <input type="checkbox" name="montant_perso" class="montant_libre" />
-                <:campagnodon:label_montant_perso:>
-              </label>
-            </div>
-            <div>
-              <label>
-                <input type="checkbox" name="montant_libre" class="montant_libre" />
-                <:campagnodon:label_montant_libre:>
-              </label>
-            </div>
-            <div>
-              <label>
-                <input type="checkbox" name="souscriptions_perso" class="souscriptions_perso" />
-                <:campagnodon:label_souscriptions_perso:>
-              </label>
+              <div>
+                <label>
+                  <input type="checkbox" name="montant_libre" class="montant_libre" />
+                  <:campagnodon:label_montant_libre:>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input type="checkbox" name="souscriptions_perso" class="souscriptions_perso" />
+                  <:campagnodon:label_souscriptions_perso:>
+                </label>
+              </div>
             </div>
           </form>
         </td>
@@ -107,56 +121,63 @@
         td.append(balise);
 
         function campagnodon_balise_raffraichir() {
-          let s = '<campagnodon|\n\torigine=[(#ORIGINE)]|\n\tid=[(#ID_ORIGINE)]';
           let type = td.find('input[name=type]:checked:first');
           let type_valeur = null;
+          let s = '<campagnodon|\n\torigine=[(#ORIGINE)]|\n\tid=[(#ID_ORIGINE)]';
           if (type.length) {
             type_valeur = type.attr('value');
-            s+= '|\n\ttype=' + type_valeur;
           }
-          if (type_valeur === 'adhesion') {
-            td.find('input[name=montant_libre]').prop('disabled', true);
-            td.find('input[name=don_recurrent]').prop('disabled', true);
+          if (type_valeur === 'objectif') {
+            $('#campagnodon_balise_form_options').hide();
+            // on remplace la balise <campagnodon par <campagnodon_objectif
+            s = s.replace(/^<campagnodon\b/, '<campagnodon_objectif');
           } else {
-            td.find('input[name=montant_libre]').prop('disabled', false);
-            td.find('input[name=don_recurrent]').prop('disabled', false);
-          }
-
-          const don_recurrent = type_valeur === 'don' && !!td.find('input[name=don_recurrent]:checked:not(:disabled)').length
-          if (don_recurrent) {
-            s+= '|\n\t'+'don_recurrent=1';
-          }
-
-          const montant_perso = !!td.find('input[name=montant_perso]:checked:not(:disabled)').length;
-          const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length;
-          if (montant_libre || montant_perso) {
-            s+= '|\n\tmontants=';
-            if (montant_perso) {
-              s+= liste_montants[type_valeur] ? liste_montants[type_valeur] : '10,20,40';
-              if (montant_libre) {
-                s+= ',libre';
-              }
-            } else if (montant_libre) {
-              s+= 'libre';
+            $('#campagnodon_balise_form_options').show();
+            s+= '|\n\ttype=' + type_valeur;
+            if (type_valeur === 'adhesion') {
+              td.find('input[name=montant_libre]').prop('disabled', true);
+              td.find('input[name=don_recurrent]').prop('disabled', true);
+            } else {
+              td.find('input[name=montant_libre]').prop('disabled', false);
+              td.find('input[name=don_recurrent]').prop('disabled', false);
             }
+
+            const don_recurrent = type_valeur === 'don' && !!td.find('input[name=don_recurrent]:checked:not(:disabled)').length
             if (don_recurrent) {
-              s+= '|\n\tmontants_recurrent=';
+              s+= '|\n\t'+'don_recurrent=1';
+            }
+
+            const montant_perso = !!td.find('input[name=montant_perso]:checked:not(:disabled)').length;
+            const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length;
+            if (montant_libre || montant_perso) {
+              s+= '|\n\tmontants=';
               if (montant_perso) {
-                s+= liste_montants[type_valeur+'_recurrent'] ? liste_montants[type_valeur+'_recurrent'] : '5,10,20';
+                s+= liste_montants[type_valeur] ? liste_montants[type_valeur] : '10,20,40';
                 if (montant_libre) {
                   s+= ',libre';
                 }
               } else if (montant_libre) {
                 s+= 'libre';
               }
+              if (don_recurrent) {
+                s+= '|\n\tmontants_recurrent=';
+                if (montant_perso) {
+                  s+= liste_montants[type_valeur+'_recurrent'] ? liste_montants[type_valeur+'_recurrent'] : '5,10,20';
+                  if (montant_libre) {
+                    s+= ',libre';
+                  }
+                } else if (montant_libre) {
+                  s+= 'libre';
+                }
+              }
             }
-          }
 
-          const souscriptions_perso = !!td.find('input[name=souscriptions_perso]:checked:not(:disabled)').length;
-          if (souscriptions_perso) {
-            s+= '|\n\tsouscriptions=';
-            liste_so = liste_souscriptions_perso[type_valeur] ?? [];
-            s+= liste_so.join(',');
+            const souscriptions_perso = !!td.find('input[name=souscriptions_perso]:checked:not(:disabled)').length;
+            if (souscriptions_perso) {
+              s+= '|\n\tsouscriptions=';
+              liste_so = liste_souscriptions_perso[type_valeur] ?? [];
+              s+= liste_so.join(',');
+            }
           }
 
           s+= '\n>';

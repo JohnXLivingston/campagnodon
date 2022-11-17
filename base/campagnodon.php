@@ -116,6 +116,8 @@ function campagnodon_declarer_tables_objets_sql($tables) {
       'date' => "datetime NOT NULL DEFAULT '0000-00-00 00:00:00'",
       'origine' => 'varchar(20) CHARACTER SET ASCII DEFAULT NULL', // origine de la campagne. Cette valeur doit être l'une des clé de _CAMPAGNODON_MODES.
       'id_origine' => 'bigint(21) DEFAULT NULL', // ID dans la base de donnée d'origine (le cas échéant).
+      'objectif' => 'decimal(20,2) DEFAULT NULL', // objectif de campagne. Le type decimal(20,2) est celui utilisé dans CiviCRM
+      'recolte' => 'decimal(20,2) DEFAULT NULL', // somme déjà récoltée. Le type decimal(20,2) est celui utilisé dans CiviCRM
       'statut' => 'varchar(20) CHARACTER SET ASCII NOT NULL DEFAULT "publie"',
       'maj' => 'TIMESTAMP'
     ],

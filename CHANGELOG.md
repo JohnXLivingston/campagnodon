@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.0 (Not Released Yet)
+
+* Bandeau d'avancement des campagnes.
+
 ## 1.4.4
 
 * Tentative de faire marcher attac_widgets (bis).

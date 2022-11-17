@@ -15,6 +15,8 @@ function inc_campagnodon_connecteur_test_lister_campagnes_dist($mode_options) {
       'texte' => 'Ceci est une donnée de test',
       'id_origine' => '123456789',
       'date' => '2022-01-01',
+      'objectif' => 1000.10,
+      'recolte' => 20.0,
       'statut' => 'publie'
     ]
   ];

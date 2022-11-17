@@ -64,7 +64,9 @@ function genie_campagnodon_synchronisation_campagnes_dist() {
             'titre' => $ligne_distante['titre'],
             'texte' => $ligne_distante['texte'],
             'date' => $ligne_distante['date'],
-            'statut' => $ligne_distante['statut']
+            'statut' => $ligne_distante['statut'],
+            'objectif' => $ligne_distante['objectif'],
+            'recolte' => $ligne_distante['recolte']
           ),
           'id_campagnodon_campagne='.sql_quote($ligne_locale['id_campagnodon_campagne'])
         );

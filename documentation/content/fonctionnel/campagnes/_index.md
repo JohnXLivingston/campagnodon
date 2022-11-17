@@ -27,3 +27,8 @@ On peut retrouver la liste des campagnes dans **l'espace privé** de SPIP, via l
   Campagnodon peut être lié à plusieurs systèmes distant différents.
   La colonne `origine` indique le nom du système distant concerné.
 {{% /notice %}}
+
+{{% notice note %}}
+  Si la campagne a un objectif de dons dans le système distant, alors il sera possible
+  d'afficher des bandeau d'avancement dans les articles ou en tête de site.
+{{% /notice %}}

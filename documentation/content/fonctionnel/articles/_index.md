@@ -60,12 +60,13 @@ Vous pouvez cocher les différentes cases de l'utilitaire pour pouvoir personnal
 Ce paramètre reprend les valeurs par défaut de votre installation. **Vous pourrez alors copier/coller la balise
 dans un article, puis ensuite changer les valeurs**.
 
-### Don / Adhésion
+### Don / Adhésion / Objectif
 
 Les premiers boutons radio permettent de choisir le type de formulaire à utiliser :
 
 * formulaire de don
 * formulaire d'adhésion (qui permet également de faire un don additionnel)
+* objectif (voir plus loin)
 
 ### Permettre les dons récurrents
 
@@ -114,6 +115,18 @@ Ces bornes servent à générer une phrase pouvant conditionner par exemple les 
 
 Les [souscriptions optionnelles](../../glossaire/#souscriptions-optionnelles) peuvent être personnalisées
 pour le formulaire.
+
+### Objectif
+
+Si la campagne a un objectif de dons dans le système distant, alors vous aurez la possibilité de générer une
+balise `campagnodon_objectif`. En utilisant celle-ci dans un article, vous pourrez afficher une barre de progression.
+
+L'avancement de la campagne est raffraîchi toutes les heures, via le script de synchronisation des campagnes.
+
+{{% notice info %}}
+  Si vous souhaitez tester visuellement le rendu des bandeaux, ajoutez `debug_objectif=1` aux paramètres de la balise.
+  Vous aurez alors, en plus du bandeau de votre campagne, un rendu de différentes valeurs exemples.
+{{% /notice %}}
 
 ## Rédaction de l'article
 

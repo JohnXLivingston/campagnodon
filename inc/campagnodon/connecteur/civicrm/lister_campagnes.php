@@ -36,6 +36,8 @@ function inc_campagnodon_connecteur_civicrm_lister_campagnes_dist($mode_options)
       'texte' => property_exists($ligne_distante, 'description') ? $ligne_distante->description : null,
       'id_origine' => property_exists($ligne_distante, 'id') ? $ligne_distante->id : null,
       'date' => property_exists($ligne_distante, 'start_date') ? $ligne_distante->start_date : null,
+      'objectif' => property_exists($ligne_distante, 'goal_revenue') ? $ligne_distante->goal_revenue : null,
+      'recolte' => property_exists($ligne_distante, 'current_revenue') ? $ligne_distante->current_revenue : null,
       'statut' => 'publie' // TODO: Reprendre le statut de CiviCRM.
     ));
   }

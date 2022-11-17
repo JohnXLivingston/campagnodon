@@ -1,0 +1,45 @@
+@campagnodon_objectif_non_atteint: #D4294A;
+@campagnodon_objectif_atteint: green;
+@campagnodon_objectif_non_atteint_texte: white;
+@campagnodon_objectif_atteint_texte: white;
+
+.campagnodon_objectif_barre {
+  background-color: lighten(@campagnodon_objectif_non_atteint, 15%);
+  border-radius: 10px;
+  border: 1px solid @campagnodon_objectif_non_atteint;
+  color: @campagnodon_objectif_non_atteint_texte;
+  height: 40px;
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  .campagnodon_objectif_barre_avancement {
+    background-color: @campagnodon_objectif_non_atteint;
+    float:left;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+  }
+
+  .campagnodon_objectif_barre_libelle {
+    display: inline;
+    font-weight: bold;
+    line-height: 20px;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    white-space: nowrap;
+    width: 100%;
+    z-index: 2;
+  }
+
+  &.campagnodon_objectif_barre_atteint {
+    background-color: lighten(@campagnodon_objectif_atteint, 15%);
+    border-color: @campagnodon_objectif_atteint;
+    color: @campagnodon_objectif_atteint_texte;
+    .campagnodon_objectif_barre_avancement {
+      background-color: @campagnodon_objectif_atteint;
+    }
+  }
+}
