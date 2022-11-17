@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.5.0 (Not Released Yet)
+## 1.5.0
 
 * Bandeau d'avancement des campagnes.
 
