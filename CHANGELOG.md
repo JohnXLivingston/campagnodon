@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1
+
+* Espace avant le symbole €.
+
 ## 1.5.0
 
 * Bandeau d'avancement des campagnes.
