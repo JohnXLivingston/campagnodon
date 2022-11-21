@@ -85,7 +85,7 @@ function action_campagnodon_migration_dist(){
 		$res_transactions = sql_select(
 			'id_objet',
 			'spip_souscriptions_liens',
-			'id_souscription = '.sql_quote($souscription['id_souscription']),
+			'id_souscription = '.sql_quote($souscription['id_souscription']).' AND objet = '.sql_quote('transaction'),
 			null,
 			'id_objet ASC'
 		);

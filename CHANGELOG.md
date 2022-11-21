@@ -1,5 +1,9 @@
 # Changelog
 
+## ??? (Not Released Yet)
+
+* Fix migration, quand on requête spip_souscriptions_liens, il faut que objet='transaction'.
+
 ## 1.5.1
 
 * Espace avant le symbole €.
