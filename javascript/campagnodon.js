@@ -38,7 +38,7 @@ function campagnodon_formulaire(formSelector) {
   });
 
   $form.on('click', 'input[type=radio][name=don_recurrent]', () => {
-    campagnodon_formulaire_don_recurrent($form, false);
+    campagnodon_formulaire_don_recurrent($form, false); // doit être appelé avant campagnodon_formulaire_montant_libre
     campagnodon_formulaire_montant_libre($form, false, true, '');
     campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
     campagnodon_formulaire_explications($form);
@@ -53,9 +53,9 @@ function campagnodon_formulaire(formSelector) {
   $form.on('click', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
 
   $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
+  campagnodon_formulaire_don_recurrent($form, true); // doit être appelé avant campagnodon_formulaire_montant_libre
   campagnodon_formulaire_montant_libre($form, true);
   campagnodon_formulaire_montant_libre($form, true, false, '_recurrent');
-  campagnodon_formulaire_don_recurrent($form, true);
   campagnodon_formulaire_explications($form);
 }
 
@@ -76,7 +76,7 @@ function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_
     // Le champ est hidden => il n'y a que du montant libre => il n'y a rien à faire
     return;
   }
-  const montant_libre = $radio_montant_libre.is(':checked');
+  const montant_libre = $radio_montant_libre.is(':checked:not(:disabled)');
   const $input_montant_libre = $form.find('input[name=montant_libre'+suffix+']');
   $input_montant_libre.attr('disabled', !montant_libre);
   $input_montant_libre.attr('required', montant_libre);
@@ -279,6 +279,5 @@ function campagnodon_formulaire_don_recurrent($form, premier_appel = false) {
   }
   $form.find('input[name=montant'+suffix_enabled+']').attr('disabled', false).attr('required', true);
   $form.find('input[name=montant'+suffix_disabled+']').attr('disabled', true).attr('required', false);
-  $form.find('input[name=montant_libre'+suffix_enabled+']').attr('disabled', false); // required is handled by campagnodon_formulaire_montant_libre
-  $form.find('input[name=montant_libre'+suffix_disabled+']').attr('disabled', true); // required is handled by campagnodon_formulaire_montant_libre
+  // for name=montant_libre and name=montant_libre_recurrent, required and disabled are handled by campagnodon_formulaire_montant_libre
 }

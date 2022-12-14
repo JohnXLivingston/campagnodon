@@ -1,7 +1,8 @@
 # Changelog
 
-## ??? (Not Released Yet)
+## 1.5.2
 
+* Fix régression introduite avec les dons récurrents: on pouvait saisir un montant libre sans cliquer sur «montant libre».
 * Fix migration, quand on requête spip_souscriptions_liens, il faut que objet='transaction'.
 
 ## 1.5.1
