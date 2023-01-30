@@ -321,6 +321,12 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
         'currency' => 'EUR',
         'amount' => $transaction['montant']
       ];
+      // Pour les paiements récurrents, on a spip_transactions.date_paiement qui peut être dans le futur !
+      // En effet, dans le cas de paiements SEPA, on a une première requête pour tester environ 15 jours avant.
+      // La date à retenir est celle du prélèvement effectif !
+      if (!empty($transaction['date_paiement']) && substr($transaction['date_paiement'], 0, 4) != '0000') {
+        $params_garantir['contribution_date'] = $transaction['date_paiement'];
+      }
 
       try {
         $resultat = $fonction_garantir_echeance_existe($mode_options, $campagnodon_transaction_parent['transaction_distant'], $campagnodon_transaction['transaction_distant'], $params_garantir);

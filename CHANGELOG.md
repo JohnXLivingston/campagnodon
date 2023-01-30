@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0 (Unreleased yet)
+
+* Pour les échéances de paiements récurrents, on passe la date de paiement prévu (qui peut être dans le futur).
+
 ## 1.5.2
 
 * Fix régression introduite avec les dons récurrents: on pouvait saisir un montant libre sans cliquer sur «montant libre».
