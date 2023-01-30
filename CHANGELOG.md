@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.6.0 (Unreleased yet)
+## 1.6.0
 
 * Pour les échéances de paiements récurrents, on passe la date de paiement prévu (qui peut être dans le futur).
 
