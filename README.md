@@ -299,7 +299,7 @@ Pour avoir la liste des fonctions nécessaires, voir dans le dossier qui défini
 ## Personnaliser des libellés
 
 Pour personnaliser des libellés, il suffit de surcharger les fichiers de langues.
-Par exemple, créer un fichier `squelettes/lang/local_campagnodon_form_fr.php` avec pour contenu:
+Par exemple, créer un fichier `squelettes/lang/campagnodon_form_fr.php` avec pour contenu:
 
 ```php
 <?php
