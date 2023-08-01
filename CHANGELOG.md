@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+
+* On autorise Z-Core 3.0.* dans les dépendances.
+
 ## 1.6.0
 
 * Pour les échéances de paiements récurrents, on passe la date de paiement prévu (qui peut être dans le futur).

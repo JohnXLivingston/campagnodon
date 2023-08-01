@@ -21,7 +21,7 @@
   <!-- Les dépendances ci-dessous sont là pour avoir la même mise en forme que sur le site d'Attac. -->
   <!-- Ce sont des versions datées des plugins, il faudra un jour les mettre à jour -->
   <necessite nom="spipr_dist" compatibilite="[0.4.17;0.4.*]" />
-  <necessite nom="zcore" compatibilite="[2.8.9;2.8.*]" />
+  <necessite nom="zcore" compatibilite="[2.8.9;3.0.*]" />
   <necessite nom="switchcase" />
   <necessite nom="lesscss" compatibilite="[1.0.0;1.*.*]" />
   
