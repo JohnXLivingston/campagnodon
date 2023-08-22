@@ -1,5 +1,9 @@
 # Changelog
 
+## ??? (Not Released Yet)
+
+* Compatibilité SPIP 4.2.
+
 ## 1.6.1
 
 * On autorise Z-Core 3.0.* dans les dépendances.
