@@ -2,7 +2,7 @@
 
 ## ??? (Not Released Yet)
 
-* Compatibilité SPIP 4.2.
+* **Important**: Compatibilité SPIP 4.2. La compatibilité avec les versions précédentes n'est pas assurée.
 
 ## 1.6.1
 

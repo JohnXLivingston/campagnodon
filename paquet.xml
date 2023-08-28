@@ -1,12 +1,12 @@
 <paquet 
   prefix="campagnodon"
   categorie="communication"
-  version="1.6.1"
+  version="2.0.0"
   etat="stable"
-  compatibilite="[3.2.0;4.2.*]"
+  compatibilite="[4.2.0;4.2.*]"
   logo="campagnodon.svg"
   documentation="https://code.globenet.org/attacfr/campagnodon"
-  schema="1.6.1"
+  schema="2.0.0"
 >
  
   <nom>Campagnodon</nom>
@@ -14,14 +14,14 @@
   <auteur>John Livingston</auteur>
   <licence>AGPLv3</licence>
  
-  <necessite nom="bank" compatibilite="[4.7.0;)"/>
-  <necessite nom="spip_bonux" compatibilite="[3.8.0;)"/>
-  <necessite nom="pays" compatibilite="[3.4.9;]"/>
-  <necessite nom="verifier" compatibilite="[1.17.1;]"/>
-  <necessite nom="spipr_dist" compatibilite="[0.4.17;]" />
-  <necessite nom="zcore" compatibilite="[2.8.9;]" />
+  <necessite nom="bank" compatibilite="[6.0.0;["/>
+  <necessite nom="spip_bonux" compatibilite="[4.1.0;["/>
+  <necessite nom="pays" compatibilite="[4.0.0;["/>
+  <necessite nom="verifier" compatibilite="[3.1.0;["/>
+  <necessite nom="spipr_dist" compatibilite="[2.2.0;[" />
+  <necessite nom="zcore" compatibilite="[3.0.5;[" />
   <necessite nom="switchcase" />
-  <necessite nom="lesscss" compatibilite="[1.0.0;]" />
+  <necessite nom="scssphp" compatibilite="[3.0.0;[" />
   
   <pipeline nom="jquery_plugins" inclure="campagnodon_front_pipeline.php"/>
   <pipeline nom="autoriser" inclure="campagnodon_autorisations.php"/>
