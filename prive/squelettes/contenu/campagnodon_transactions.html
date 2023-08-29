@@ -1,4 +1,11 @@
 [(#AUTORISER{voir,campagnodon_transactions}|sinon_interdire_acces)]
+
+[(#REM|campagnodon_peut_migration_souscription_don_recurrent|oui)
+  [(#AUTORISER{campagnodon_migration}|oui)
+    [(#BOUTON_ACTION{<:campagnodon:bouton_migration_souscription_don_recurrent:>,#URL_ACTION_AUTEUR{campagnodon_migration,souscription_don_recurrent,#SELF},ajax, <:campagnodon:bouton_migration_confirmation:>})]
+  ]
+]
+
 <div class='onglets_simple clearfix'>
 	<ul>
 		<BOUCLE_filtres(POUR){tableau #REM|campagnodon_transactions_statuts_synchronisation}>

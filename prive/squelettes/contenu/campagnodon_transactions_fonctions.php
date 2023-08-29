@@ -31,3 +31,12 @@ function campagnodon_transactions_statuts_synchronisation(){
   $result[''] = array_sum($result);
   return $result;
 }
+
+/**
+ * Indique si on peut effectuer la migration en question.
+ */
+function filtre_campagnodon_peut_migration_souscription_don_recurrent_dist() {
+  include_spip('action/campagnodon_migration');
+  $migration_config = campagnodon_migration_config('souscription', 'don_recurrent');
+  return !empty($migration_config);
+}

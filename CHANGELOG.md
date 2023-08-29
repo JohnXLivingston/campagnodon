@@ -4,6 +4,10 @@
 
 * **Important**: Compatibilité SPIP 4.2. La compatibilité avec les versions précédentes n'est pas assurée.
 * Boutons d'action backend: ajout de "noscroll" sur les boutons "ajax".
+* Refonte de l'écran «liste des transactions»: le tableau était trop large, le menu extra se mettait par dessus.
+  * passage en page «pleine_largeur»
+  * suppression du menu gauche (transactions/campagnes), pour être remplacé par 2 entrées dans le menu SPIP
+  * déplacement du bouton de la fonction de migration des dons mensuels depuis le plugin Souscription
 
 ## 1.6.1
 

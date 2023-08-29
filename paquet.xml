@@ -44,5 +44,10 @@
     titre="campagnodon:titre_menu_activites"
     parent="menu_activite"
   />
+  <menu
+    nom="campagnodon_campagnes"
+    titre="campagnodon:titre_menu_activites_campagnes"
+    parent="menu_activite"
+  />
  
 </paquet>
