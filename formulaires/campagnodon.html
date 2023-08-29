@@ -10,7 +10,7 @@
       <BOUCLE_adhesion(CONDITION){si #ENV{_type}|=={adhesion}}>
         <fieldset>
           <legend><span><:campagnodon_form:j_adhere:></span></legend>
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_adhesion}})]
               <div class="editer editer_montant_adhesion obligatoire [(#GET{erreurs}|oui)erreur]">
@@ -31,7 +31,7 @@
           </div>
         </fieldset>
 
-        <div class="row">
+        <div class="form-row">
           <div class="form-group col-md-12 choix">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adhesion_avec_don}})]
             <div class="editer editer_adhesion_avec_don [(#GET{erreurs}|oui)erreur]">
@@ -69,7 +69,7 @@
           ]
         ]
 
-        <div class="row" si_pas_don_recurrent>
+        <div class="form-row" si_pas_don_recurrent>
           <div class="form-group col-md-12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
             <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
@@ -123,7 +123,7 @@
 
         [(#REM) Si on a activé les dons récurrents, voici les montants specifiques:]
         <BOUCLE_don_recurrent_montants(CONDITION){si #ENV{_don_recurrent}|oui}>
-          <div class="row" si_don_recurrent>
+          <div class="form-row" si_don_recurrent>
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_recurrent}})]
               <div class="editer editer_montant_recurrent obligatoire [(#GET{erreurs}|oui)erreur]">
@@ -195,7 +195,7 @@
       <fieldset>
         <legend><span><:campagnodon_form:coordonnees:></span></legend>
 
-        <div class="row">
+        <div class="form-row">
           <div class="form-group col-md-12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{email}})]
             <div class="editer editer_email obligatoire [(#GET{erreurs}|oui)erreur]">
@@ -208,7 +208,7 @@
 
         [(#REM) sur le formulaire d'adhésion, recu_fiscal est implicite.]
         [(#ENV{_type}|=={adhesion}|non)
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12 choix">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
               <div class="editer editer_recu_fiscal [(#GET{erreurs}|oui)erreur]">
@@ -238,7 +238,7 @@
             <:campagnodon_form:recu_fiscal_champs_supplementaires:>
           </p>
 
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-2">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{civilite}})]
               <div class="editer editer_civilite [(#GET{erreurs}|oui)erreur]">
@@ -271,7 +271,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{date_naissance}})]
               <div class="editer editer_date_naissance [(#GET{erreurs}|oui)erreur]">
@@ -282,7 +282,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adresse}})]
               <div class="editer editer_adresse obligatoire [(#GET{erreurs}|oui)erreur]">
@@ -292,7 +292,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{complement_adresse_1}})]
               <div class="editer editer_complement_adresse_1 [(#GET{erreurs}|oui)erreur]">
@@ -302,7 +302,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{complement_adresse_2}})]
               <div class="editer editer_complement_adresse_2 [(#GET{erreurs}|oui)erreur]">
@@ -313,8 +313,8 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="form-group col-md-2">
+          <div class="form-row">
+            <div class="form-group col-md-3">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{code_postal}})]
               <div class="editer editer_code_postal obligatoire [(#GET{erreurs}|oui)erreur]">
                 <label for="champ_code_postal"><:campagnodon_form:label_code_postal:></label>
@@ -322,7 +322,7 @@
                 <input type="text"  name="code_postal" class="text" value="#ENV*{code_postal}" id="champ_code_postal" required="required" />
               </div>
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-5">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{ville}})]
               <div class="editer editer_ville obligatoire [(#GET{erreurs}|oui)erreur]">
                 <label for="champ_ville"><:campagnodon_form:label_ville:></label>
@@ -345,7 +345,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{telephone}})]
               <div class="editer editer_telephone [(#GET{erreurs}|oui)erreur]">
@@ -361,7 +361,7 @@
         <BOUCLE_souscriptions_optionnelles(POUR){tableau #ENV{_souscriptions_optionnelles}}>
           #SET{nom_champ,souscription_optionnelle_#CLE}
           #SET{label_champ, #VALEUR|table_valeur{label}}
-          <div class="row">
+          <div class="form-row">
             <div class="form-group col-md-12 choix">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{#GET{nom_champ}}})]
               <div class="editer editer_#GET{nom_champ} [(#GET{erreurs}|oui)erreur]">
