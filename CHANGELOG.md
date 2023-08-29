@@ -3,6 +3,7 @@
 ## ??? (Not Released Yet)
 
 * **Important**: Compatibilité SPIP 4.2. La compatibilité avec les versions précédentes n'est pas assurée.
+* Boutons d'action backend: ajout de "noscroll" sur les boutons "ajax".
 
 ## 1.6.1
 

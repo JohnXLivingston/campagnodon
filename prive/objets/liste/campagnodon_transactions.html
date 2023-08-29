@@ -54,7 +54,7 @@
 				[(#TYPE_TRANSACTION|=={don_mensuel}|oui)
 					[(#AUTORISER{campagnodon_declencher_mensualite,campagnodon_transactions,#ID_CAMPAGNODON_TRANSACTION}|oui)
 						<div class="actions">
-							[(#BOUTON_ACTION{<:campagnodon:bouton_declencher_mensualite:>,#URL_ACTION_AUTEUR{campagnodon_declencher_mensualite,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax,<:campagnodon:bouton_declencher_mensualite_confirmation:>})]
+							[(#BOUTON_ACTION{<:campagnodon:bouton_declencher_mensualite:>,#URL_ACTION_AUTEUR{campagnodon_declencher_mensualite,#ID_CAMPAGNODON_TRANSACTION,#SELF},'ajax noscroll',<:campagnodon:bouton_declencher_mensualite_confirmation:>})]
 						</div>
 					]
 				]
@@ -75,7 +75,7 @@
 				</div>
 				[(#AUTORISER{campagnodon_synchroniser,campagnodon_transactions}|oui)
 					<div class="actions">
-						[(#BOUTON_ACTION{<:campagnodon:bouton_synchroniser:>,#URL_ACTION_AUTEUR{campagnodon_synchroniser,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax})]
+						[(#BOUTON_ACTION{<:campagnodon:bouton_synchroniser:>,#URL_ACTION_AUTEUR{campagnodon_synchroniser,#ID_CAMPAGNODON_TRANSACTION,#SELF},'ajax noscroll'})]
 					</div>
 				]
 			</td>
@@ -84,7 +84,7 @@
 				<div class="actions">
 					<BOUCLE_convertir(DATA){source table, #ID_CAMPAGNODON_TRANSACTION|campagnodon_peut_convertir_en}>
 						[(#AUTORISER{campagnodon_synchroniser,campagnodon_transactions}|oui)
-							[(#BOUTON_ACTION{<:campagnodon:bouton_convertir:> - #VALEUR,#URL_ACTION_AUTEUR{campagnodon_convertir,#ID_CAMPAGNODON_TRANSACTION-#VALEUR,#SELF},ajax, <:campagnodon:bouton_convertir_confirmation:>})]
+							[(#BOUTON_ACTION{<:campagnodon:bouton_convertir:> - #VALEUR,#URL_ACTION_AUTEUR{campagnodon_convertir,#ID_CAMPAGNODON_TRANSACTION-#VALEUR,#SELF},'ajax noscroll', <:campagnodon:bouton_convertir_confirmation:>})]
 						]
 					</BOUCLE_convertir>
 				</div>
