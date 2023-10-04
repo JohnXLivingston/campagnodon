@@ -103,9 +103,12 @@
 .formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[name=montant_libre],
 .formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[name=montant_libre_recurrent],
 .formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[name=montant_libre_recurrent] {
+  /* Le display:inline-block est nécessaire pour boostrap4, qui passe les champs en display:block.
+  Sans ça, on a un retour à la ligne avant le symbole € */
+  display: inline-block;
   font-size: 1.2em;
   font-weight: bold;
-  width: 70px;
+  width: 100px;
 }
 
 .formulaire_campagnodon .editer_montant .campagnodon_montant_ligne label,
