@@ -1,8 +1,13 @@
 # Changelog
 
-## ??? (Not Released Yet)
+## 1.7.0 (Not Released Yet)
 
-* **Important**: Compatibilité SPIP 4.2. La compatibilité avec les versions précédentes n'est pas assurée.
+* Compatibilité SPIP 3.2 et 4.2.
+  * Utilisation de CSS "vanilla", en lieu et place de LESS ou SCSS (problèmes de compatibilité bootstrap 2 et 4 sinon).
+  * Les dépendances deviennent ouvertes sur les nouvelles versions.
+  * N'utilise plus les classes CSS bootstrap.
+  * Suppression des dépendances bootstrap, lesscss/scssphp.
+* Fix CSS: on ne touche pas à la largeur des champs date.
 * Boutons d'action backend: ajout de "noscroll" sur les boutons "ajax".
 * Refonte de l'écran «liste des transactions»: le tableau était trop large, le menu extra se mettait par dessus.
   * passage en page «pleine_largeur»

@@ -1,0 +1,284 @@
+.formulaire_campagnodon .editer_montant_adhesion .erreur_message {
+  margin-bottom: 10px;
+}
+
+.formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 5px;
+}
+
+.formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion label {
+  display: inline;
+  white-space: nowrap;
+}
+
+.formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion input[type=radio] + span {
+  /* Le style du libellé */
+  padding: 0.7em;
+  margin-right: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  vertical-align: middle;
+}
+
+.formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion input[type=radio]:hover + span {
+  background-color: #DA1E48;
+  color: white;
+  border:#DA1E48 1px solid;
+}
+
+.formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion input[type=radio]:checked + span {
+  background: #DA1E48;
+  border:#DA1E48 1px solid;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0,0,0,.5);
+  color: white;
+}
+
+.formulaire_campagnodon label[for=champ_adhesion_avec_don] {
+  font-weight: bold;
+}
+
+.formulaire_campagnodon .editer_montant .erreur_message,
+.formulaire_campagnodon .editer_montant_recurrent .erreur_message {
+  margin-bottom: 10px;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant,
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne,
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 20px;
+  align-items: center;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[type=radio],
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[type=radio] {
+  /* On ne met pas les boutons invisibles pour permettre une navigation au clavier */
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[type=radio] + span,
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[type=radio] + span {
+  /* Le style du libellé */
+  padding: 0.7em;
+  margin-right: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  border:#7f7f7f 1px solid;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[type=radio]:hover + span,
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[type=radio]:hover + span {
+  background-color: #DA1E48;
+  color: white;
+  border:#DA1E48 1px solid;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[type=radio]:checked + span,
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[type=radio]:checked + span {
+  background: #DA1E48;
+  border:#DA1E48 1px solid;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0,0,0,.5);
+  color: white;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[name=montant_libre],
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[name=montant_libre],
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne input[name=montant_libre_recurrent],
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne input[name=montant_libre_recurrent] {
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 70px;
+}
+
+.formulaire_campagnodon .editer_montant .campagnodon_montant_ligne label,
+.formulaire_campagnodon .editer_montant_recurrent .campagnodon_montant_ligne label {
+  white-space: nowrap;
+}
+
+.formulaire_campagnodon .editer_don_recurrent {
+  /* Le bouton de choix entre dons récurrents ou non. */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.formulaire_campagnodon .editer_don_recurrent input[type=radio] {
+  /* On ne met pas les boutons invisibles pour permettre une navigation au clavier */
+  opacity: 0;
+  position: fixed;
+  width: 0;
+}
+
+.formulaire_campagnodon .editer_don_recurrent input[type=radio] + span {
+  /* Le style du libellé */
+  padding: 0.7em;
+  margin-right: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  border:#7f7f7f 1px solid;
+}
+
+.formulaire_campagnodon .editer_don_recurrent input[type=radio]:hover + span {
+  background-color: #DA1E48;
+  color: white;
+  border:#DA1E48 1px solid;
+}
+
+.formulaire_campagnodon .editer_don_recurrent input[type=radio]:checked + span {
+  background: #DA1E48;
+  border:#DA1E48 1px solid;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(0,0,0,.5);
+  color: white;
+}
+
+.formulaire_campagnodon .editer_don_recurrent label {
+  white-space: nowrap;
+}
+
+.formulaire_campagnodon .obligatoire label:after {
+  content: ' *';
+}
+
+.formulaire_campagnodon .obligatoire .campagnodon_montant_ligne label:after,
+.formulaire_campagnodon .obligatoire .campagnodon_montant_adhesion label:after,
+.formulaire_campagnodon .obligatoire.editer_don_recurrent label:after {
+  content: ''
+}
+
+/* Une partie des règles ci-dessous sont inspirées de bootstrap4. */
+.formulaire_campagnodon .campagnodon-form-row {
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	margin-right: -5px;
+	margin-left: -5px;
+}
+
+.form-row > .campagnodon-col, .form-row > [class*="campagnodon-col-"] {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.formulaire_campagnodon .campagnodon-form-group {
+	margin-bottom: 1.5rem;
+}
+
+.formulaire_campagnodon .campagnodon-col-md-1,
+.formulaire_campagnodon .campagnodon-col-md-2,
+.formulaire_campagnodon .campagnodon-col-md-3,
+.formulaire_campagnodon .campagnodon-col-md-4,
+.formulaire_campagnodon .campagnodon-col-md-5,
+.formulaire_campagnodon .campagnodon-col-md-6,
+.formulaire_campagnodon .campagnodon-col-md-7,
+.formulaire_campagnodon .campagnodon-col-md-8,
+.formulaire_campagnodon .campagnodon-col-md-9,
+.formulaire_campagnodon .campagnodon-col-md-10,
+.formulaire_campagnodon .campagnodon-col-md-11,
+.formulaire_campagnodon .campagnodon-col-md-12,
+.formulaire_campagnodon .campagnodon-col-md,
+.formulaire_campagnodon .campagnodon-col-md-auto {
+	position: relative;
+	width: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+  .formulaire_campagnodon .campagnodon-col-md {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-auto {
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-1 {
+    -ms-flex: 0 0 8.33333333%;
+    flex: 0 0 8.33333333%;
+    max-width: 8.33333333%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-2 {
+    -ms-flex: 0 0 16.66666667%;
+    flex: 0 0 16.66666667%;
+    max-width: 16.66666667%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-3 {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-4 {
+    -ms-flex: 0 0 33.33333333%;
+    flex: 0 0 33.33333333%;
+    max-width: 33.33333333%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-5 {
+    -ms-flex: 0 0 41.66666667%;
+    flex: 0 0 41.66666667%;
+    max-width: 41.66666667%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-6 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-7 {
+    -ms-flex: 0 0 58.33333333%;
+    flex: 0 0 58.33333333%;
+    max-width: 58.33333333%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-8 {
+    -ms-flex: 0 0 66.66666667%;
+    flex: 0 0 66.66666667%;
+    max-width: 66.66666667%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-9 {
+    -ms-flex: 0 0 75%;
+    flex: 0 0 75%;
+    max-width: 75%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-10 {
+    -ms-flex: 0 0 83.33333333%;
+    flex: 0 0 83.33333333%;
+    max-width: 83.33333333%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-11 {
+    -ms-flex: 0 0 91.66666667%;
+    flex: 0 0 91.66666667%;
+    max-width: 91.66666667%;
+  }
+  .formulaire_campagnodon .campagnodon-col-md-12 {
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

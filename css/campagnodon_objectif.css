@@ -1,0 +1,52 @@
+:root {
+  --campagnodon-objectif-non-atteint: #D4294A;
+  --campagnodon-objectif-non-atteint-clair: #e2687f;
+  --campagnodon-objectif-atteint: #008000;
+  --campagnodon-objectif-atteint-clair: #00cd00;
+  --campagnodon-objectif-non-atteint-texte: #fff;
+  --campagnodon-objectif-atteint-texte: #fff;
+}
+
+
+
+.campagnodon_objectif_barre {
+  background-color: var(--campagnodon-objectif-non-atteint-clair);
+  border-radius: 10px;
+  border: 1px solid var(--campagnodon-objectif-non-atteint);
+  color: var(--campagnodon-objectif-non-atteint-texte);
+  height: 40px;
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.campagnodon_objectif_barre .campagnodon_objectif_barre_avancement {
+  background-color: var(--campagnodon-objectif-non-atteint);
+  float:left;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+.campagnodon_objectif_barre .campagnodon_objectif_barre_libelle {
+  display: inline;
+  font-weight: bold;
+  line-height: 20px;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  width: 100%;
+  z-index: 2;
+}
+
+.campagnodon_objectif_barre.campagnodon_objectif_barre_atteint {
+  background-color: var(--campagnodon-objectif-atteint-clair);
+  border-color: var(--campagnodon-objectif-atteint);
+  color: var(--campagnodon-objectif-atteint-texte);
+}
+
+.campagnodon_objectif_barre.campagnodon_objectif_barre_atteint .campagnodon_objectif_barre_avancement {
+  background-color: var(--campagnodon-objectif-atteint);
+}
