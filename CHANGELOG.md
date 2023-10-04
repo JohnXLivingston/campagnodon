@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.0 (Not Released Yet)
+## 1.7.0
 
 * Compatibilité SPIP 3.2 et 4.2.
   * Utilisation de CSS "vanilla", en lieu et place de LESS ou SCSS (problèmes de compatibilité bootstrap 2 et 4 sinon).
