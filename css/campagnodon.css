@@ -168,7 +168,6 @@
   content: ''
 }
 
-/* Une partie des règles ci-dessous sont inspirées de bootstrap4. */
 .formulaire_campagnodon .campagnodon-form-row {
 	display: -ms-flexbox;
 	display: flex;
@@ -178,7 +177,11 @@
 	margin-left: -5px;
 }
 
-.form-row > .campagnodon-col, .form-row > [class*="campagnodon-col-"] {
+.formulaire_campagnodon .campagnodon-form-row > * {
+  box-sizing: border-box; /* requis pour que form-row et col-md-* fonctionne avec bootstrap2. */
+}
+
+.campagnodon-form-row > .campagnodon-col, .campagnodon-form-row > [class*="campagnodon-col-"] {
   padding-right: 5px;
   padding-left: 5px;
 }
