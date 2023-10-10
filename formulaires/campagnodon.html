@@ -6,6 +6,31 @@
     <form name="formulaire_#FORM" action="#ENV{action}" method="post" campagnodon_type="#ENV{_type}">
       #ACTION_FORMULAIRE{#ENV{action}}
 
+      <fieldset class="campagnodon-choix">
+        <BOUCLE_types(DATA){source table, #ENV{_types}}>
+          #SET{type_description,#VALEUR}
+          #SET{val, #GET{type_description}|table_valeur{'valeur'}}
+          <input
+            type="radio"
+            name="choix_type"
+            class="radio"
+            required="required"
+            id="choix_type_#GET{val}"
+            value="#GET{val}"
+            [
+              (#ENV{choix_type}|=={#GET{val}}|oui)
+              checked="checked"
+            ]
+          >
+          <label for="choix_type_#GET{val}">
+            [(#GET{type_description}|table_valeur{'label'})]
+          </label>
+        </BOUCLE_types>
+      </fieldset>
+
+
+
+      ANCIEN FORMULAIRE
       [(#REM) Si on est sur un formulaire d'adhésion, on affiche le bloc correspondant, ainsi qu'une checkbock pour ajouter un don :]
       <BOUCLE_adhesion(CONDITION){si #ENV{_type}|=={adhesion}}>
         <fieldset>

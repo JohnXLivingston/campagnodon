@@ -1,5 +1,8 @@
 <?php
 $GLOBALS[$GLOBALS['idx_lang']] = array(
+  'choix_don' => 'Je donne',
+  'choix_adhesion' => "J'adhère",
+  'j_adhere' => "J'adhère",
   'je_donne' => 'Je donne :',
   'je_donne_une_fois' => 'Je donne une fois',
   'je_donne_recurrent' => 'Je donne tous les mois',

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0 (Not Released Yet)
+
+TODO: nouveau formulaire d'adhésion (unifié, et gestion des adhésions renouvelables).
+
 ## 1.7.0
 
 * Compatibilité SPIP 3.2 et 4.2.

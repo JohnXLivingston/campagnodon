@@ -281,13 +281,35 @@ function get_adhesion_magazine_prix($mode_options, $type) {
 }
 
 /**
-* Declarer les champs postes et y integrer les valeurs par defaut
+* Declarer les champs, y integrer les valeurs par defaut, et initialiser les variables pour le formulaire.
 */
 function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_liste_montants=NULL, $arg_souscriptions_perso=NULL, $arg_don_recurrent=NULL, $arg_liste_montants_recurrent=NULL) {
-  if ($type !== 'don' && $type !== 'adhesion') {
+  if ($type !== 'don' && $type !== 'adhesion' && $type !== 'don+adhesion') {
     spip_log("Type de Campagnodon inconnu: ".$type, "campagnodon"._LOG_ERREUR);
     return false;
   }
+
+  $types = [];
+  if ($type === 'don' || $type === 'don+adhesion') {
+    $types[] = [
+      'valeur' => 'don',
+      'label' => _T('campagnodon_form:choix_don'),
+    ];
+  }
+  if ($type === 'adhesion' || $type === 'don+adhesion') {
+    $types[] = [
+      'valeur' => 'adhesion',
+      'label' => _T('campagnodon_form:choix_adhesion'),
+    ];
+  }
+
+  $choix_type_defaut = '';
+  if ($type === 'don') {
+    $choix_type_defaut = 'don';
+  } else if ($type === 'adhesion') {
+    $choix_type_defaut = 'adhesion';
+  }
+
 
   $campagne = get_campagne_ouverte($id_campagne);
   if (empty($campagne)) {
@@ -307,6 +329,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
   $souscriptions_optionnelles = liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
   
   $values = [
+    // NOTE_V2.X TODO: les valeurs ci-dessous devraient être remplacées par de nouvelles valeurs.
     '_type' => $type,
     '_montants_propositions' => $config_montants['propositions'],
     '_montants_proposition_libre' => $config_montants['libre'],
@@ -316,8 +339,13 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne=NULL, $arg_lis
     '_montants_proposition_libre_recurrent' => $config_montants['libre_recurrent'],
     '_montants_propositions_uniquement_libre_recurrent' => $config_montants['uniquement_libre_recurrent'],
     '_don_recurrent' => $config_montants['don_recurrent'],
-    '_civilites' => $civilites,
     '_souscriptions_optionnelles' => $souscriptions_optionnelles,
+    // NOTE_V2.X Nouveaux champs:
+    '_types' => $types,
+
+    // NOTE_V2.X Anciens champs qui restent
+    '_civilites' => $civilites,
+    'choix_type' => $choix_type_defaut,
     'montant' => '',
     'montant_libre' => '',
     'email' => '',
