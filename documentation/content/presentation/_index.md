@@ -16,4 +16,8 @@ Dans le cas d'[Attac France](https://france.attac.org), ces données sont stock�
 Pour l'instant, le code est conçu pour répondre aux besoins d'Attac France, et est notamment lié à CiviCRM (voir la [documentation](documentation/civicrm.md)).
 Toutefois, le code essaie d'être le plus générique possible, et fait en sorte d'être face à étendre.
 
+{{% notice tip %}}
+L'installation et la configuration de Campagnodon peut être compliquée. N'hésitez pas à [me contacter](https://www.john-livingston.fr/spip.php?page=contact) pour un accompagnement.
+{{% /notice %}}
+
 Pour la liste des versions disponibles, merci de vous référer au fichier `CHANGELOG.md` présent dans le dépot.
