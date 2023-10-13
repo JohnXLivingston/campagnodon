@@ -11,11 +11,16 @@
 
 .formulaire_campagnodon .campagnodon-choix {
   /* Ici ce sont des fieldset proposant un choix entre plusieurs options. */
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0px;
+
   border: none;
   padding: 0px;
   margin: 0px;
   box-sizing: border-box;
-  font-size: 0; /* sinon on aura des espaces entre les label (display: inline-block) */
 }
 
 .formulaire_campagnodon .campagnodon-choix input[type=radio] {
@@ -27,7 +32,6 @@
 }
 
 .formulaire_campagnodon .campagnodon-choix label {
-  display: inline-block;
   /* Choix non sélectionné: les couleurs sont inversées */
   background: var(--campagnodon-color);
   color: var(--campagnodon-background-color);
@@ -42,6 +46,7 @@
 }
 
 .formulaire_campagnodon .campagnodon-choix label:nth-child(2) {
+  /* nth-child(2), car il y a un input radio avant. */
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
