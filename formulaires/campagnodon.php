@@ -347,7 +347,7 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne=NULL, $arg_lis
         ];
       }
     } else {
-      throw new CampagnodonException("Type inconnu: '".$type."'");
+      throw new CampagnodonException("Type inconnu: '".$type."'", "campagnodon:erreur_sauvegarde");
     }
 
     $distant_operation_type = $type_transaction;
