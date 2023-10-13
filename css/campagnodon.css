@@ -40,8 +40,8 @@
   /* Choix non sélectionné: les couleurs sont inversées */
   background: var(--campagnodon-color);
   color: var(--campagnodon-background-color-very-light);
-  border: 1px solid var(--campagnodon-background-color);
-  border-right: 0;
+  border: 1px dotted var(--campagnodon-background-color);
+  border-right-width: 0;
   margin-left: 0;
   margin-right: 0;
   padding: 0.7em;
@@ -57,13 +57,14 @@
 }
 
 .formulaire_campagnodon .campagnodon-choix label:last-child {
-  border-right: 1px solid var(--campagnodon-background-color);
+  border-right-width: 1px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
 
 .formulaire_campagnodon .campagnodon-choix input[type=radio]:checked + label {
   background: var(--campagnodon-background-color);
+  border-style: solid;
   color: var(--campagnodon-color);
   font-weight: bold;
 }
