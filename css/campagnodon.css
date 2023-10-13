@@ -1,8 +1,13 @@
 :root {
+  /* Note: les couleurs "light" sont des "lighten 15%", "very-light" à 30% */
   --campagnodon-color: white;
+  --campagnodon-color-light: #D9D9D9;
+  --campagnodon-color-very-light: #B3B3B3;
   --campagnodon-background-color: #DA1E48;
+  --campagnodon-background-color-light: #E95C7B;
+  --campagnodon-background-color-very-light: #F29FB2;
   --campagnodon-text-shadow: rgba(0,0,0,.5);
-  --campagnodon-border: #7f7f7f;
+  --campagnodon-border: #7F7F7F;
 }
 
 .formulaire_campagnodon .editer_montant_adhesion .erreur_message {
@@ -34,7 +39,7 @@
 .formulaire_campagnodon .campagnodon-choix label {
   /* Choix non sélectionné: les couleurs sont inversées */
   background: var(--campagnodon-color);
-  color: var(--campagnodon-background-color);
+  color: var(--campagnodon-background-color-very-light);
   border: 1px solid var(--campagnodon-background-color);
   border-right: 0;
   margin-left: 0;
