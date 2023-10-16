@@ -8,6 +8,7 @@
   --campagnodon-background-color-very-light: #F29FB2;
   --campagnodon-text-shadow: rgba(0,0,0,.5);
   --campagnodon-border: #7F7F7F;
+  --campagnodon-color-disabled: #7F7F7F;
 }
 
 .formulaire_campagnodon .editer_montant_adhesion .erreur_message {
@@ -67,6 +68,10 @@
   border-style: solid;
   color: var(--campagnodon-color);
   font-weight: bold;
+}
+
+.formulaire_campagnodon .campagnodon-choix input[type=radio]:disabled + label {
+  color: var(--campagnodon-color-disabled) !important;
 }
 
 .formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion {

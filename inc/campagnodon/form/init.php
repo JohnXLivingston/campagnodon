@@ -12,7 +12,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  * @param string $type le type de formulaire (comme passé à la balise campagnodon)
  * @return array les types, et la valeur par défaut le cas échéant.
  */
-function form_init_get_types($type) {
+function form_init_get_choix_type($type) {
 	$types = [];
 	if ($type === 'don' || $type === 'don+adhesion') {
 		$types[] = [
@@ -40,7 +40,54 @@ function form_init_get_types($type) {
 	];
 }
 
+/**
+ * Retourne les infos pour afficher le choix de récurrence (le cas échéant).
+ * @param string $form_type Le type de formulaire (don, adhesion, don+adhesion).
+ * @param string|null $arg_don_recurrent Le paramètre don_recurrent des formulaires.
+ */
+function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
+	if ($arg_don_recurrent !== '1') {
+		return [];
+	}
 
+	include_spip('inc/campagnodon.utils');
+
+	$choix_recurrence_desc = [];
+	if (
+		campagnodon_don_recurrent_active()
+		&& (
+			$form_type === 'don' || $form_type === 'don+adhesion'
+		)
+	) {
+		$choix_recurrence_desc['don'] = [
+			[
+				'valeur' => 'unique',
+				'label' => _T('campagnodon_form:je_donne_une_fois')
+			],
+			[
+				'valeur' => 'mensuel',
+				'label' => _T('campagnodon_form:je_donne_recurrent')
+			]
+		];
+	}
+	if ($form_type === 'don' || $form_type === 'don+adhesion') {
+		// TODO: ces valeurs doivent vérifier la conf, et éventuellement dépendre d'un argument adhesion_recurrent
+		// TODO: de plus, il faudrait un équivaleur à campagnodon_don_recurrent_active()
+		if (campagnodon_don_recurrent_active()) {
+			$choix_recurrence_desc['adhesion'] = [
+				[
+					'valeur' => 'unique',
+					'label' => _T('campagnodon_form:jadhere_pour_un_an')
+				],
+				[
+					'valeur' => 'annuel',
+					'label' => _T('campagnodon_form:jadhere_avec_renouvellement_automatique')
+				]
+			];
+		}
+	}
+	return $choix_recurrence_desc;
+}
 
 /**
  * Retourne le montant (montant vs montant_libre, etc...)

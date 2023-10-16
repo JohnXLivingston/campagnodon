@@ -20,6 +20,15 @@ function campagnodon_formulaire(formSelector) {
     }, 500)
   });
 
+  $form.on('click', 'input[type=radio][name="choix_type"]', () => {
+    campagnodon_formulaire_choix_type($form, false);
+  });
+
+
+  campagnodon_formulaire_choix_type($form, true);
+
+  // TODO: ci-dessous l'ancien code. À voir ce qu'on garde ou pas.
+
   $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => {
     campagnodon_formulaire_adhesion_avec_don($form);
     campagnodon_formulaire_explications($form);
@@ -57,6 +66,48 @@ function campagnodon_formulaire(formSelector) {
   campagnodon_formulaire_montant_libre($form, true);
   campagnodon_formulaire_montant_libre($form, true, false, '_recurrent');
   campagnodon_formulaire_explications($form);
+}
+
+/**
+ * Raffraichi le formulaire en fonction du type d'action sélectionnées (don ou adhésion).
+ * @param {jQuery} $form le conteneur jQuery du formulaire
+ * @param {*} premier_appel Si c'est le premier appel à la fonction.
+ */
+function campagnodon_formulaire_choix_type($form, premier_appel = false) {
+  const $radio_choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)');
+  let selecteur_fieldset_a_desactiver
+  let selecteur_fieldset_a_activer
+  if ($radio_choix_type.length === 0) {
+    // on déselectionne tout.
+    selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_type]'
+  } else {
+    // Sinon on doit désactiver les radio des fieldset ne correspondant pas au type courant,
+    const choix_type = $radio_choix_type.attr('value')
+    selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_type][campagnodon_recurrence_pour_type!=' + choix_type + ']'
+    selecteur_fieldset_a_activer = 'fieldset[campagnodon_recurrence_pour_type=' + choix_type + ']'
+  }
+
+  if (selecteur_fieldset_a_desactiver) {
+    $form.find(selecteur_fieldset_a_desactiver + ' input[name=choix_recurrence]').each(function () {
+      const $radio = $(this);
+      $radio.prop('checked', false);
+      $radio.attr('disabled', true);
+    })
+    $form.find(selecteur_fieldset_a_desactiver).hide();
+  }
+  if (selecteur_fieldset_a_activer) {
+    const selecteur_radio_a_activer = selecteur_fieldset_a_activer + ' input[name=choix_recurrence]'
+    $form.find(selecteur_radio_a_activer).each(function () {
+      const $radio = $(this);
+      $radio.attr('disabled', false);
+    })
+    // Si aucun n'est coché, on coche le premier.
+    if ($form.find(selecteur_radio_a_activer).find(':checked').length === 0) {
+      // Nb: on va aussi déclencher le onclick, pour raffraichir la suite.
+      $form.find(selecteur_radio_a_activer).first().prop('checked', true).trigger('click');
+    }
+    $form.find(selecteur_fieldset_a_activer).show();
+  }
 }
 
 /**

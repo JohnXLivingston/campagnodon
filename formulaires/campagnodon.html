@@ -3,13 +3,14 @@
   [<p class="reponse_formulaire reponse_formulaire_erreur">(#ENV*{message_erreur})</p>]
 
   <BOUCLE_editable(CONDITION){si #ENV{editable}}>
-    <form name="formulaire_#FORM" action="#ENV{action}" method="post" campagnodon_type="#ENV{_type}">
+    <form name="formulaire_#FORM" action="#ENV{action}" method="post">
       #ACTION_FORMULAIRE{#ENV{action}}
 
+      [(#REM) Le choix de l'action (don/adhésion)]
       <fieldset class="campagnodon-choix">
-        <BOUCLE_types(DATA){source table, #ENV{_types}}>
+        <BOUCLE_types(DATA){source table, #ENV{_choix_type_desc}}>
           #SET{type_description,#VALEUR}
-          #SET{val, #GET{type_description}|table_valeur{'valeur'}}
+          #SET{val, #GET{type_description/valeur}}
           <input
             type="radio"
             name="choix_type"
@@ -23,10 +24,41 @@
             ]
           >
           <label for="choix_type_#GET{val}">
-            [(#GET{type_description}|table_valeur{'label'})]
+            [(#GET{type_description/label})]
           </label>
         </BOUCLE_types>
       </fieldset>
+
+      [(#REM) Le choix de la récurrence (si activé sur le formulaire.)]
+      <BOUCLE_recurrences(DATA){source table, #ENV{_choix_recurrence_desc}}>
+        [(#REM)
+          Ici on boucle sur un tableau par type (don/adhesion).
+          On va générer autant de fieldset (spécifiques au type courant).
+          C'est le javascript qui va s'occuper d'afficher les bonnes valeurs, et de sélectionner une valeur par défaut.
+        ]
+        #SET{recurrence_pour_type_courant, #CLE}
+        <fieldset class="campagnodon-choix" campagnodon_recurrence_pour_type="[(#GET{recurrence_pour_type_courant})]">
+          <BOUCLE_recurrence(DATA){source table, #VALEUR}>
+            #SET{recurrence_description,#VALEUR}
+            #SET{val, #GET{recurrence_description/valeur}}
+            <input
+              type="radio"
+              name="choix_recurrence"
+              class="radio"
+              required="required"
+              id="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}"
+              value="#GET{val}"
+              [
+                (#ENV{choix_recurrence}|=={#GET{val}}|oui)
+                checked="checked"
+              ]
+            >
+            <label for="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}">
+              [(#GET{recurrence_description/label})]
+            </label>
+          </BOUCLE_recurrence>
+        </fieldset>
+      </BOUCLE_recurrences>
 
 
 

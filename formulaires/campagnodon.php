@@ -19,16 +19,24 @@ class CampagnodonException extends Exception { // phpcs:ignore PSR1.Classes.Clas
 /**
 * Declarer les champs, y integrer les valeurs par defaut, et initialiser les variables pour le formulaire.
 */
-function formulaires_campagnodon_charger_dist($type, $id_campagne = null, $arg_liste_montants = null, $arg_souscriptions_perso = null, $arg_don_recurrent = null, $arg_liste_montants_recurrent = null) {
-	if ($type !== 'don' && $type !== 'adhesion' && $type !== 'don+adhesion') {
-		spip_log('Type de Campagnodon inconnu: '.$type, 'campagnodon'._LOG_ERREUR);
+function formulaires_campagnodon_charger_dist(
+	$form_type,
+	$id_campagne = null,
+	$arg_liste_montants = null,
+	$arg_souscriptions_perso = null,
+	$arg_don_recurrent = null,
+	$arg_liste_montants_recurrent = null
+) {
+	if ($form_type !== 'don' && $form_type !== 'adhesion' && $form_type !== 'don+adhesion') {
+		spip_log('Type de formulaire Campagnodon inconnu: '.$form_type, 'campagnodon'._LOG_ERREUR);
 		return false;
 	}
 
 	include_spip('inc/campagnodon/form/init');
 	include_spip('inc/campagnodon/form/utils');
 
-	list($types, $choix_type_defaut) = form_init_get_types($type);
+	list($choix_type_desc, $choix_type_defaut) = form_init_get_choix_type($form_type);
+	$choix_recurrence_desc = form_init_choix_recurrence($form_type, $arg_don_recurrent);
 
 	$campagne = form_utils_get_campagne_ouverte($id_campagne);
 	if (empty($campagne)) {
@@ -39,17 +47,17 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne = null, $arg_l
 	include_spip('inc/campagnodon.utils');
 	$mode_options = campagnodon_mode_options($campagne['origine']);
 
-	$config_montants = form_init_liste_montants_campagne($type, $id_campagne, $arg_liste_montants, $arg_don_recurrent, $arg_liste_montants_recurrent);
+	$config_montants = form_init_liste_montants_campagne($form_type, $id_campagne, $arg_liste_montants, $arg_don_recurrent, $arg_liste_montants_recurrent);
 	if (!$config_montants) {
 		spip_log('Liste de montants invalide', 'campagnodon'._LOG_ERREUR);
 		return false;
 	}
 	$civilites = form_init_liste_civilites($mode_options);
-	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
+	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $arg_souscriptions_perso);
 
 	$values = [
 		// NOTE_V2.X TODO: les valeurs ci-dessous devraient être remplacées par de nouvelles valeurs.
-		'_type' => $type,
+		'_type' => $form_type,
 		'_montants_propositions' => $config_montants['propositions'],
 		'_montants_proposition_libre' => $config_montants['libre'],
 		'_montants_propositions_uniquement_libre' => $config_montants['uniquement_libre'],
@@ -60,8 +68,8 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne = null, $arg_l
 		'_don_recurrent' => $config_montants['don_recurrent'],
 		'_souscriptions_optionnelles' => $souscriptions_optionnelles,
 		// NOTE_V2.X Nouveaux champs:
-		'_types' => $types,
-		'_recurrences' => $recurrences,
+		'_choix_type_desc' => $choix_type_desc,
+		'_choix_recurrence_desc' => $choix_recurrence_desc,
 
 		// NOTE_V2.X Anciens champs qui restent
 		'_civilites' => $civilites,
@@ -82,7 +90,7 @@ function formulaires_campagnodon_charger_dist($type, $id_campagne = null, $arg_l
 		'telephone' => '',
 	];
 
-	if ($type === 'adhesion') {
+	if ($form_type === 'adhesion') {
 		$values['montant_adhesion'] = '';
 		$values['adhesion_avec_don'] = '';
 		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $type);
@@ -131,7 +139,7 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne = null, $arg_
 	$adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
 	$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $type);
 
-	$obligatoires = ['email']; // Pas besoin de 'montant', il sera testé plus loin
+	$obligatoires = ['choix_type', 'email']; // Pas besoin de 'montant', il sera testé plus loin
 	if ($recu_fiscal || $adhesion_avec_don) {
 		array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville', 'pays');
 	}
