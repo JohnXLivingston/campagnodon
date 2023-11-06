@@ -25,7 +25,9 @@ function formulaires_campagnodon_charger_dist(
 	$arg_liste_montants = null,
 	$arg_souscriptions_perso = null,
 	$arg_don_recurrent = null,
-	$arg_liste_montants_recurrent = null
+	$arg_liste_montants_recurrent = null,
+	$arg_liste_montants_adhesion = null,
+	$arg_liste_montants_adhesion_recurrent = null
 ) {
 	if ($form_type !== 'don' && $form_type !== 'adhesion' && $form_type !== 'don+adhesion') {
 		spip_log('Type de formulaire Campagnodon inconnu: '.$form_type, 'campagnodon'._LOG_ERREUR);
@@ -47,7 +49,15 @@ function formulaires_campagnodon_charger_dist(
 	include_spip('inc/campagnodon.utils');
 	$mode_options = campagnodon_mode_options($campagne['origine']);
 
-	$config_montants = form_init_liste_montants_campagne($form_type, $id_campagne, $arg_liste_montants, $arg_don_recurrent, $arg_liste_montants_recurrent);
+	$config_montants = form_init_liste_montants_campagne(
+		$form_type,
+		$id_campagne,
+		$arg_liste_montants,
+		$arg_don_recurrent,
+		$arg_liste_montants_recurrent,
+		$arg_liste_montants_adhesion,
+		$arg_liste_montants_adhesion_recurrent
+	);
 	if (!$config_montants) {
 		spip_log('Liste de montants invalide', 'campagnodon'._LOG_ERREUR);
 		return false;
@@ -58,18 +68,21 @@ function formulaires_campagnodon_charger_dist(
 	$values = [
 		// NOTE_V2.X TODO: les valeurs ci-dessous devraient être remplacées par de nouvelles valeurs.
 		'_type' => $form_type,
-		'_montants_propositions' => $config_montants['propositions'],
-		'_montants_proposition_libre' => $config_montants['libre'],
-		'_montants_propositions_uniquement_libre' => $config_montants['uniquement_libre'],
-		'_montants_propositions_adhesion' => $config_montants['propositions_adhesion'],
-		'_montants_propositions_recurrent' => $config_montants['propositions_recurrent'],
-		'_montants_proposition_libre_recurrent' => $config_montants['libre_recurrent'],
-		'_montants_propositions_uniquement_libre_recurrent' => $config_montants['uniquement_libre_recurrent'],
-		'_don_recurrent' => $config_montants['don_recurrent'],
+		'_montants_propositions' => [], // $config_montants['propositions'],
+		'_montants_proposition_libre' => false, // $config_montants['libre'],
+		'_montants_propositions_uniquement_libre' => false, // $config_montants['uniquement_libre'],
+		'_montants_propositions_adhesion' => [], // $config_montants['propositions_adhesion'],
+		'_montants_propositions_recurrent' => false, // $config_montants['propositions_recurrent'],
+		'_montants_proposition_libre_recurrent' => false, // $config_montants['libre_recurrent'],
+		'_montants_propositions_uniquement_libre_recurrent' => false, // $config_montants['uniquement_libre_recurrent'],
+		'_don_recurrent' => false, // $config_montants['don_recurrent'],
 		'_souscriptions_optionnelles' => $souscriptions_optionnelles,
 		// NOTE_V2.X Nouveaux champs:
+		'_avec_don' => $form_type === 'don' || $form_type === 'don+adhesion',
+		'_avec_adhesion' => $form_type === 'adhesion' || $form_type === 'don+adhesion',
 		'_choix_type_desc' => $choix_type_desc,
 		'_choix_recurrence_desc' => $choix_recurrence_desc,
+		'_propositions_montants' => $config_montants['propositions'],
 
 		// NOTE_V2.X Anciens champs qui restent
 		'_civilites' => $civilites,
@@ -90,10 +103,10 @@ function formulaires_campagnodon_charger_dist(
 		'telephone' => '',
 	];
 
-	if ($form_type === 'adhesion') {
+	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
 		$values['montant_adhesion'] = '';
 		$values['adhesion_avec_don'] = '';
-		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $type);
+		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
 		if ($adhesion_magazine_prix > 0) {
 			$values['_adhesion_magazine'] = true;
 			$values['_adhesion_magazine_prix'] = $adhesion_magazine_prix;
@@ -117,7 +130,16 @@ function formulaires_campagnodon_charger_dist(
 	return $values;
 }
 
-function formulaires_campagnodon_verifier_dist($type, $id_campagne = null, $arg_liste_montants = null, $arg_souscriptions_perso = null, $arg_don_recurrent = null, $arg_liste_montants_recurrent = null) {
+function formulaires_campagnodon_verifier_dist(
+	$type,
+	$id_campagne = null,
+	$arg_liste_montants = null,
+	$arg_souscriptions_perso = null,
+	$arg_don_recurrent = null,
+	$arg_liste_montants_recurrent = null,
+	$arg_liste_montants_adhesion = null,
+	$arg_liste_montants_adhesion_recurrent = null
+) {
 	$erreurs = [];
 	$verifier = charger_fonction('verifier', 'inc/');
 	include_spip('inc/campagnodon/form/init');
@@ -133,7 +155,15 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne = null, $arg_
 	include_spip('inc/campagnodon.utils');
 	$mode_options = campagnodon_mode_options($campagne['origine']);
 
-	$config_montants = form_init_liste_montants_campagne($type, $id_campagne, $arg_liste_montants, $arg_don_recurrent, $arg_liste_montants_recurrent);
+	$config_montants = form_init_liste_montants_campagne(
+		$type,
+		$id_campagne,
+		$arg_liste_montants,
+		$arg_don_recurrent,
+		$arg_liste_montants_recurrent,
+		$arg_liste_montants_adhesion,
+		$arg_liste_montants_adhesion_recurrent
+	);
 	$civilites = form_init_liste_civilites($mode_options);
 	$recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
 	$adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
@@ -217,7 +247,16 @@ function formulaires_campagnodon_verifier_dist($type, $id_campagne = null, $arg_
 	return $erreurs;
 }
 
-function formulaires_campagnodon_traiter_dist($type, $id_campagne = null, $arg_liste_montants = null, $arg_souscriptions_perso = null, $arg_don_recurrent = null, $arg_liste_montants_recurrent = null) {
+function formulaires_campagnodon_traiter_dist(
+	$type,
+	$id_campagne = null,
+	$arg_liste_montants = null,
+	$arg_souscriptions_perso = null,
+	$arg_don_recurrent = null,
+	$arg_liste_montants_recurrent = null,
+	$arg_liste_montants_adhesion = null,
+	$arg_liste_montants_adhesion_recurrent = null
+) {
 	try {
 		spip_log('traiter_dist' . $type . ':'. $id_campagne);
 
@@ -229,7 +268,15 @@ function formulaires_campagnodon_traiter_dist($type, $id_campagne = null, $arg_l
 			throw new CampagnodonException('Campagne invalide au moment de l\'enregistrement', 'campagnodon:campagne_invalide');
 		}
 
-		$config_montants = form_init_liste_montants_campagne($type, $id_campagne, $arg_liste_montants, $arg_don_recurrent, $arg_liste_montants_recurrent);
+		$config_montants = form_init_liste_montants_campagne(
+			$type,
+			$id_campagne,
+			$arg_liste_montants,
+			$arg_don_recurrent,
+			$arg_liste_montants_recurrent,
+			$arg_liste_montants_adhesion,
+			$arg_liste_montants_adhesion_recurrent
+		);
 		$recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
 		$adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
 		list ($montant, $montant_est_recurrent) = ($type !== 'adhesion' || $adhesion_avec_don) ? form_init_get_form_montant($config_montants) : null;

@@ -74,6 +74,69 @@
   color: var(--campagnodon-color-disabled) !important;
 }
 
+.formulaire_campagnodon ul.campagnodon-choix-montant {
+  /* Les différentes cases pour chaque montant (qui contiennent chacune le bouton radio, le label, et la description optionnelle */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px 20px;
+  align-items: center;
+  list-style: none;
+}
+
+.formulaire_campagnodon ul.campagnodon-choix-montant > li label {
+  /*
+    Ici on est sur une option.
+    On a d'abord un input radio, puis ensuite une div qui contiendra elle-meme label et description
+  */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  column-gap: 10px;
+  align-items: center;
+
+  background: var(--campagnodon-color);
+  color: var(--campagnodon-background-color);
+  border: 1px solid var(--campagnodon-background-color);
+  border-radius: 5px;
+  padding: 0.7em;
+  font-size: 1.2em;
+  box-sizing: border-box;
+
+  margin: 0; /* nécessaire, car boostrap semble ajouter un margin-bottom */
+  font-weight: normal !important;
+}
+
+/* .formulaire_campagnodon .campagnodon-choix-montant > div.campagnodon-montant-selectionne {
+  background: var(--campagnodon-background-color);
+  color: var(--campagnodon-color);
+} */
+
+.formulaire_campagnodon .campagnodon-choix-montant .campagnodon-choix-montant-label {
+  white-space: nowrap;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.formulaire_campagnodon .campagnodon-choix-montant label:after {
+  /* On enlève l'* pour le montant obligatoire */
+  content: '' !important
+}
+.formulaire_campagnodon .campagnodon-choix-montant input[type=radio] {
+  accent-color: var(--campagnodon-background-color);
+}
+
+
+
+
+
+
+
+
+
+
+/* TODO: voir ce qui est deprecated ci-dessous */
+
 .formulaire_campagnodon .editer_montant_adhesion .campagnodon_montant_adhesion {
   display: flex;
   flex-direction: column;

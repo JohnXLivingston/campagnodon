@@ -60,11 +60,47 @@
         </fieldset>
       </BOUCLE_recurrences>
 
+      [(#REM) Le choix des montants. On mix les montants pour tous les types et recurrences, c'est le javascript qui jouera sur l'affichage]
+      <div class="campagnodon-form-row">
+        <div class="campagnodon-form-group campagnodon-col-md-12">
+          [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
+          <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
+            [<span class='erreur_message'>(#GET{erreurs})</span>]
+            <ul class="campagnodon-choix-montant">
+              <BOUCLE_montants(POUR){tableau #ENV{_propositions_montants}}>
+                #SET{montant_description,#VALEUR}
+                #SET{val, #GET{montant_description/valeur}}
+                <li>
+                  <label>
+                    <input
+                      type="radio"
+                      name="montant"
+                      class="radio"
+                      required="required"
+                      id="#GET{montant_description/id}"
+                      value="#GET{val}"
+                      [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"]
+                      campagnodon_pour_type="#GET{montant_description/pour_type}"
+                    />
+                    <div>
+                      <div class="campagnodon-choix-montant-label">
+                        #GET{montant_description/label}
+                      </div>
+                      [<div class="campagnodon-choix-montant-desc">(#GET{montant_description/desc})</div>]
+                    </div>
+                  </label>
+                </li>
+              </BOUCLE_montants>
+            </ul>
+          </div>
+        </div>
+      </div>
+
 
 
       ANCIEN FORMULAIRE
       [(#REM) Si on est sur un formulaire d'adhésion, on affiche le bloc correspondant, ainsi qu'une checkbock pour ajouter un don :]
-      <BOUCLE_adhesion(CONDITION){si #ENV{_type}|=={adhesion}}>
+      <BOUCLE_adhesion(CONDITION){si #ENV{_avec_adhesion}|oui}>
         <fieldset>
           <legend><span><:campagnodon_form:j_adhere:></span></legend>
           <div class="campagnodon-form-row">
@@ -109,7 +145,7 @@
 
       [(#REM) Ci dessous le bloc des dons. Toujours affiché (mais son apparence change légèrement)]
       <fieldset si_adhesion_avec_don>
-        [(#ENV{_type}|=={adhesion}|non)
+        [(#ENV{_avec_adhesion}|non)
           <legend><span><:campagnodon_form:je_donne:></span></legend>
           [(#ENV{_don_recurrent}|oui)
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{don_recurrent}})]
@@ -136,13 +172,13 @@
                 [(#REM) Sauf si on ne met que des montants de don libre, on affiche la liste des montants présélectionnés.]
                 <BOUCLE_liste_montants(CONDITION){si #ENV{_montants_propositions_uniquement_libre}|non}>
                   <div class="campagnodon_montant_ligne">
-                    <BOUCLE_montants(POUR){tableau #ENV{_montants_propositions}}>
+                    <BOUCLE_montants_old(POUR){tableau #ENV{_montants_propositions}}>
                       #SET{val,#CLE}
                       <label>
                         <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
                         <span>#VALEUR</span>
                       </label>
-                    </BOUCLE_montants>
+                    </BOUCLE_montants_old>
                   </div>
                 </BOUCLE_liste_montants>
 
@@ -234,7 +270,7 @@
         </BOUCLE_don_recurrent_montants>
       </fieldset>
 
-      [(#ENV{_type}|=={adhesion}|oui)
+      [(#ENV{_avec_adhesion}|oui)
         [(#REM) Le paragraphe «adhesion_explication» est rempli via JS.]
         <p class="explication" display="none"
           [(#ENV{_adhesion_magazine}|oui)
@@ -264,7 +300,7 @@
         </div>
 
         [(#REM) sur le formulaire d'adhésion, recu_fiscal est implicite.]
-        [(#ENV{_type}|=={adhesion}|non)
+        [(#ENV{_avec_adhesion}|non)
           <div class="campagnodon-form-row">
             <div class="campagnodon-form-group campagnodon-col-md-12 choix">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
@@ -286,7 +322,7 @@
 
         <div si_recu_fiscal="">
           [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Il n'est pas utile en cas d'adhésion, car il y a «adhesion_explication».]
-          [(#ENV{_type}|=={adhesion}|non)
+          [(#ENV{_avec_adhesion}|non)
             <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
             </p>
           ]
@@ -443,12 +479,13 @@
       </p>
 
       <p class="boutons">
-        [(#ENV{_type}|=={adhesion}|non)
+        [(#ENV{_avec_adhesion}|non)
           <input type="submit" class="submit" value="<:campagnodon_form:valider_don:>" />
         ]
-        [(#ENV{_type}|=={adhesion}|oui)
+        [(#ENV{_avec_adhesion}|oui)
           <input type="submit" class="submit" value="<:campagnodon_form:valider_adhesion:>" />
         ]
+        FIXME libellé
       </p>
     </form>
   </BOUCLE_editable>
