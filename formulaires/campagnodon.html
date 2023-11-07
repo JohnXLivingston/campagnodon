@@ -210,7 +210,7 @@
             <div class="campagnodon-form-group campagnodon-col-md-5">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{nom}})]
               <div class="editer editer_nom obligatoire [(#GET{erreurs}|oui)erreur]">
-                <label for="champ_nom">Nom de famille</label>
+                <label for="champ_nom"><:campagnodon_form:label_nom:></label>
                 [<span class='erreur_message'>(#GET{erreurs})</span>]
                 <input type="text" name="nom" class="text" value="#ENV*{nom}" id="champ_nom" required="required" />
               </div>
