@@ -76,12 +76,17 @@
 
 .formulaire_campagnodon ul.campagnodon-choix-montant {
   /* Les différentes cases pour chaque montant (qui contiennent chacune le bouton radio, le label, et la description optionnelle */
-  display: flex;
-  flex-direction: row;
+  /* display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 20px 20px;
-  align-items: center;
+  align-items: stretch; */
   list-style: none;
+  max-width: 500px;
+}
+
+.formulaire_campagnodon ul.campagnodon-choix-montant li {
+  margin-bottom: 5px;
 }
 
 .formulaire_campagnodon ul.campagnodon-choix-montant > li label {
@@ -97,7 +102,7 @@
 
   background: var(--campagnodon-color);
   color: var(--campagnodon-background-color);
-  border: 1px solid var(--campagnodon-background-color);
+  border: 1px solid var(--campagnodon-border);
   border-radius: 5px;
   padding: 0.7em;
   font-size: 1.2em;
@@ -105,6 +110,10 @@
 
   margin: 0; /* nécessaire, car boostrap semble ajouter un margin-bottom */
   font-weight: normal !important;
+}
+
+.formulaire_campagnodon ul.campagnodon-choix-montant > li label.campagnodon-is-checked {
+  border: 1px solid var(--campagnodon-background-color);
 }
 
 /* .formulaire_campagnodon .campagnodon-choix-montant > div.campagnodon-montant-selectionne {

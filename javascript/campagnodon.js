@@ -22,10 +22,18 @@ function campagnodon_formulaire(formSelector) {
 
   $form.on('click', 'input[type=radio][name="choix_type"]', () => {
     campagnodon_formulaire_choix_type($form, false);
+    campagnodon_formulaire_filtre_montants($form);
+  });
+  $form.on('click', 'input[type=radio][name="choix_recurrence"]', () => {
+    campagnodon_formulaire_filtre_montants($form);
+  });
+  $form.on('click', 'input[type=radio][name="montant"]', () => {
+    campagnodon_formulaire_choix_montant($form, false);
   });
 
-
   campagnodon_formulaire_choix_type($form, true);
+  campagnodon_formulaire_choix_montant($form, true);
+  campagnodon_formulaire_filtre_montants($form);
 
   // TODO: ci-dessous l'ancien code. À voir ce qu'on garde ou pas.
 
@@ -107,6 +115,62 @@ function campagnodon_formulaire_choix_type($form, premier_appel = false) {
       $form.find(selecteur_radio_a_activer).first().prop('checked', true).trigger('click');
     }
     $form.find(selecteur_fieldset_a_activer).show();
+  }
+}
+
+/**
+ * Raffraichi le formulaire en fonction du montant sélectionnées.
+ * @param {jQuery} $form le conteneur jQuery du formulaire
+ * @param {*} premier_appel Si c'est le premier appel à la fonction.
+ */
+function campagnodon_formulaire_choix_montant($form, premier_appel = false) {
+  $form.find('.campagnodon-choix-montant label.campagnodon-is-checked').each(function () {
+    $(this).removeClass('campagnodon-is-checked');
+  });
+  $form.find('input[type=radio][name=montant]:checked').each(function () {
+    $(this).closest('label').addClass('campagnodon-is-checked');
+  });
+}
+
+/**
+ * Filtre les montants affichés en fonction des choix précédents.
+ * @param {jQuery} $form le conteneur jQuery du formulaire
+ */
+function campagnodon_formulaire_filtre_montants($form) {
+  const $radio_choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)');
+  const $is_choix_recurrence = $form.find('input[name=choix_recurrence]').length > 0; //  ce champ est optionnel
+  const $radio_choix_recurrence = $form.find('input[name=choix_recurrence]:checked:not(:disabled)');
+
+  let selecteur_radio_a_desactiver
+  let selecteur_radio_a_activer
+  if ($radio_choix_recurrence.length === 0 || ($is_choix_recurrence && $radio_choix_recurrence.length === 0)) {
+    // Premier cas: je n'ai pas encore rempli les champs: on filtre tout.
+    selecteur_radio_a_desactiver = 'input[name=montant]';
+  } else {
+    // Sinon, on construit le selecteur qui va bien:
+    let campagnodon_pour_type = $radio_choix_type.val(); // don ou adhesion
+    if ($is_choix_recurrence && $radio_choix_recurrence.val() !== 'unique') {
+      // FIXME: gérer d'autres types de récurrence que 'don mensuel' et 'adhesion annuelle' ?
+      campagnodon_pour_type += '_recurrent';
+    }
+    selecteur_radio_a_activer = 'input[name=montant][campagnodon_pour_type=' + campagnodon_pour_type + ']';
+    selecteur_radio_a_desactiver = 'input[name=montant][campagnodon_pour_type!=' + campagnodon_pour_type + ']';
+  }
+
+  if (selecteur_radio_a_desactiver) {
+    $form.find(selecteur_radio_a_desactiver).each(function () {
+      $(this)
+        .prop('checked', false)
+        .attr('disabled', true)
+        .closest('li').hide();
+    });
+  }
+  if (selecteur_radio_a_activer) {
+    $form.find(selecteur_radio_a_activer).each(function () {
+      $(this)
+        .attr('disabled', false)
+        .closest('li').show();
+    });
   }
 }
 
