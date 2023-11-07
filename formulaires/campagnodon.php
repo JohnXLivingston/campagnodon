@@ -66,25 +66,13 @@ function formulaires_campagnodon_charger_dist(
 	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $arg_souscriptions_perso);
 
 	$values = [
-		// NOTE_V2.X TODO: les valeurs ci-dessous devraient être remplacées par de nouvelles valeurs.
-		'_type' => $form_type,
-		'_montants_propositions' => [], // $config_montants['propositions'],
-		'_montants_proposition_libre' => false, // $config_montants['libre'],
-		'_montants_propositions_uniquement_libre' => false, // $config_montants['uniquement_libre'],
-		'_montants_propositions_adhesion' => [], // $config_montants['propositions_adhesion'],
-		'_montants_propositions_recurrent' => false, // $config_montants['propositions_recurrent'],
-		'_montants_proposition_libre_recurrent' => false, // $config_montants['libre_recurrent'],
-		'_montants_propositions_uniquement_libre_recurrent' => false, // $config_montants['uniquement_libre_recurrent'],
-		'_don_recurrent' => false, // $config_montants['don_recurrent'],
+		'_form_type' => $form_type,
 		'_souscriptions_optionnelles' => $souscriptions_optionnelles,
-		// NOTE_V2.X Nouveaux champs:
 		'_avec_don' => $form_type === 'don' || $form_type === 'don+adhesion',
 		'_avec_adhesion' => $form_type === 'adhesion' || $form_type === 'don+adhesion',
 		'_choix_type_desc' => $choix_type_desc,
 		'_choix_recurrence_desc' => $choix_recurrence_desc,
 		'_propositions_montants' => $config_montants['propositions'],
-
-		// NOTE_V2.X Anciens champs qui restent
 		'_civilites' => $civilites,
 		'choix_type' => $choix_type_defaut,
 		'montant' => '',
@@ -111,14 +99,10 @@ function formulaires_campagnodon_charger_dist(
 		} else {
 			$values['_adhesion_magazine'] = false;
 		}
-	} else {
-		$values['recu_fiscal'] = '';
 	}
 
-	if ($values['_don_recurrent']) {
-		$values['montant_recurrent'] = '';
-		$values['montant_libre_recurrent'] = '';
-		$values['don_recurrent'] = '';
+	if ($form_type === 'don' || $form_type === 'don+adhesion') {
+		$values['recu_fiscal'] = '';
 	}
 
 	foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
