@@ -83,9 +83,23 @@
                       campagnodon_pour_type="#GET{montant_description/pour_type}"
                     />
                     <div>
-                      <div class="campagnodon-choix-montant-label">
-                        #GET{montant_description/label}
-                      </div>
+                      [(#GET{val}|=={libre}|oui)
+                        [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre}})]
+                        [<span class='erreur_message'>(#GET{erreurs})</span>]
+                          <input
+                            type="number" name="montant_libre"
+                            class="text" value="#ENV*{montant_libre}"
+                            placeholder="#GET{montant_description/label}"
+                            aria-label="#GET{montant_description/label}"
+                            title="#GET{montant_description/desc}"
+                            id="#GET{montant_description/id}_montant"
+                          />&nbsp;€
+                      ]
+                      [(#GET{val}|=={libre}|non)
+                        <div class="campagnodon-choix-montant-label">
+                          #GET{montant_description/label}
+                        </div>
+                        ]
                       [<div class="campagnodon-choix-montant-desc">(#GET{montant_description/desc})</div>]
                     </div>
                   </label>

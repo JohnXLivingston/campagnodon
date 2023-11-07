@@ -223,8 +223,10 @@ function form_init_liste_montants_campagne(
 			if (!form_init_parse_config_montant($liste_montants, campagnodon_montants_par_defaut($type))) {
 				throw new Error('Montant invalide dans la configuration du formulaire ('.$type.').');
 			}
-			// Et ici on ajoute toujours le montant libre.
-			$avec_libre = true;
+			// Pour les dons, on ajoute toujours le montant libre.
+			if ($type === 'don' || $type === 'don_recurrent') {
+				$avec_libre = true;
+			}
 		} else {
 			// on a donné des montants dans la configuration du formulaire, on les prend en compte.
 			$liste = explode(',', $arg_liste);
@@ -250,7 +252,19 @@ function form_init_liste_montants_campagne(
 			];
 		}
 		if ($avec_libre) {
-			// TODO
+			// Note: si jamais plusieurs "pour_type" acceptent les montants libres,
+			// on va mettre autant de propositions.
+			// Cela a 2 avantages:
+			// - simplifier le code
+			// - si un jour on veut mettre des attribut min/max sur les input,
+			//		on pourra avoir des bornes différentes pour chaque cas.
+			$r['propositions'][] = [
+				'valeur' => 'libre',
+				'label' => _T('campagnodon_form:montant_libre'),
+				'desc' => _T('campagnodon_form:montant_libre_desc'),
+				'pour_type' => $type,
+				'id' => 'montant_' . $type . '_libre', // l'ID html, doit être unique...
+			];
 		}
 	};
 

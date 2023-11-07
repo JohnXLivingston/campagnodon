@@ -30,6 +30,13 @@ function campagnodon_formulaire(formSelector) {
   $form.on('click', 'input[type=radio][name="montant"]', () => {
     campagnodon_formulaire_choix_montant($form, false);
   });
+  $form.on('focus', 'input[name=montant_libre]', function () {
+    // Quand on rentre dans un montant_libre, on s'assure que le radio est sélectionné
+    const $radio = $(this).closest('li').find('input[type=radio][name=montant]');
+    if (!$radio.is(':checked')) {
+      $radio.prop('checked', true).trigger('click');
+    }
+  });
 
   campagnodon_formulaire_choix_type($form, true);
   campagnodon_formulaire_choix_montant($form, true);
@@ -37,43 +44,43 @@ function campagnodon_formulaire(formSelector) {
 
   // TODO: ci-dessous l'ancien code. À voir ce qu'on garde ou pas.
 
-  $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => {
-    campagnodon_formulaire_adhesion_avec_don($form);
-    campagnodon_formulaire_explications($form);
-  });
-  $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form));
-  campagnodon_formulaire_adhesion_avec_don($form, true);
-  campagnodon_formulaire_recu_fiscal($form, true);
+  // $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => {
+  //   campagnodon_formulaire_adhesion_avec_don($form);
+  //   campagnodon_formulaire_explications($form);
+  // });
+  // $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form));
+  // campagnodon_formulaire_adhesion_avec_don($form, true);
+  // campagnodon_formulaire_recu_fiscal($form, true);
 
-  $form.on('click', 'input[type=radio][name=montant]', () => {
-    campagnodon_formulaire_montant_libre($form, false, true);
-    campagnodon_formulaire_explications($form);
-  });
-  $form.on('click', 'input[type=radio][name=montant_recurrent]', () => {
-    campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
-    campagnodon_formulaire_explications($form);
-  });
+  // $form.on('click', 'input[type=radio][name=montant]', () => {
+  //   campagnodon_formulaire_montant_libre($form, false, true);
+  //   campagnodon_formulaire_explications($form);
+  // });
+  // $form.on('click', 'input[type=radio][name=montant_recurrent]', () => {
+  //   campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
+  //   campagnodon_formulaire_explications($form);
+  // });
 
-  $form.on('click', 'input[type=radio][name=don_recurrent]', () => {
-    campagnodon_formulaire_don_recurrent($form, false); // doit être appelé avant campagnodon_formulaire_montant_libre
-    campagnodon_formulaire_montant_libre($form, false, true, '');
-    campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
-    campagnodon_formulaire_explications($form);
-  });
+  // $form.on('click', 'input[type=radio][name=don_recurrent]', () => {
+  //   campagnodon_formulaire_don_recurrent($form, false); // doit être appelé avant campagnodon_formulaire_montant_libre
+  //   campagnodon_formulaire_montant_libre($form, false, true, '');
+  //   campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
+  //   campagnodon_formulaire_explications($form);
+  // });
 
-  $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
-  $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
-  $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  // $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  // $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  // $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
 
-  $form.on('keyup', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
-  $form.on('change', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
-  $form.on('click', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
+  // $form.on('keyup', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
+  // $form.on('change', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
+  // $form.on('click', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
 
-  $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
-  campagnodon_formulaire_don_recurrent($form, true); // doit être appelé avant campagnodon_formulaire_montant_libre
-  campagnodon_formulaire_montant_libre($form, true);
-  campagnodon_formulaire_montant_libre($form, true, false, '_recurrent');
-  campagnodon_formulaire_explications($form);
+  // $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
+  // campagnodon_formulaire_don_recurrent($form, true); // doit être appelé avant campagnodon_formulaire_montant_libre
+  // campagnodon_formulaire_montant_libre($form, true);
+  // campagnodon_formulaire_montant_libre($form, true, false, '_recurrent');
+  // campagnodon_formulaire_explications($form);
 }
 
 /**
@@ -130,6 +137,24 @@ function campagnodon_formulaire_choix_montant($form, premier_appel = false) {
   $form.find('input[type=radio][name=montant]:checked').each(function () {
     $(this).closest('label').addClass('campagnodon-is-checked');
   });
+
+  // On doit également modifier des attributs du champs montant_libre le cas échéant.
+  const $checked_radio = $form.find('input[type=radio][name=montant]:checked:not(:disabled)');
+  if ($checked_radio.val() === 'libre') {
+    const $montant_libre = $checked_radio.closest('li').find('input[name=montant_libre]');
+    $montant_libre.attr('required', true);
+    if (!premier_appel) {
+      // C'est un click, on met le focus
+      $montant_libre.focus();
+    }
+  } else {
+    // ici, on va pas s'embêter, on va tout vider/désactiver
+    // (même si c'est peut être déjà fait par campagnodon_formulaire_filtre_montants)
+    // Note: on vide la valeur, pour éviter les erreurs de donnée invalide au submit (pour un champ désactivé)
+    $form.find('input[name=montant_libre]').each(function () {
+      $(this).attr('required', false).val('');
+    });
+  }
 }
 
 /**
@@ -159,17 +184,30 @@ function campagnodon_formulaire_filtre_montants($form) {
 
   if (selecteur_radio_a_desactiver) {
     $form.find(selecteur_radio_a_desactiver).each(function () {
-      $(this)
-        .prop('checked', false)
-        .attr('disabled', true)
-        .closest('li').hide();
+      const $radio = $(this);
+      $radio.prop('checked', false);
+      $radio.attr('disabled', true)
+      const $li = $radio.closest('li')
+      $li.hide();
+      $li.find('input[name=montant_libre]').each(function () {
+        const $montant_libre = $(this);
+        $montant_libre.val('');
+        $montant_libre.attr('disabled', true);
+        $montant_libre.attr('required', false);
+      });
     });
   }
   if (selecteur_radio_a_activer) {
     $form.find(selecteur_radio_a_activer).each(function () {
-      $(this)
-        .attr('disabled', false)
-        .closest('li').show();
+      const $radio = $(this);
+      $radio.attr('disabled', false)
+      const $li = $radio.closest('li')
+      $li.show();
+      $li.find('input[name=montant_libre]').each(function () {
+        const $montant_libre = $(this);
+        $montant_libre.attr('disabled', false);
+        // Ici on ne le met pas obligatoire, ça ça doit être fait quand on choisi montant=libre.
+      });
     });
   }
 }
@@ -179,9 +217,8 @@ function campagnodon_formulaire_filtre_montants($form) {
  * @param {jQuery} $form Le conteneur jQuery du formulaire
  * @param {boolean} permier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
  * @param {boolean} est_click Vrai si c'est un click.
- * @param {string} suffix Suffix pour les noms de champs. Permet de gérer les montants pour les dons récurrents.
  */
-function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_click = false, suffix = '') {
+function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_click = false) {
   const $radio_montant_libre = $form.find('input[name=montant'+suffix+'][value=libre]');
   if (!$radio_montant_libre.length) {
     // Le montant libre n'est pas activé

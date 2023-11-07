@@ -10,6 +10,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'jadhere_avec_renouvellement_automatique' => "J'adhère avec renouvellement automatique",
   'j_adhere' => "J'adhère pour l'année civile en versant un montant de :",
   'montant_libre' => 'Montant libre',
+  'montant_libre_desc' => 'Veuillez saisir un montant',
   'option_revenu_entre' => 'Entre @min@ € et @max@ € de revenus mensuels',
   'option_revenu_en_dessous' => 'Moins de @max@ € de revenus mensuels',
   'option_revenu_au_dessus' => 'Plus de @min@ € de revenus mensuels',

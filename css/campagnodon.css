@@ -131,12 +131,20 @@
   /* On enlève l'* pour le montant obligatoire */
   content: '' !important
 }
+
 .formulaire_campagnodon .campagnodon-choix-montant input[type=radio] {
   accent-color: var(--campagnodon-background-color);
 }
 
+.formulaire_campagnodon .campagnodon-choix-montant input[type=number] {
+  appearance: textfield; /* (remove arrows) */
+  border: 1px solid var(--campagnodon-border);
+  box-shadow: none; /* remove bootstrap box-shadow */
+}
 
-
+.formulaire_campagnodon .campagnodon-choix-montant label.campagnodon-is-checked input[type=number] {
+  border: 1px solid var(--campagnodon-background-color);
+}
 
 
 
