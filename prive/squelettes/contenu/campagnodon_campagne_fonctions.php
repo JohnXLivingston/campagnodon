@@ -34,6 +34,17 @@ function campagnodon_campagne_souscriptions_perso_json($origine) {
 		$result[$type] = $r;
 	}
 
+	// Pour don+adhesion, on merge les 2 listes en enlevant les doublons.
+	$result['don+adhesion'] = array();
+	foreach (['don', 'adhesion'] as $type) {
+		foreach ($result[$type] as $k) {
+			if (!in_array($k, $result['don+adhesion'])) {
+				$result['don+adhesion'][] = $k;
+			}
+		}
+	}
+	//  array_values(array_unique(array_merge($result['don'], $result['adhesion'])));
+
 	return json_encode($result);
 }
 
@@ -45,6 +56,9 @@ function campagnodon_campagne_montants_par_defaut() {
 	}
 	if (campagnodon_campagne_don_recurrent()) {
 		$r['don_recurrent'] = implode(',', campagnodon_montants_par_defaut('don_recurrent'));
+		// FIXME: remplacer campagnodon_campagne_don_recurrent par un équivaleur pour les adhésions ?
+		// Pour les adhésions, pour l'instant on est en renouvellement annuel... Donc même liste.
+		$r['adhesion_recurrent'] = $r['adhesion'];
 	}
 	return json_encode($r);
 }

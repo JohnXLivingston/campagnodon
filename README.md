@@ -65,7 +65,7 @@ En voici la syntaxe:
 
 ```php
 define('_CAMPAGNODON_MONTANTS', array(
-        'don' => array( // le type de formulaire. 'don' ou 'adhesion'
+        'don' => array( // le type d'opération: 'don' ou 'adhesion'
                 '30','50','100','200'
         ),
         'don_recurrent' => array( // NB: ne s'applique que si _CAMPAGNODON_DON_RECURRENT est activé

@@ -57,6 +57,10 @@
                 <input type="radio" name="type" class="type" value="adhesion" />
                 <:campagnodon:label_type_adhesion:>
               </label>
+              <label>
+                <input type="radio" name="type" class="type" value="don+adhesion" />
+                <:campagnodon:label_type_don:> + <:campagnodon:label_type_adhesion:>
+              </label>
               [(#OBJECTIF|oui)
                 <label>
                   <input type="radio" name="type" class="type" value="objectif" />
@@ -142,24 +146,33 @@
             const montant_perso = !!td.find('input[name=montant_perso]:checked:not(:disabled)').length;
             const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length;
             if (montant_libre || montant_perso) {
-              s+= '|\n\tmontants' + (type_valeur === 'adhesion' ? '_adhesion' : '') + '=';
-              if (montant_perso) {
-                s+= liste_montants[type_valeur] ? liste_montants[type_valeur] : '10,20,40';
-                if (montant_libre) {
-                  s+= ',libre';
-                }
-              } else if (montant_libre) {
-                s+= 'libre';
+              const sous_type_valeurs = [];
+              if (type_valeur === 'don' || type_valeur === 'don+adhesion') {
+                sous_type_valeurs.push('don');
               }
-              if (don_recurrent) {
-                s+= '|\n\tmontants' + (type_valeur === 'adhesion' ? '_adhesion' : '') + '_recurrent=';
+              if (type_valeur === 'adhesion' || type_valeur === 'don+adhesion') {
+                sous_type_valeurs.push('adhesion');
+              }
+              for (const sous_type_valeur of sous_type_valeurs) {
+                s+= '|\n\tmontants' + (sous_type_valeur === 'adhesion' ? '_adhesion' : '') + '=';
                 if (montant_perso) {
-                  s+= liste_montants[type_valeur+'_recurrent'] ? liste_montants[type_valeur+'_recurrent'] : '5,10,20';
+                  s+= liste_montants[sous_type_valeur] ? liste_montants[sous_type_valeur] : '10,20,40';
                   if (montant_libre) {
                     s+= ',libre';
                   }
                 } else if (montant_libre) {
                   s+= 'libre';
+                }
+                if (don_recurrent) {
+                  s+= '|\n\tmontants' + (sous_type_valeur === 'adhesion' ? '_adhesion' : '') + '_recurrent=';
+                  if (montant_perso) {
+                    s+= liste_montants[sous_type_valeur+'_recurrent'] ? liste_montants[sous_type_valeur+'_recurrent'] : '5,10,20';
+                    if (montant_libre) {
+                      s+= ',libre';
+                    }
+                  } else if (montant_libre) {
+                    s+= 'libre';
+                  }
                 }
               }
             }
