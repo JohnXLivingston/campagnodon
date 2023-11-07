@@ -70,7 +70,7 @@
               <BOUCLE_montants(POUR){tableau #ENV{_propositions_montants}}>
                 #SET{montant_description,#VALEUR}
                 #SET{val, #GET{montant_description/valeur}}
-                <li>
+                <li class="[(#GET{montant_description/grand}|oui)campagnodon-choix-montant-grand]">
                   <label>
                     <input
                       type="radio"

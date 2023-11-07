@@ -248,6 +248,7 @@ function form_init_liste_montants_campagne(
 				'label' => $montant_desc['label'],
 				'desc' => $montant_desc['desc'],
 				'pour_type' => $type,
+				'grand' => !empty($montant_desc['desc']), // si la case doit être "grande"
 				'id' => 'montant_' . $type . '_' . $valeur, // l'ID html, doit être unique...
 			];
 		}
@@ -263,6 +264,7 @@ function form_init_liste_montants_campagne(
 				'label' => _T('campagnodon_form:montant_libre'),
 				'desc' => _T('campagnodon_form:montant_libre_desc'),
 				'pour_type' => $type,
+				'grand' => true,
 				'id' => 'montant_' . $type . '_libre', // l'ID html, doit être unique...
 			];
 		}

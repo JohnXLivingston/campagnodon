@@ -76,17 +76,16 @@
 
 .formulaire_campagnodon ul.campagnodon-choix-montant {
   /* Les différentes cases pour chaque montant (qui contiennent chacune le bouton radio, le label, et la description optionnelle */
-  /* display: flex;
-  flex-direction: column;
+  display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
-  gap: 20px 20px;
-  align-items: stretch; */
+  gap: 10px 10px;
+  align-items: flex-start;
   list-style: none;
-  max-width: 500px;
 }
 
-.formulaire_campagnodon ul.campagnodon-choix-montant li {
-  margin-bottom: 5px;
+.formulaire_campagnodon ul.campagnodon-choix-montant > .campagnodon-choix-montant-grand {
+  flex-basis: 100%; /* toute la ligne */
 }
 
 .formulaire_campagnodon ul.campagnodon-choix-montant > li label {
