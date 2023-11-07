@@ -53,38 +53,6 @@ function campagnodon_formulaire(formSelector) {
   campagnodon_formulaire_filtre_montants($form);
   campagnodon_formulaire_explications($form);
   campagnodon_formulaire_recu_fiscal($form, true);
-
-  // TODO: ci-dessous l'ancien code. À voir ce qu'on garde ou pas.
-
-  // $form.on('click', 'input[type=checkbox][name=adhesion_avec_don]', () => {
-  //   campagnodon_formulaire_adhesion_avec_don($form);
-  //   campagnodon_formulaire_explications($form);
-  // });
-  // $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form));
-  // campagnodon_formulaire_adhesion_avec_don($form, true);
-  // campagnodon_formulaire_recu_fiscal($form, true);
-
-  // $form.on('click', 'input[type=radio][name=montant]', () => {
-  //   campagnodon_formulaire_montant_libre($form, false, true);
-  //   campagnodon_formulaire_explications($form);
-  // });
-  // $form.on('click', 'input[type=radio][name=montant_recurrent]', () => {
-  //   campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
-  //   campagnodon_formulaire_explications($form);
-  // });
-
-  // $form.on('click', 'input[type=radio][name=don_recurrent]', () => {
-  //   campagnodon_formulaire_don_recurrent($form, false); // doit être appelé avant campagnodon_formulaire_montant_libre
-  //   campagnodon_formulaire_montant_libre($form, false, true, '');
-  //   campagnodon_formulaire_montant_libre($form, false, true, '_recurrent');
-  //   campagnodon_formulaire_explications($form);
-  // });
-
-  // $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
-  // campagnodon_formulaire_don_recurrent($form, true); // doit être appelé avant campagnodon_formulaire_montant_libre
-  // campagnodon_formulaire_montant_libre($form, true);
-  // campagnodon_formulaire_montant_libre($form, true, false, '_recurrent');
-  // campagnodon_formulaire_explications($form);
 }
 
 /**
@@ -241,66 +209,6 @@ function campagnodon_formulaire_filtre_montants($form) {
 }
 
 /**
- * Cette fonction s'occupe de mettre à jour le formulaire en fonction de si on choisi le montant libre ou non.
- * @param {jQuery} $form Le conteneur jQuery du formulaire
- * @param {boolean} permier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
- * @param {boolean} est_click Vrai si c'est un click.
- */
-function campagnodon_formulaire_montant_libre($form, premier_appel = false, est_click = false) {
-  const $radio_montant_libre = $form.find('input[name=montant'+suffix+'][value=libre]');
-  if (!$radio_montant_libre.length) {
-    // Le montant libre n'est pas activé
-    return;
-  }
-  if ($radio_montant_libre.attr('type') === 'hidden') {
-    // Le champ est hidden => il n'y a que du montant libre => il n'y a rien à faire
-    return;
-  }
-  const montant_libre = $radio_montant_libre.is(':checked:not(:disabled)');
-  const $input_montant_libre = $form.find('input[name=montant_libre'+suffix+']');
-  $input_montant_libre.attr('disabled', !montant_libre);
-  $input_montant_libre.attr('required', montant_libre);
-
-  if (montant_libre && est_click) {
-    $input_montant_libre.focus();
-  }
-}
-
-/**
- * Cette fonction s'occupe de mettre à jour le formulaire en fonction de la case à cocher «je souhaite faire un don»
- * (sur le formulaire d'adhésion)
- * @param {jQuery} $form Le conteneur jQuery du formulaire
- * @param {boolean} premier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
- */
-function campagnodon_formulaire_adhesion_avec_don($form, premier_appel = false) {
-  const $cb = $form.find('input[type=checkbox][name=adhesion_avec_don]');
-
-  if (!$cb.length) {
-    // Il n'y a pas de case à cocher adhesion_avec_don, on doit être sur un formulaire de don.
-    return;
-  }
-
-  const checked = $cb.is(':checked');
-
-  if (premier_appel) {
-    // On va noter tous les champs obligatoires, pour pouvoir restaurer la valeur.
-    $form.find('[si_adhesion_avec_don] [required]').attr('adhesion_avec_don_obligatoire', true);
-  }
-
-  if (checked) {
-    // On affiche les zones liées
-    $form.find('[si_adhesion_avec_don]').show();
-    // On remet les attribut required sur les champs concernés.
-    $form.find('[si_adhesion_avec_don] [adhesion_avec_don_obligatoire]').attr('required', true);
-  } else {
-    // On masque les zones à masquer.
-    $form.find('[si_adhesion_avec_don]').hide();
-    // On enlève les attributs required des champs concernés.
-    $form.find('[si_adhesion_avec_don] [adhesion_avec_don_obligatoire]').removeAttr('required');
-  }
-}
-
-/**
  * Cette fonction s'occupe de mettre à jour le formulaire en fonction de la case à cocher recu_fiscal et du type.
  * À appeler à chaque affichage, et à chaque changement de valeur de la case à cocher.
  * @param {jQuery} $form Le conteneur jQuery du formulaire
@@ -427,32 +335,4 @@ function campagnodon_formulaire_adhesion_explication($form) {
 function campagnodon_formulaire_explications($form) {
   campagnodon_formulaire_recu_fiscal_explication($form);
   campagnodon_formulaire_adhesion_explication($form);
-}
-
-/**
- * Cette fonction gère la bascule entre don unique et don récurrent
- * @param {jQuery} $form Le conteneur jQuery du formulaire
- * @param {boolean} permier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
- */
-function campagnodon_formulaire_don_recurrent($form, premier_appel = false) {
-  const $radio_don_recurrent = $form.find('input[name=don_recurrent][value=1]');
-  if (!$radio_don_recurrent.length) {
-    // Le don récurrent n'est pas activé sur ce formulaire
-    return;
-  }
-
-  let suffix_enabled = '';
-  let suffix_disabled = '';
-  if ($radio_don_recurrent.is(':checked')) {
-    suffix_enabled = '_recurrent';
-    $form.find('[si_pas_don_recurrent]').hide();
-    $form.find('[si_don_recurrent]').show();
-  } else {
-    suffix_disabled = '_recurrent';
-    $form.find('[si_pas_don_recurrent]').show();
-    $form.find('[si_don_recurrent]').hide();
-  }
-  $form.find('input[name=montant'+suffix_enabled+']').attr('disabled', false).attr('required', true);
-  $form.find('input[name=montant'+suffix_disabled+']').attr('disabled', true).attr('required', false);
-  // for name=montant_libre and name=montant_libre_recurrent, required and disabled are handled by campagnodon_formulaire_montant_libre
 }
