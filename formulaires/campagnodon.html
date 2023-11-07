@@ -150,7 +150,7 @@
           </div>
         </div>
 
-        [(#REM) sur le formulaire d'adhésion, recu_fiscal est implicite.]
+        [(#REM) Note: sur le formulaire d'adhésion, recu_fiscal est implicite.]
         [(#ENV{_avec_don}|oui)
           <div class="campagnodon-form-row" uniquement_pour_don>
             <div class="campagnodon-form-group campagnodon-col-md-12 choix">
@@ -173,9 +173,11 @@
 
         <div si_recu_fiscal="">
           [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Il n'est pas utile en cas d'adhésion, car il y a «adhesion_explication».]
-          [(#ENV{_avec_adhesion}|non)
-            <p class="explication" display="none" recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>">
-            </p>
+          [(#ENV{_avec_don}|oui)
+            <p class="explication"
+              uniquement_pour_don
+              recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>"
+            ></p>
           ]
 
           <p class="explication">

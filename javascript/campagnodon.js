@@ -374,14 +374,13 @@ function campagnodon_formulaire_recu_fiscal_explication($form) {
   const montant = campagnodon_lire_montant($form);
 
   const explication = $form.find('[recu_fiscal_explication]');
-  if (explication.length && montant !== undefined && !isNaN(montant)) {
+  if (explication.length && montant !== null && !isNaN(montant)) {
     let text = explication.attr('recu_fiscal_explication');
     text = text.replace(/_MONTANT_/g, montant);
     text = text.replace(/_COUT_/g, Math.round(montant * .34));
     explication.text(text);
-    explication.show();
   } else {
-    explication.hide();
+    explication.text(''); // on ne hide pas, pour pas être en conflit avec uniquement_pour_don
   }
 }
 
@@ -415,9 +414,8 @@ function campagnodon_formulaire_adhesion_explication($form) {
       text = text.replace(/_MAGAZINE_PRIX_/g, adhesion_magazine_prix);
       text = text.replace(/_RESTANT_ADHESION_/g, adhesion_sans_magazine);
       explication.text(text);
-      explication.show();
     } else {
-      explication.hide();
+      explication.text(''); // on ne hide pas, pour pas être en conflit avec uniquement_pour_don
     }
   });
 }
