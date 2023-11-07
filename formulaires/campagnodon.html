@@ -332,13 +332,12 @@
       </p>
 
       <p class="boutons">
-        [(#ENV{_avec_adhesion}|non)
-          <input type="submit" class="submit" value="<:campagnodon_form:valider_don:>" />
+        [(#ENV{_avec_don}|oui)
+          <input type="submit" uniquement_pour_don class="submit" value="<:campagnodon_form:valider_don:>" />
         ]
         [(#ENV{_avec_adhesion}|oui)
-          <input type="submit" class="submit" value="<:campagnodon_form:valider_adhesion:>" />
+          <input type="submit" uniquement_pour_adhesion class="submit" value="<:campagnodon_form:valider_adhesion:>" />
         ]
-        FIXME libellé
       </p>
     </form>
   </BOUCLE_editable>
