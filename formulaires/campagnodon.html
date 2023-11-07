@@ -7,286 +7,123 @@
       #ACTION_FORMULAIRE{#ENV{action}}
 
       [(#REM) Le choix de l'action (don/adhésion)]
-      <fieldset class="campagnodon-choix">
-        <BOUCLE_types(DATA){source table, #ENV{_choix_type_desc}}>
-          #SET{type_description,#VALEUR}
-          #SET{val, #GET{type_description/valeur}}
-          <input
-            type="radio"
-            name="choix_type"
-            class="radio"
-            required="required"
-            id="choix_type_#GET{val}"
-            value="#GET{val}"
-            [
-              (#ENV{choix_type}|=={#GET{val}}|oui)
-              checked="checked"
-            ]
-          >
-          <label for="choix_type_#GET{val}">
-            [(#GET{type_description/label})]
-          </label>
-        </BOUCLE_types>
-      </fieldset>
-
-      [(#REM) Le choix de la récurrence (si activé sur le formulaire.)]
-      <BOUCLE_recurrences(DATA){source table, #ENV{_choix_recurrence_desc}}>
-        [(#REM)
-          Ici on boucle sur un tableau par type (don/adhesion).
-          On va générer autant de fieldset (spécifiques au type courant).
-          C'est le javascript qui va s'occuper d'afficher les bonnes valeurs, et de sélectionner une valeur par défaut.
-        ]
-        #SET{recurrence_pour_type_courant, #CLE}
-        <fieldset class="campagnodon-choix" campagnodon_recurrence_pour_type="[(#GET{recurrence_pour_type_courant})]">
-          <BOUCLE_recurrence(DATA){source table, #VALEUR}>
-            #SET{recurrence_description,#VALEUR}
-            #SET{val, #GET{recurrence_description/valeur}}
+      [(#SET{erreurs, #ENV**{erreurs}|table_valeur{choix_type}})]
+      <div class="editer editer_choix_type [(#GET{erreurs}|oui)erreur]">
+        [<span class='erreur_message'>(#GET{erreurs})</span>]
+        <fieldset class="campagnodon-choix">
+          <BOUCLE_types(DATA){source table, #ENV{_choix_type_desc}}>
+            #SET{type_description,#VALEUR}
+            #SET{val, #GET{type_description/valeur}}
             <input
               type="radio"
-              name="choix_recurrence"
+              name="choix_type"
               class="radio"
               required="required"
-              id="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}"
+              id="choix_type_#GET{val}"
               value="#GET{val}"
               [
-                (#ENV{choix_recurrence}|=={#GET{val}}|oui)
+                (#ENV{choix_type}|=={#GET{val}}|oui)
                 checked="checked"
               ]
             >
-            <label for="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}">
-              [(#GET{recurrence_description/label})]
+            <label for="choix_type_#GET{val}">
+              [(#GET{type_description/label})]
             </label>
-          </BOUCLE_recurrence>
+          </BOUCLE_types>
         </fieldset>
-      </BOUCLE_recurrences>
-
-      [(#REM) Le choix des montants. On mix les montants pour tous les types et recurrences, c'est le javascript qui jouera sur l'affichage]
-      <div class="campagnodon-form-row">
-        <div class="campagnodon-form-group campagnodon-col-md-12">
-          [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
-          <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
-            [<span class='erreur_message'>(#GET{erreurs})</span>]
-            <ul class="campagnodon-choix-montant">
-              <BOUCLE_montants(POUR){tableau #ENV{_propositions_montants}}>
-                #SET{montant_description,#VALEUR}
-                #SET{val, #GET{montant_description/valeur}}
-                <li class="[(#GET{montant_description/grand}|oui)campagnodon-choix-montant-grand]">
-                  <label>
-                    <input
-                      type="radio"
-                      name="montant"
-                      class="radio"
-                      required="required"
-                      id="#GET{montant_description/id}"
-                      value="#GET{val}"
-                      [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"]
-                      campagnodon_pour_type="#GET{montant_description/pour_type}"
-                    />
-                    <div>
-                      [(#GET{val}|=={libre}|oui)
-                        [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre}})]
-                        [<span class='erreur_message'>(#GET{erreurs})</span>]
-                          <input
-                            type="number" name="montant_libre"
-                            class="text" value="#ENV*{montant_libre}"
-                            placeholder="#GET{montant_description/label}"
-                            aria-label="#GET{montant_description/label}"
-                            title="#GET{montant_description/desc}"
-                            id="#GET{montant_description/id}_montant"
-                          />&nbsp;€
-                      ]
-                      [(#GET{val}|=={libre}|non)
-                        <div class="campagnodon-choix-montant-label">
-                          #GET{montant_description/label}
-                        </div>
-                        ]
-                      [<div class="campagnodon-choix-montant-desc">(#GET{montant_description/desc})</div>]
-                    </div>
-                  </label>
-                </li>
-              </BOUCLE_montants>
-            </ul>
-          </div>
-        </div>
       </div>
 
-
-
-      ANCIEN FORMULAIRE
-      [(#REM) Si on est sur un formulaire d'adhésion, on affiche le bloc correspondant, ainsi qu'une checkbock pour ajouter un don :]
-      <BOUCLE_adhesion(CONDITION){si #ENV{_avec_adhesion}|oui}>
-        <fieldset>
-          <legend><span><:campagnodon_form:j_adhere:></span></legend>
-          <div class="campagnodon-form-row">
-            <div class="campagnodon-form-group campagnodon-col-md-12">
-              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_adhesion}})]
-              <div class="editer editer_montant_adhesion obligatoire [(#GET{erreurs}|oui)erreur]">
-                [<span class='erreur_message'>(#GET{erreurs})</span>]
-                <div class="campagnodon_montant_adhesion">
-
-                  [(#REM) Et on boucle sur les propositions.]
-                  <BOUCLE_montants_adhesion(POUR){tableau #ENV{_montants_propositions_adhesion}}>
-                    #SET{val,#CLE}
-                    <label>
-                      <input type="radio" name="montant_adhesion" class="radio" required="required" id="montant_adhesion_#GET{val}" value="#GET{val}" [(#ENV{montant_adhesion}|=={#GET{val}}|oui)checked="checked"] />
-                      <span>#VALEUR</span>
-                    </label>
-                  </BOUCLE_montants_adhesion>
-                </div>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-
-        <div class="campagnodon-form-row">
-          <div class="campagnodon-form-group campagnodon-col-md-12 choix">
-            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{adhesion_avec_don}})]
-            <div class="editer editer_adhesion_avec_don [(#GET{erreurs}|oui)erreur]">
-              <input
-                type="checkbox"
-                name="adhesion_avec_don"
-                class="checkbox"
-                value="1"
-                id="champ_adhesion_avec_don"
-                [(#ENV{adhesion_avec_don}|=={1}|oui)checked="checked"]
-              />
-              <label for="champ_adhesion_avec_don"><:campagnodon_form:label_adhesion_avec_don:></label>
-              [<span class='erreur_message'>(#GET{erreurs})</span>]
-            </div>
-          </div>
-        </div>
-      </BOUCLE_adhesion>
-
-      [(#REM) Ci dessous le bloc des dons. Toujours affiché (mais son apparence change légèrement)]
-      <fieldset si_adhesion_avec_don>
-        [(#ENV{_avec_adhesion}|non)
-          <legend><span><:campagnodon_form:je_donne:></span></legend>
-          [(#ENV{_don_recurrent}|oui)
-            [(#SET{erreurs, #ENV**{erreurs}|table_valeur{don_recurrent}})]
-            <div class="editer editer_don_recurrent obligatoire [(#GET{erreurs}|oui)erreur]">
-              <label>
-                <input type="radio" name="don_recurrent" class="radio" required="required" id="don_recurrent_non" value="0" [(#ENV{don_recurrent}|!={1}|oui)checked="checked"] />
-                <span><:campagnodon_form:je_donne_une_fois:></span>
-              </label>
-              <label>
-                <input type="radio" name="don_recurrent" class="radio" required="required" id="don_recurrent_oui" value="1" [(#ENV{don_recurrent}|=={1}|oui)checked="checked"] />
-                <span><:campagnodon_form:je_donne_recurrent:></span>
-              </label>
-            </div>
+      [(#REM) Le choix de la récurrence (si activé sur le formulaire.)]
+      [(#SET{erreurs, #ENV**{erreurs}|table_valeur{choix_recurrence}})]
+      <div class="editer editer_choix_recurrence [(#GET{erreurs}|oui)erreur]">
+        [<span class='erreur_message'>(#GET{erreurs})</span>]
+        <BOUCLE_recurrences(DATA){source table, #ENV{_choix_recurrence_desc}}>
+          [(#REM)
+            Ici on boucle sur un tableau par type (don/adhesion).
+            On va générer autant de fieldset (spécifiques au type courant).
+            C'est le javascript qui va s'occuper d'afficher les bonnes valeurs, et de sélectionner une valeur par défaut.
           ]
-        ]
+          #SET{recurrence_pour_type_courant, #CLE}
+          <fieldset class="campagnodon-choix" campagnodon_recurrence_pour_type="[(#GET{recurrence_pour_type_courant})]">
+            <BOUCLE_recurrence(DATA){source table, #VALEUR}>
+              #SET{recurrence_description,#VALEUR}
+              #SET{val, #GET{recurrence_description/valeur}}
+              <input
+                type="radio"
+                name="choix_recurrence"
+                class="radio"
+                required="required"
+                id="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}"
+                value="#GET{val}"
+                [
+                  (#ENV{choix_recurrence}|=={#GET{val}}|oui)
+                  checked="checked"
+                ]
+              >
+              <label for="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}">
+                [(#GET{recurrence_description/label})]
+              </label>
+            </BOUCLE_recurrence>
+          </fieldset>
+        </BOUCLE_recurrences>
+      </div>
 
-        <div class="campagnodon-form-row" si_pas_don_recurrent>
+      [(#REM) Le choix des montants. On mix les montants pour tous les types et recurrences, c'est le javascript qui jouera sur l'affichage]
+      <fieldset>
+        <legend uniquement_pour_adhesion><:campagnodon_form:j_adhere:></legend>
+        <div class="campagnodon-form-row">
           <div class="campagnodon-form-group campagnodon-col-md-12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]
             <div class="editer editer_montant obligatoire [(#GET{erreurs}|oui)erreur]">
               [<span class='erreur_message'>(#GET{erreurs})</span>]
-              <div class="campagnodon_montant">
-
-                [(#REM) Sauf si on ne met que des montants de don libre, on affiche la liste des montants présélectionnés.]
-                <BOUCLE_liste_montants(CONDITION){si #ENV{_montants_propositions_uniquement_libre}|non}>
-                  <div class="campagnodon_montant_ligne">
-                    <BOUCLE_montants_old(POUR){tableau #ENV{_montants_propositions}}>
-                      #SET{val,#CLE}
-                      <label>
-                        <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
-                        <span>#VALEUR</span>
-                      </label>
-                    </BOUCLE_montants_old>
-                  </div>
-                </BOUCLE_liste_montants>
-
-                [(#REM) On affiche la saisie de montant libre si activée.]
-                [(#ENV{_montants_proposition_libre}|oui)
-                  [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre}})]
-                  [<span class='erreur_message'>(#GET{erreurs})</span>]
-                  <div class="campagnodon_montant_ligne">
-
-                    [(#REM) Si on n'a que le montant libre, le champs 'montant' est caché, sinon c'est un bouton radio.]
-                    [(#ENV{_montants_propositions_uniquement_libre}|oui)
-                      <input type="hidden" name="montant" value="libre" />
-                    ]
-                    [(#ENV{_montants_propositions_uniquement_libre}|non)
-                      #SET{val,libre}
-                      <label>
-                        <input type="radio" name="montant" class="radio" required="required" id="montant_#GET{val}" value="#GET{val}" [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"] />
-                        <span><:campagnodon_form:montant_libre:></span>
-                      </label>
-                    ]
+              <ul class="campagnodon-choix-montant">
+                <BOUCLE_montants(POUR){tableau #ENV{_propositions_montants}}>
+                  #SET{montant_description,#VALEUR}
+                  #SET{val, #GET{montant_description/valeur}}
+                  <li class="[(#GET{montant_description/grand}|oui)campagnodon-choix-montant-grand]">
                     <label>
                       <input
-                        type="number" name="montant_libre"
-                        class="text" value="#ENV*{montant_libre}"
-                        id="champ_montant_libre"
-                        [(#ENV{_montants_propositions_uniquement_libre}|non)disabled="disabled"]
-                      />&nbsp;€
+                        type="radio"
+                        name="montant"
+                        class="radio"
+                        required="required"
+                        id="#GET{montant_description/id}"
+                        value="#GET{val}"
+                        [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"]
+                        campagnodon_pour_type="#GET{montant_description/pour_type}"
+                      />
+                      <div>
+                        [(#GET{val}|=={libre}|oui)
+                          [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre}})]
+                          [<span class='erreur_message'>(#GET{erreurs})</span>]
+                            <input
+                              type="number" name="montant_libre"
+                              class="text" value="#ENV*{montant_libre}"
+                              placeholder="#GET{montant_description/label}"
+                              aria-label="#GET{montant_description/label}"
+                              title="#GET{montant_description/desc}"
+                              id="#GET{montant_description/id}_montant"
+                            />&nbsp;€
+                        ]
+                        [(#GET{val}|=={libre}|non)
+                          <div class="campagnodon-choix-montant-label">
+                            #GET{montant_description/label}
+                          </div>
+                        ]
+                        [<div class="campagnodon-choix-montant-desc">(#GET{montant_description/desc})</div>]
+                      </div>
                     </label>
-                  </div>
-                ]
-              </div>
+                  </li>
+                </BOUCLE_montants>
+              </ul>
             </div>
           </div>
         </div>
-
-        [(#REM) Si on a activé les dons récurrents, voici les montants specifiques:]
-        <BOUCLE_don_recurrent_montants(CONDITION){si #ENV{_don_recurrent}|oui}>
-          <div class="campagnodon-form-row" si_don_recurrent>
-            <div class="campagnodon-form-group campagnodon-col-md-12">
-              [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_recurrent}})]
-              <div class="editer editer_montant_recurrent obligatoire [(#GET{erreurs}|oui)erreur]">
-                [<span class='erreur_message'>(#GET{erreurs})</span>]
-                <div class="campagnodon_montant">
-
-                  [(#REM) Sauf si on ne met que des montants de don libre, on affiche la liste des montants présélectionnés.]
-                  <BOUCLE_liste_montants_recurrent(CONDITION){si #ENV{_montants_propositions_uniquement_libre}|non}>
-                    <div class="campagnodon_montant_ligne">
-                      <BOUCLE_montants_recurrent(POUR){tableau #ENV{_montants_propositions_recurrent}}>
-                        #SET{val,#CLE}
-                        <label>
-                          <input type="radio" name="montant_recurrent" class="radio" required="required" id="montant_recurrent_#GET{val}" value="#GET{val}" [(#ENV{montant_recurrent}|=={#GET{val}}|oui)checked="checked"] />
-                          <span>#VALEUR</span>
-                        </label>
-                      </BOUCLE_montants_recurrent>
-                    </div>
-                  </BOUCLE_liste_montants_recurrent>
-
-                  [(#REM) On affiche la saisie de montant libre si activée.]
-                  [(#ENV{_montants_proposition_libre_recurrent}|oui)
-                    [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant_libre_recurrent}})]
-                    [<span class='erreur_message'>(#GET{erreurs})</span>]
-                    <div class="campagnodon_montant_ligne">
-
-                      [(#REM) Si on n'a que le montant libre, le champs 'montant_recurrent' est caché, sinon c'est un bouton radio.]
-                      [(#ENV{_montants_propositions_uniquement_libre_recurrent}|oui)
-                        <input type="hidden" name="montant_recurrent" value="libre" />
-                      ]
-                      [(#ENV{_montants_propositions_uniquement_libre_recurrent}|non)
-                        #SET{val,libre}
-                        <label>
-                          <input type="radio" name="montant_recurrent" class="radio" required="required" id="montant_recurrent_#GET{val}" value="#GET{val}" [(#ENV{montant_recurrent}|=={#GET{val}}|oui)checked="checked"] />
-                          <span><:campagnodon_form:montant_libre:></span>
-                        </label>
-                      ]
-                      <label>
-                        <input
-                          type="number" name="montant_libre_recurrent"
-                          class="text" value="#ENV*{montant_libre_recurrent}"
-                          id="champ_montant_libre_recurrent"
-                          [(#ENV{_montants_propositions_uniquement_libre_recurrent}|non)disabled="disabled"]
-                        />&nbsp;€
-                      </label>
-                    </div>
-                  ]
-                </div>
-              </div>
-            </div>
-          </div>
-        </BOUCLE_don_recurrent_montants>
       </fieldset>
 
       [(#ENV{_avec_adhesion}|oui)
         [(#REM) Le paragraphe «adhesion_explication» est rempli via JS.]
-        <p class="explication" display="none"
+        <p class="explication" uniquement_pour_adhesion
           [(#ENV{_adhesion_magazine}|oui)
             adhesion_magazine_prix="#ENV{_adhesion_magazine_prix}"
             adhesion_explication="<:campagnodon_form:adhesion_magazine_explication:>"

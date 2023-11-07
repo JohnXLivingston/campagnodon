@@ -304,7 +304,7 @@ Par exemple, créer un fichier `squelettes/lang/campagnodon_form_fr.php` avec po
 ```php
 <?php
 $GLOBALS[$GLOBALS['idx_lang']] = array(
-  'j_adhere' => "J'adhère à Attac pour l'année civile en version un montant de :",
+  'j_adhere' => "J'adhère à Attac pour l'année civile en versant un montant de :",
 );
 ```
 

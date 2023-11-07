@@ -23,12 +23,15 @@ function campagnodon_formulaire(formSelector) {
   $form.on('click', 'input[type=radio][name="choix_type"]', () => {
     campagnodon_formulaire_choix_type($form, false);
     campagnodon_formulaire_filtre_montants($form);
+    campagnodon_formulaire_explications($form);
   });
   $form.on('click', 'input[type=radio][name="choix_recurrence"]', () => {
     campagnodon_formulaire_filtre_montants($form);
+    campagnodon_formulaire_explications($form);
   });
   $form.on('click', 'input[type=radio][name="montant"]', () => {
     campagnodon_formulaire_choix_montant($form, false);
+    campagnodon_formulaire_explications($form);
   });
   $form.on('focus', 'input[name=montant_libre]', function () {
     // Quand on rentre dans un montant_libre, on s'assure que le radio est sélectionné
@@ -38,9 +41,14 @@ function campagnodon_formulaire(formSelector) {
     }
   });
 
+  $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+  $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
+
   campagnodon_formulaire_choix_type($form, true);
   campagnodon_formulaire_choix_montant($form, true);
   campagnodon_formulaire_filtre_montants($form);
+  campagnodon_formulaire_explications($form);
 
   // TODO: ci-dessous l'ancien code. À voir ce qu'on garde ou pas.
 
@@ -68,14 +76,6 @@ function campagnodon_formulaire(formSelector) {
   //   campagnodon_formulaire_explications($form);
   // });
 
-  // $form.on('keyup', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
-  // $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
-  // $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
-
-  // $form.on('keyup', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
-  // $form.on('change', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
-  // $form.on('click', 'input[name=montant_libre_recurrent]', () => campagnodon_formulaire_explications($form));
-
   // $form.on('click', 'input[type=radio][name=montant_adhesion]', () => campagnodon_formulaire_explications($form));
   // campagnodon_formulaire_don_recurrent($form, true); // doit être appelé avant campagnodon_formulaire_montant_libre
   // campagnodon_formulaire_montant_libre($form, true);
@@ -92,14 +92,27 @@ function campagnodon_formulaire_choix_type($form, premier_appel = false) {
   const $radio_choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)');
   let selecteur_fieldset_a_desactiver
   let selecteur_fieldset_a_activer
+  let selecteur_a_invisibiliser
+  let selecteur_a_visibiliser
   if ($radio_choix_type.length === 0) {
     // on déselectionne tout.
     selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_type]'
+    selecteur_a_invisibiliser = '[uniquement_pour_adhesion],[uniquement_pour_don]'
   } else {
     // Sinon on doit désactiver les radio des fieldset ne correspondant pas au type courant,
     const choix_type = $radio_choix_type.attr('value')
     selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_type][campagnodon_recurrence_pour_type!=' + choix_type + ']'
     selecteur_fieldset_a_activer = 'fieldset[campagnodon_recurrence_pour_type=' + choix_type + ']'
+
+    if (choix_type === 'don') {
+      selecteur_a_invisibiliser = '[uniquement_pour_adhesion]'
+      selecteur_a_visibiliser = '[uniquement_pour_don]'
+    } else if (choix_type === 'adhesion') {
+      selecteur_a_invisibiliser = '[uniquement_pour_don]'
+      selecteur_a_visibiliser = '[uniquement_pour_adhesion]'
+    } else {
+      selecteur_a_invisibiliser = '[uniquement_pour_adhesion],[uniquement_pour_don]'
+    }
   }
 
   if (selecteur_fieldset_a_desactiver) {
@@ -122,6 +135,17 @@ function campagnodon_formulaire_choix_type($form, premier_appel = false) {
       $form.find(selecteur_radio_a_activer).first().prop('checked', true).trigger('click');
     }
     $form.find(selecteur_fieldset_a_activer).show();
+  }
+
+  if (selecteur_a_invisibiliser) {
+    $form.find(selecteur_a_invisibiliser).each(function () {
+      $(this).hide();
+    });
+  }
+  if (selecteur_a_visibiliser) {
+    $form.find(selecteur_a_visibiliser).each(function () {
+      $(this).show();
+    });
   }
 }
 
@@ -306,36 +330,32 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
   }
 }
 
+
 /**
- * Retourne le montant du don le cas échéant.
- * @param {jQuery} $form
+ * Cette fonction retourne le montant actuellement choisi.
+ * Si pas de montant choisi, retourne null.
+ * @param {jQuery} $form Conteneur jQuery du formulaire
  */
-function campagnodon_lire_montant_don($form) {
-  let montant_est_libre = false;
-  suffix = ''; // Suffix pour les noms de champs. Permet de gérer les montants pour les dons récurrents.
-  if ($form.find('input[name=don_recurrent][value=1]').is(':checked')) {
-    suffix = '_recurrent';
+function campagnodon_lire_montant($form) {
+  const $radio = $form.find('input[type=radio][name=montant]:checked:not(:disabled)');
+  if ($radio.length === 0) {
+    return null;
   }
-  if ($form.find('input[name=montant'+suffix+'][type=hidden][value=libre]').length) {
-    // Le champ est hidden => il n'y a que du montant libre
-    montant_est_libre = true;
-  } else if ($form.find('input[type=radio][name=montant'+suffix+'][value=libre]:checked').length) {
-    montant_est_libre = true;
+  let val = $radio.val();
+  if (val !== 'libre') {
+    return parseInt(val);
   }
-
-  let montant;
-  if (montant_est_libre) {
-    const $montant_libre = $form.find('input[name=montant_libre'+suffix+']');
-    montant = $montant_libre.prop('value');
-    montant = parseInt(montant);
-  } else {
-    const $montant = $form.find('input[type=radio][name=montant'+suffix+']:checked');
-    if ($montant.length) {
-      montant = parseInt($montant.attr('value'));
-    }
+  
+  const $montant_libre = $radio.closest('li').find('input[name=montant_libre]:not(:disabled)');
+  if ($montant_libre.length === 0) {
+    // ne devrait pas arriver, mais bon
+    return null;
   }
-
-  return montant;
+  val = parseInt($montant_libre.val());
+  if (isNaN(val)) {
+    return null;
+  }
+  return val;
 }
 
 /**
@@ -343,7 +363,7 @@ function campagnodon_lire_montant_don($form) {
  * @param {jQuery} $form
  */
 function campagnodon_formulaire_recu_fiscal_explication($form) {
-  const montant = campagnodon_lire_montant_don($form);
+  const montant = campagnodon_lire_montant($form);
 
   const explication = $form.find('[recu_fiscal_explication]');
   if (explication.length && montant !== undefined && !isNaN(montant)) {
@@ -362,25 +382,22 @@ function campagnodon_formulaire_recu_fiscal_explication($form) {
  * @param {jQuery} $form
  */
 function campagnodon_formulaire_adhesion_explication($form) {
-  const $montant_adhesion = $form.find('input[type=radio][name=montant_adhesion]:checked');
-  let montant_adhesion;
-  if ($montant_adhesion.length) {
-    montant_adhesion = parseInt($montant_adhesion.attr('value'));
-  }
+  const montant_adhesion = campagnodon_lire_montant($form);
   $form.find('[adhesion_explication]').each(function () {
     const explication = $(this);
     let adhesion_magazine_prix = parseInt(explication.attr('adhesion_magazine_prix'))
     if (adhesion_magazine_prix === undefined || isNaN(adhesion_magazine_prix)) {
       adhesion_magazine_prix = 0;
     }
-    if (montant_adhesion !== undefined && !isNaN(montant_adhesion)) {
+    if (montant_adhesion !== null && !isNaN(montant_adhesion)) {
       let montant_don = 0;
-      if ($form.find('input[type=checkbox][name=adhesion_avec_don]:checked').length) {
-        montant_don = campagnodon_lire_montant_don($form);
-        if (montant_don === undefined || isNaN(montant_don)) {
-          montant_don = 0;
-        }
-      }
+      // TODO: est ce qu'on garde le principe des dons en plus de l'adhésion ? Si oui, traiter.
+      // if ($form.find('input[type=checkbox][name=adhesion_avec_don]:checked').length) {
+      //   montant_don = campagnodon_lire_montant($form);
+      //   if (montant_don === null || isNaN(montant_don)) {
+      //     montant_don = 0;
+      //   }
+      // }
       let adhesion_sans_magazine = montant_adhesion - adhesion_magazine_prix + montant_don;
       let cout_adhesion = Math.round(adhesion_magazine_prix + (adhesion_sans_magazine * 0.34));
 

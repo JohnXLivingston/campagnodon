@@ -104,8 +104,6 @@ function formulaires_campagnodon_charger_dist(
 	];
 
 	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
-		$values['montant_adhesion'] = '';
-		$values['adhesion_avec_don'] = '';
 		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
 		if ($adhesion_magazine_prix > 0) {
 			$values['_adhesion_magazine'] = true;
