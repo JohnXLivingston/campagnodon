@@ -24,6 +24,7 @@ function campagnodon_formulaire(formSelector) {
     campagnodon_formulaire_choix_type($form, false);
     campagnodon_formulaire_filtre_montants($form);
     campagnodon_formulaire_explications($form);
+    campagnodon_formulaire_recu_fiscal($form, false);
   });
   $form.on('click', 'input[type=radio][name="choix_recurrence"]', () => {
     campagnodon_formulaire_filtre_montants($form);
@@ -45,10 +46,13 @@ function campagnodon_formulaire(formSelector) {
   $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
   $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
 
+  $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form, false));
+
   campagnodon_formulaire_choix_type($form, true);
   campagnodon_formulaire_choix_montant($form, true);
   campagnodon_formulaire_filtre_montants($form);
   campagnodon_formulaire_explications($form);
+  campagnodon_formulaire_recu_fiscal($form, true);
 
   // TODO: ci-dessous l'ancien code. À voir ce qu'on garde ou pas.
 
@@ -297,7 +301,7 @@ function campagnodon_formulaire_adhesion_avec_don($form, premier_appel = false) 
 }
 
 /**
- * Cette fonction s'occupe de mettre à jour le formulaire en fonction de la case à cocher recu_fiscal.
+ * Cette fonction s'occupe de mettre à jour le formulaire en fonction de la case à cocher recu_fiscal et du type.
  * À appeler à chaque affichage, et à chaque changement de valeur de la case à cocher.
  * @param {jQuery} $form Le conteneur jQuery du formulaire
  * @param {boolean} premier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
@@ -306,11 +310,15 @@ function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
   const $cb = $form.find('input[type=checkbox][name=recu_fiscal]');
 
   if (!$cb.length) {
-    // Il n'y a pas de case à cocher recu_fiscal, on considère qu'il est implicitement obligatoire (c'est le cas pour les adhésions)
+    // Il n'y a pas de case à cocher recu_fiscal,
+    // on considère qu'il est implicitement obligatoire (c'est le cas pour les formulaire d'adhésion uniquement)
     return;
   }
 
-  const checked = $cb.is(':checked');
+  const $radio_choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)');
+
+  // Petite particularité: on considère que la case est cochée si on est sur des adhésions.
+  const checked = $radio_choix_type.val() === 'adhesion' || $cb.is(':checked');
 
   if (premier_appel) {
     // On va noter tous les champs obligatoires, pour pouvoir restaurer la valeur.

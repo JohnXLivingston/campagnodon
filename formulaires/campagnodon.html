@@ -151,8 +151,8 @@
         </div>
 
         [(#REM) sur le formulaire d'adhésion, recu_fiscal est implicite.]
-        [(#ENV{_avec_adhesion}|non)
-          <div class="campagnodon-form-row">
+        [(#ENV{_avec_don}|oui)
+          <div class="campagnodon-form-row" uniquement_pour_don>
             <div class="campagnodon-form-group campagnodon-col-md-12 choix">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{recu_fiscal}})]
               <div class="editer editer_recu_fiscal [(#GET{erreurs}|oui)erreur]">
