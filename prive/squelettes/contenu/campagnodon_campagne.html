@@ -72,7 +72,6 @@
                       type="checkbox"
                       name="don_recurrent"
                       class="don_recurrent"
-                      disabled="disabled"
                     />
                     <:campagnodon:label_activer_don_recurrent:>
                   </label>
@@ -80,7 +79,7 @@
               ]
               <div>
                 <label>
-                  <input type="checkbox" name="montant_perso" class="montant_libre" />
+                  <input type="checkbox" name="montant_perso" class="montant_perso" />
                   <:campagnodon:label_montant_perso:>
                 </label>
               </div>
@@ -134,15 +133,8 @@
           } else {
             $('#campagnodon_balise_form_options').show();
             s+= '|\n\ttype=' + type_valeur;
-            if (type_valeur === 'adhesion') {
-              td.find('input[name=montant_libre]').prop('disabled', true);
-              td.find('input[name=don_recurrent]').prop('disabled', true);
-            } else {
-              td.find('input[name=montant_libre]').prop('disabled', false);
-              td.find('input[name=don_recurrent]').prop('disabled', false);
-            }
 
-            const don_recurrent = type_valeur === 'don' && !!td.find('input[name=don_recurrent]:checked:not(:disabled)').length
+            const don_recurrent = !!td.find('input[name=don_recurrent]:checked:not(:disabled)').length
             if (don_recurrent) {
               s+= '|\n\t'+'don_recurrent=1';
             }
@@ -150,7 +142,7 @@
             const montant_perso = !!td.find('input[name=montant_perso]:checked:not(:disabled)').length;
             const montant_libre = !!td.find('input[name=montant_libre]:checked:not(:disabled)').length;
             if (montant_libre || montant_perso) {
-              s+= '|\n\tmontants=';
+              s+= '|\n\tmontants' + (type_valeur === 'adhesion' ? '_adhesion' : '') + '=';
               if (montant_perso) {
                 s+= liste_montants[type_valeur] ? liste_montants[type_valeur] : '10,20,40';
                 if (montant_libre) {
@@ -160,7 +152,7 @@
                 s+= 'libre';
               }
               if (don_recurrent) {
-                s+= '|\n\tmontants_recurrent=';
+                s+= '|\n\tmontants' + (type_valeur === 'adhesion' ? '_adhesion' : '') + '_recurrent=';
                 if (montant_perso) {
                   s+= liste_montants[type_valeur+'_recurrent'] ? liste_montants[type_valeur+'_recurrent'] : '5,10,20';
                   if (montant_libre) {

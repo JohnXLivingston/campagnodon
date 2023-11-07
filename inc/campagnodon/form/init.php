@@ -278,7 +278,16 @@ function form_init_liste_montants_campagne(
 			}
 		}
 		if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
-			$_ajoute_propositions('adhesion', $arg_liste_montants_adhesion);
+
+			// Pour la rétro compatibilité :
+			// Avant la v2.x, la liste de valeur pour les adhésions était aussi dans "montant".
+			// Donc si type===adhesion (uniquement), et que arg_liste_montants_adhesion vide, on fallback:
+			$tmp = $arg_liste_montants_adhesion;
+			if ($form_type === 'adhesion' && empty($tmp)) {
+				$tmp = $arg_liste_montants;
+			}
+
+			$_ajoute_propositions('adhesion', $tmp);
 			// TODO: passer par un campagnodon_adhesion_recurrente_active et un $arg_adhesion_recurrente ?
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
 				$_ajoute_propositions('adhesion_recurrent', $arg_liste_montants_adhesion_recurrent);
