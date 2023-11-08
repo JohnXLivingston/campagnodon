@@ -4,6 +4,8 @@
 
 TODO: nouveau formulaire d'adhésion (unifié, et gestion des adhésions renouvelables).
 
+* Quelques fix mineurs.
+
 ## 1.7.0
 
 * Compatibilité SPIP 3.2 et 4.2.
