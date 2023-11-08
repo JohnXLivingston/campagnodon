@@ -278,7 +278,6 @@ function form_init_liste_montants_campagne(
 			}
 		}
 		if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
-
 			// Pour la rétro compatibilité :
 			// Avant la v2.x, la liste de valeur pour les adhésions était aussi dans "montant".
 			// Donc si type===adhesion (uniquement), et que arg_liste_montants_adhesion vide, on fallback:
@@ -333,17 +332,48 @@ function form_init_get_adhesion_magazine_prix($mode_options, $form_type) {
 }
 
 
-function form_init_liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso) {
+function form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $arg_souscriptions_perso) {
 	if (!is_array($mode_options) || !array_key_exists('souscriptions_optionnelles', $mode_options)) {
 		return array();
 	}
+
+	$types_acceptes = [];
+	if ($form_type === 'don+adhesion') {
+		$types_acceptes[] = 'don';
+		$types_acceptes[] = 'adhesion';
+	} else {
+		$types_acceptes[] = $form_type;
+	}
+
 	$r = array();
-	// 2 modes: soit on prend la config par défaut, doit on a personnalisé via la balise
+
+	$test_so = function (&$so, $test_optionals) use ($types_acceptes) {
+		if (!array_key_exists('pour', $so) || empty($so['pour'])) {
+			// Pas de condition "pour", on prend toujours
+			return true;
+		} elseif (is_array($so['pour'])) {
+			foreach ($types_acceptes as $type) {
+				if (false !== array_search($type, $so['pour'], true)) {
+					return true;
+				}
+
+				if ($test_optionals) {
+					// Dans la conf, on peut mettre "don?":
+					// cela veut dire qu'on peut utiliser cette souscription sur le type "don",
+					// mais elle ne sera proposée que si on l'a explicitement demandé dans la balise.
+					if (false !== array_search($type.'?', $so['pour'], true)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	};
+
+	// 2 modes: soit on prend la config par défaut, soit on a personnalisé via la balise
 	if (empty($arg_souscriptions_perso)) {
 		foreach ($mode_options['souscriptions_optionnelles'] as $k => $so) {
-			if (!array_key_exists('pour', $so) || empty($so['pour'])) {
-				$r[$k] = $so;
-			} elseif (is_array($so['pour']) && false !== array_search($type, $so['pour'], true)) {
+			if ($test_so($so, false)) { // false, car ici on ne veut que les souscriptions activées par défaut
 				$r[$k] = $so;
 			}
 		}
@@ -357,15 +387,8 @@ function form_init_liste_souscriptions_optionnelles($type, $mode_options, $arg_s
 			if (!is_array($so)) {
 				continue;
 			}
-			if (!array_key_exists('pour', $so) || empty($so['pour'])) {
+			if ($test_so($so, true)) {
 				$r[$k] = $so;
-			} elseif (is_array($so['pour'])) {
-				if (
-					false !== array_search($type, $so['pour'], true)
-					|| false !== array_search($type.'?', $so['pour'], true)
-				) {
-					$r[$k] = $so;
-				}
 			}
 		}
 	}

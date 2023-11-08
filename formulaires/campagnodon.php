@@ -75,6 +75,7 @@ function formulaires_campagnodon_charger_dist(
 		'_propositions_montants' => $config_montants['propositions'],
 		'_civilites' => $civilites,
 		'choix_type' => $choix_type_defaut,
+		'choix_recurrence' => '', // FIXME: uniquement si récurrence activées ?
 		'montant' => '',
 		'montant_libre' => '',
 		'email' => '',
@@ -113,7 +114,7 @@ function formulaires_campagnodon_charger_dist(
 }
 
 function formulaires_campagnodon_verifier_dist(
-	$type,
+	$type, // FIXME: $form_type, pas $type.
 	$id_campagne = null,
 	$arg_liste_montants = null,
 	$arg_souscriptions_perso = null,
@@ -230,7 +231,7 @@ function formulaires_campagnodon_verifier_dist(
 }
 
 function formulaires_campagnodon_traiter_dist(
-	$type,
+	$form_type,
 	$id_campagne = null,
 	$arg_liste_montants = null,
 	$arg_souscriptions_perso = null,
@@ -240,7 +241,8 @@ function formulaires_campagnodon_traiter_dist(
 	$arg_liste_montants_adhesion_recurrent = null
 ) {
 	try {
-		spip_log('traiter_dist' . $type . ':'. $id_campagne);
+		spip_log('traiter_dist' . $form_type . ':'. $id_campagne);
+		$type = $form_type; // TODO: lire la valeur du champ
 
 		include_spip('inc/campagnodon/form/init');
 		include_spip('inc/campagnodon/form/utils');
@@ -251,7 +253,7 @@ function formulaires_campagnodon_traiter_dist(
 		}
 
 		$config_montants = form_init_liste_montants_campagne(
-			$type,
+			$form_type,
 			$id_campagne,
 			$arg_liste_montants,
 			$arg_don_recurrent,
@@ -259,12 +261,13 @@ function formulaires_campagnodon_traiter_dist(
 			$arg_liste_montants_adhesion,
 			$arg_liste_montants_adhesion_recurrent
 		);
-		$recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
-		$adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
-		list ($montant, $montant_est_recurrent) = ($type !== 'adhesion' || $adhesion_avec_don) ? form_init_get_form_montant($config_montants) : null;
-		$montant_adhesion = ($type === 'adhesion') ? form_init_get_form_montant_adhesion($config_montants) : null;
+		$recu_fiscal = $form_type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
+		$adhesion_avec_don = $form_type === 'adhesion' && _request('adhesion_avec_don') == '1';
+		list ($montant, $montant_est_recurrent) = ($form_type !== 'adhesion' || $adhesion_avec_don) ? form_init_get_form_montant($config_montants) : null;
+		$montant_adhesion = ($form_type === 'adhesion') ? form_init_get_form_montant_adhesion($config_montants) : null;
 
-		$type_transaction = ($type === 'don' && $montant_est_recurrent) ? 'don_mensuel' : $type;
+		die('FIXME');
+		$type_transaction = ($form_type === 'don' && $montant_est_recurrent) ? 'don_mensuel' : $form_type;
 
 		$montant_total = 0;
 		if ($montant) {
@@ -285,7 +288,7 @@ function formulaires_campagnodon_traiter_dist(
 		}
 		$source = campagnodon_calcul_libelle_source($mode_options, $campagne);
 
-		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $type);
+		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type); // FIXME: $form_type ou $type ?
 
 		$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
 			'id_campagnodon_campagne' => $id_campagne,
@@ -340,7 +343,7 @@ function formulaires_campagnodon_traiter_dist(
 			throw new CampagnodonException('Erreur à la modification de la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon:erreur_sauvegarde');
 		}
 
-		$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($type, $mode_options, $arg_souscriptions_perso);
+		$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $arg_souscriptions_perso); // FIXME: $form_type ou $type ?
 
 		$contributions = null;
 		if ($type === 'don') {

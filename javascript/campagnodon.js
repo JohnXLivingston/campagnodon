@@ -25,6 +25,7 @@ function campagnodon_formulaire(formSelector) {
     campagnodon_formulaire_filtre_montants($form);
     campagnodon_formulaire_explications($form);
     campagnodon_formulaire_recu_fiscal($form, false);
+    campagnodon_formulaire_souscriptions_optionnelles($form);
   });
   $form.on('click', 'input[type=radio][name="choix_recurrence"]', () => {
     campagnodon_formulaire_filtre_montants($form);
@@ -53,6 +54,7 @@ function campagnodon_formulaire(formSelector) {
   campagnodon_formulaire_filtre_montants($form);
   campagnodon_formulaire_explications($form);
   campagnodon_formulaire_recu_fiscal($form, true);
+  campagnodon_formulaire_souscriptions_optionnelles($form);
 }
 
 /**
@@ -335,4 +337,47 @@ function campagnodon_formulaire_adhesion_explication($form) {
 function campagnodon_formulaire_explications($form) {
   campagnodon_formulaire_recu_fiscal_explication($form);
   campagnodon_formulaire_adhesion_explication($form);
+}
+
+/**
+ * Désactive les souscriptions optionnelles non compatibles avec le type d'opération choisi.
+ * @param {jQuery} $form
+ */
+function campagnodon_formulaire_souscriptions_optionnelles($form) {
+  const choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)').val();
+  $form.find('[campagnodon_souscription_pour]').each(function () {
+    const $div = $(this);
+    const $cb = $div.find('input[type=checkbox]');
+    const pour_attr = $div.attr('campagnodon_souscription_pour');
+    let pour = undefined;
+    try {
+      if (pour_attr) {
+        pour = JSON.parse(pour_attr);
+        if (!Array.isArray(pour)) {
+          pour = undefined;
+        }
+      }
+    } catch {
+      pour = undefined;
+    }
+
+    let show = false;
+    if (pour === undefined) {
+      show = true;
+    } else {
+      if (choix_type) {
+        if ((pour.indexOf(choix_type) >= 0) || (pour.indexOf(choix_type + '?') >= 0)) {
+          show = true
+        }
+      }
+    }
+
+    if (show) {
+      $cb.attr('disabled', false);
+      $div.show();
+    } else {
+      $cb.attr('disabled', true);
+      $div.hide();
+    }
+  });
 }

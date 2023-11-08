@@ -307,7 +307,13 @@
         <BOUCLE_souscriptions_optionnelles(POUR){tableau #ENV{_souscriptions_optionnelles}}>
           #SET{nom_champ,souscription_optionnelle_#CLE}
           #SET{label_champ, #VALEUR|table_valeur{label}}
-          <div class="campagnodon-form-row">
+          #SET{souscription_pour, #VALEUR|table_valeur{pour}}
+          <div
+            class="campagnodon-form-row"
+            [(#GET{souscription_pour}|oui)
+              campagnodon_souscription_pour="[(#GET{souscription_pour}|json_encode|attribut_html)]"
+            ]
+          >
             <div class="campagnodon-form-group campagnodon-col-md-12 choix">
               [(#SET{erreurs, #ENV**{erreurs}|table_valeur{#GET{nom_champ}}})]
               <div class="editer editer_#GET{nom_champ} [(#GET{erreurs}|oui)erreur]">
