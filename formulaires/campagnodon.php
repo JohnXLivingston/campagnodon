@@ -75,7 +75,6 @@ function formulaires_campagnodon_charger_dist(
 		'_propositions_montants' => $config_montants['propositions'],
 		'_civilites' => $civilites,
 		'choix_type' => $choix_type_defaut,
-		'choix_recurrence' => '', // FIXME: uniquement si récurrence activées ?
 		'montant' => '',
 		'montant_libre' => '',
 		'email' => '',
@@ -91,6 +90,10 @@ function formulaires_campagnodon_charger_dist(
 		'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : '',
 		'telephone' => '',
 	];
+
+	if (!empty($values['_choix_recurrence_desc'])) {
+		$values['choix_recurrence'] = '';
+	}
 
 	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
 		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
@@ -114,7 +117,7 @@ function formulaires_campagnodon_charger_dist(
 }
 
 function formulaires_campagnodon_verifier_dist(
-	$type, // FIXME: $form_type, pas $type.
+	$form_type,
 	$id_campagne = null,
 	$arg_liste_montants = null,
 	$arg_souscriptions_perso = null,
@@ -130,16 +133,21 @@ function formulaires_campagnodon_verifier_dist(
 
 	$obligatoires = [];
 
+	list($choix_type_desc, $choix_type_defaut) = form_init_get_choix_type($form_type);
+	$choix_recurrence_desc = form_init_choix_recurrence($form_type, $arg_don_recurrent);
+
 	$campagne = form_utils_get_campagne_ouverte($id_campagne);
 	if (empty($campagne)) {
 		$erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
 	}
 
+	$choix_type = _request('choix_type');
+
 	include_spip('inc/campagnodon.utils');
 	$mode_options = campagnodon_mode_options($campagne['origine']);
 
 	$config_montants = form_init_liste_montants_campagne(
-		$type,
+		$form_type,
 		$id_campagne,
 		$arg_liste_montants,
 		$arg_don_recurrent,
@@ -148,12 +156,19 @@ function formulaires_campagnodon_verifier_dist(
 		$arg_liste_montants_adhesion_recurrent
 	);
 	$civilites = form_init_liste_civilites($mode_options);
-	$recu_fiscal = $type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
-	$adhesion_avec_don = $type === 'adhesion' && _request('adhesion_avec_don') == '1';
-	$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $type);
+
+	// On veut les coordonnées complètes dans ces cas:
+	$coordonnees_completes = $choix_type === 'adhesion' || _request('recu_fiscal') == '1';
+
+	$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
 
 	$obligatoires = ['choix_type', 'email']; // Pas besoin de 'montant', il sera testé plus loin
-	if ($recu_fiscal || $adhesion_avec_don) {
+
+	if (!empty($choix_recurrence_desc)) {
+		$obligatoires[] = 'choix_recurrence';
+	}
+
+	if ($coordonnees_completes) {
 		array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville', 'pays');
 	}
 
@@ -163,37 +178,56 @@ function formulaires_campagnodon_verifier_dist(
 		}
 	}
 
+	$choix_type = _request('choix_type');
+	if (!array_key_exists($choix_type, $choix_type_desc)) {
+		$erreurs['choix_type'] = _T('campagnodon_form:erreur_valeur_invalide');
+	}
+
+	$choix_recurrence = null;
+	if (!empty($choix_recurrence_desc)) {
+		$choix_recurrence = _request('choix_recurrence');
+		if (
+			!array_key_exists($choix_type, $choix_recurrence_desc)
+			|| ! array_key_exists($choix_recurrence, $choix_recurrence_desc[$choix_type])
+		) {
+			$erreurs['choix_recurrence'] = _T('campagnodon_form:erreur_valeur_invalide');
+		}
+	}
+
 	if ($e = _request('email') and !email_valide($e)) {
 		$erreurs['email'] = _T('campagnodon_form:erreur_email_invalide');
 	}
 
-	list ($montant, $montant_est_recurrent) = form_init_get_form_montant($config_montants);
+	$montant = form_utils_read_montant($config_montants, $choix_type, $choix_recurrence);
+	if ($montant === null) {
+		$erreurs['montant'] = _T('info_obligatoire');
+	} else {
+		// On vérifie qu'on est dans les bornes autorisées.
+		$don_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM)
+			? _CAMPAGNODON_DON_MINIMUM
+			: 1;
+		$don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM)
+			? _CAMPAGNODON_DON_MAXIMUM
+			: 10000000;
 
-	if ($type !== 'adhesion' || $adhesion_avec_don) {
-		$don_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM) ? _CAMPAGNODON_DON_MINIMUM : 1;
-		$don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM) ? _CAMPAGNODON_DON_MAXIMUM : 10000000;
-		if (empty($montant)) {
-			$erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = _T('info_obligatoire');
-		} elseif (
+		// Si c'est une adhésion, il faut en plus être au moins 1 euro au dessus du prix du magazine.
+		// FIXME: pour l'adhésion minimum (hors maganize),
+		//			je pars du principe que c'est la meme valeur que pour les dons.
+		//			Il faudrait peut être une borne spécifique aux adhésions.
+		if ($choix_type === 'adhesion' && $adhesion_magazine_prix + 1 > $don_min) {
+			$don_min = $adhesion_magazine_prix + 1;
+		}
+
+		if (
 			$erreur = $verifier($montant, 'entier', array('min' => $don_min))
 			or // on teste en 2 fois, pour que le message d'erreur n'affiche qu'une seule borne.
 			$erreur = $verifier($montant, 'entier', array('max' => $don_max))
 		) {
-			$erreurs['montant'.($montant_est_recurrent ? '_recurrent': '')] = $erreur;
+			$erreurs['montant'] = $erreur;
 		}
 	}
 
-	$montant_adhesion = null;
-	if ($type === 'adhesion') {
-		$montant_adhesion = form_init_get_form_montant_adhesion($config_montants);
-		if (empty($montant_adhesion)) {
-			$erreurs['montant_adhesion'] = _T('info_obligatoire');
-		} elseif ($erreur = $verifier($montant_adhesion, 'entier', array('min' => 1 + $adhesion_magazine_prix, 'max' => 10000000))) {
-			$erreurs['montant_adhesion'] = $erreur;
-		}
-	}
-
-	if ($recu_fiscal || $type === 'adhesion') {
+	if ($coordonnees_completes) {
 		$pays = _request('pays');
 		$ret = sql_select('nom', 'spip_pays', 'code='.sql_quote($pays));
 		if (sql_count($ret) != 1) {

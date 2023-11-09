@@ -38,6 +38,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'valider_don' => 'Je valide et je procède au don',
   'valider_adhesion' => 'Je valide et j\'adhère',
   'champ_obligatoire' => 'Champs obligatoires',
+  'erreur_valeur_invalide' => 'Valeur invalide',
   'erreur_email_invalide' => 'Adresse email invalide',
   'erreur_civilite_invalide' => 'Civilité invalide',
   'erreur_pays_invalide' => 'Pays invalide',

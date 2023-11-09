@@ -15,13 +15,13 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 function form_init_get_choix_type($type) {
 	$types = [];
 	if ($type === 'don' || $type === 'don+adhesion') {
-		$types[] = [
+		$types['don'] = [
 			'valeur' => 'don',
 			'label' => _T('campagnodon_form:choix_don'),
 		];
 	}
 	if ($type === 'adhesion' || $type === 'don+adhesion') {
-		$types[] = [
+		$types['adhesion'] = [
 			'valeur' => 'adhesion',
 			'label' => _T('campagnodon_form:choix_adhesion'),
 		];
@@ -60,11 +60,11 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 		)
 	) {
 		$choix_recurrence_desc['don'] = [
-			[
+			'unique' => [
 				'valeur' => 'unique',
 				'label' => _T('campagnodon_form:je_donne_une_fois')
 			],
-			[
+			'mensuel' => [
 				'valeur' => 'mensuel',
 				'label' => _T('campagnodon_form:je_donne_recurrent')
 			]
@@ -75,11 +75,11 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 		// TODO: de plus, il faudrait un équivalent à campagnodon_don_recurrent_active()
 		if (campagnodon_don_recurrent_active()) {
 			$choix_recurrence_desc['adhesion'] = [
-				[
+				'unique' => [
 					'valeur' => 'unique',
 					'label' => _T('campagnodon_form:jadhere_pour_un_an')
 				],
-				[
+				'annuel' => [
 					'valeur' => 'annuel',
 					'label' => _T('campagnodon_form:jadhere_avec_renouvellement_automatique')
 				]
@@ -88,53 +88,6 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 	}
 	return $choix_recurrence_desc;
 }
-
-/**
- * Retourne le montant (montant vs montant_libre, etc...)
- * @param $config_montants Correspond au retour de la fonction form_init_liste_montants_campagne
- */
-function form_init_get_form_montant($config_montants) {
-	die('A reecrire'); // $config_montants['propositions'*]  a changé
-	$suffix = ''; // pour les dons récurrents, on a un suffix au nom du champs.
-	if ($config_montants['don_recurrent'] === true) { // les dons récurrents sont bien activés sur ce formulaire
-		if (_request('don_recurrent') == '1') { // la case don récurrent est cochée
-			$suffix = '_recurrent';
-		}
-	}
-	spip_log('form_init_get_form_montant: le suffixe est "'.$suffix.'"', 'campagnodon'._LOG_DEBUG);
-	$v_montant = _request('montant'.$suffix);
-	if ($v_montant === 'libre') {
-		if (!$config_montants['libre'.$suffix]) {
-			spip_log('Le champs est sur libre, mais la fonction n\'est pas active.', 'campagnodon'._LOG_DEBUG);
-			return null;
-		}
-		$v_montant = trim(_request('montant_libre'.$suffix));
-	} else {
-		if (!array_key_exists($v_montant, $config_montants['propositions'.$suffix])) {
-			return null;
-		}
-	}
-	return [$v_montant, $suffix !== ''];
-}
-
-
-/**
- * Retourne le montant de l'adhésion
- * @param $config_montants Correspond au retour de la fonction form_init_liste_montants_campagne
- */
-function form_init_get_form_montant_adhesion($config_montants) {
-	$v_montant = _request('montant_adhesion');
-	die('A reecrire');
-	if (empty($config_montants['propositions_adhesion'])) {
-		return null;
-	}
-	if (!array_key_exists($v_montant, $config_montants['propositions_adhesion'])) {
-		return null;
-	}
-	return $v_montant;
-}
-
-
 
 /**
  * Parse les montants configuré.
@@ -296,7 +249,7 @@ function form_init_liste_montants_campagne(
 		spip_log($e->getMessage(), 'campagnodon'._LOG_ERREUR);
 		return false;
 	}
-	
+
 	return $r;
 }
 

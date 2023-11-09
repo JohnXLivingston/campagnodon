@@ -29,3 +29,45 @@ function form_utils_traduit_adhesion_type($mode_options, $type) {
 	}
 	return $type;
 }
+
+
+/**
+ * Retourne le montant saisi (en tenant comptes des montants libres le cas échéant).
+ * Si le montant n'est pas libre, et n'est pas dans la liste configurée, retournen null.
+ * @param $config_montants Correspond au retour de la fonction form_init_liste_montants_campagne
+ */
+function form_utils_read_montant($config_montants, $choix_type, $choix_recurrence) {
+	$v_montant = _request('montant');
+	if (empty($v_montant)) {
+		return null;
+	}
+
+	// On doit vérifier que $v_montant existe dans $config_montants['propositions'],
+	// pour cette combinaison type/recurrence.
+	$pour_type = $choix_type;
+	if (!empty($choix_recurrence) && $choix_recurrence !== 'unique') {
+		$pour_type.= '_recurrent';
+	}
+	$trouve = false;
+	foreach ($config_montants['propositions'] as $proposition) {
+		if ($proposition['pour_type'] === $pour_type && ''.$proposition['valeur'] === $v_montant) {
+			$trouve = true;
+			break;
+		}
+	}
+	if (!$trouve) {
+		spip_log(
+			'La valeur "'.$v_montant.'" ne fait pas parti de la liste de choix pour '.$pour_type,
+			'campagnodon'._LOG_DEBUG
+		);
+		return null;
+	}
+
+	// On a bien saisi une valeur de la liste.
+	// Si c'est 'libre', il faut lire le champs 'montant_libre'.
+	if ($v_montant === 'libre') {
+		$v_montant = trim(_request('montant_libre'));
+	}
+
+	return $v_montant;
+}
