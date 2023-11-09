@@ -75,6 +75,7 @@ function formulaires_campagnodon_charger_dist(
 		'_propositions_montants' => $config_montants['propositions'],
 		'_civilites' => $civilites,
 		'choix_type' => $choix_type_defaut,
+		'choix_recurrence' => 'unique',
 		'montant' => '',
 		'montant_libre' => '',
 		'email' => '',
@@ -90,10 +91,6 @@ function formulaires_campagnodon_charger_dist(
 		'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : '',
 		'telephone' => '',
 	];
-
-	if (!empty($values['_choix_recurrence_desc'])) {
-		$values['choix_recurrence'] = '';
-	}
 
 	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
 		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
@@ -162,11 +159,7 @@ function formulaires_campagnodon_verifier_dist(
 
 	$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
 
-	$obligatoires = ['choix_type', 'email']; // Pas besoin de 'montant', il sera testé plus loin
-
-	if (!empty($choix_recurrence_desc)) {
-		$obligatoires[] = 'choix_recurrence';
-	}
+	$obligatoires = ['choix_type', 'choix_recurrence', 'email']; // Pas besoin de 'montant', il sera testé plus loin
 
 	if ($coordonnees_completes) {
 		array_push($obligatoires, 'prenom', 'nom', 'adresse', 'code_postal', 'ville', 'pays');
@@ -183,15 +176,12 @@ function formulaires_campagnodon_verifier_dist(
 		$erreurs['choix_type'] = _T('campagnodon_form:erreur_valeur_invalide');
 	}
 
-	$choix_recurrence = null;
-	if (!empty($choix_recurrence_desc)) {
-		$choix_recurrence = _request('choix_recurrence');
-		if (
-			!array_key_exists($choix_type, $choix_recurrence_desc)
-			|| ! array_key_exists($choix_recurrence, $choix_recurrence_desc[$choix_type])
-		) {
-			$erreurs['choix_recurrence'] = _T('campagnodon_form:erreur_valeur_invalide');
-		}
+	$choix_recurrence = _request('choix_recurrence');
+	if (
+		!array_key_exists($choix_type, $choix_recurrence_desc)
+		|| ! array_key_exists($choix_recurrence, $choix_recurrence_desc[$choix_type])
+	) {
+		$erreurs['choix_recurrence'] = _T('campagnodon_form:erreur_valeur_invalide');
 	}
 
 	if ($e = _request('email') and !email_valide($e)) {

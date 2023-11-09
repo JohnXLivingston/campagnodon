@@ -55,6 +55,19 @@ function campagnodon_formulaire(formSelector) {
   campagnodon_formulaire_explications($form);
   campagnodon_formulaire_recu_fiscal($form, true);
   campagnodon_formulaire_souscriptions_optionnelles($form);
+
+  // Pour finir, s'il n'y a en tout et pour tout qu'un seul choix pour "choix_recurrence",
+  // et que ce choix est coché, on va masquer la ligne.
+  if ($form.find('input[name=choix_recurrence]').length <= 1) {
+    const $choix_recurrence = $form.find('input[name=choix_recurrence]').first();
+    if ($choix_recurrence.is(':checked:not(:disabled)')) {
+      // Par sécurité, je vérifie aussi qu'il n'y a pas de message d'erreur.
+      const $choix_recurrence_div = $choix_recurrence.closest('.editer_choix_recurrence');
+      if ($choix_recurrence_div.find('.erreur_message').length === 0) {
+        $choix_recurrence_div.hide();
+      }
+    }
+  }
 }
 
 /**

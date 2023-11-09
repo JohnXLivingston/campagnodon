@@ -46,43 +46,40 @@ function form_init_get_choix_type($type) {
  * @param string|null $arg_don_recurrent Le paramètre don_recurrent des formulaires.
  */
 function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
-	if ($arg_don_recurrent !== '1') {
-		return [];
-	}
-
 	include_spip('inc/campagnodon.utils');
 
 	$choix_recurrence_desc = [];
-	if (
-		campagnodon_don_recurrent_active()
-		&& (
-			$form_type === 'don' || $form_type === 'don+adhesion'
-		)
-	) {
+
+	if ($form_type === 'don' || $form_type === 'don+adhesion') {
 		$choix_recurrence_desc['don'] = [
 			'unique' => [
 				'valeur' => 'unique',
 				'label' => _T('campagnodon_form:je_donne_une_fois')
-			],
-			'mensuel' => [
-				'valeur' => 'mensuel',
-				'label' => _T('campagnodon_form:je_donne_recurrent')
 			]
 		];
+
+		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
+			$choix_recurrence_desc['don']['mensuel'] = [
+				'valeur' => 'mensuel',
+				'label' => _T('campagnodon_form:je_donne_recurrent')
+			];
+		}
 	}
-	if ($form_type === 'don' || $form_type === 'don+adhesion') {
+
+	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
 		// TODO: ces valeurs doivent vérifier la conf, et éventuellement dépendre d'un argument adhesion_recurrent
 		// TODO: de plus, il faudrait un équivalent à campagnodon_don_recurrent_active()
-		if (campagnodon_don_recurrent_active()) {
-			$choix_recurrence_desc['adhesion'] = [
-				'unique' => [
-					'valeur' => 'unique',
-					'label' => _T('campagnodon_form:jadhere_pour_un_an')
-				],
-				'annuel' => [
-					'valeur' => 'annuel',
-					'label' => _T('campagnodon_form:jadhere_avec_renouvellement_automatique')
-				]
+		$choix_recurrence_desc['adhesion'] = [
+			'unique' => [
+				'valeur' => 'unique',
+				'label' => _T('campagnodon_form:jadhere_pour_un_an')
+			]
+		];
+
+		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
+			$choix_recurrence_desc['adhesion']['annuel'] = [
+				'valeur' => 'annuel',
+				'label' => _T('campagnodon_form:jadhere_avec_renouvellement_automatique')
 			];
 		}
 	}

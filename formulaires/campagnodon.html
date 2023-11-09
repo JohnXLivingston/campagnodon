@@ -33,7 +33,7 @@
         </fieldset>
       </div>
 
-      [(#REM) Le choix de la récurrence (si activé sur le formulaire.)]
+      [(#REM) Le choix de la récurrence]
       [(#SET{erreurs, #ENV**{erreurs}|table_valeur{choix_recurrence}})]
       <div class="editer editer_choix_recurrence [(#GET{erreurs}|oui)erreur]">
         [<span class='erreur_message'>(#GET{erreurs})</span>]
@@ -42,6 +42,7 @@
             Ici on boucle sur un tableau par type (don/adhesion).
             On va générer autant de fieldset (spécifiques au type courant).
             C'est le javascript qui va s'occuper d'afficher les bonnes valeurs, et de sélectionner une valeur par défaut.
+            Le javascript pourra aussi masquer ce champs s'il n'y a qu'un choix.
           ]
           #SET{recurrence_pour_combinaison_courant, #CLE}
           <fieldset class="campagnodon-choix" campagnodon_recurrence_pour_combinaison="[(#GET{recurrence_pour_combinaison_courant})]">
