@@ -63,7 +63,11 @@ function formulaires_campagnodon_charger_dist(
 		return false;
 	}
 	$civilites = form_init_liste_civilites($mode_options);
-	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $arg_souscriptions_perso);
+	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles(
+		$form_type,
+		$mode_options,
+		$arg_souscriptions_perso
+	);
 
 	$values = [
 		'_form_type' => $form_type,
@@ -142,6 +146,12 @@ function formulaires_campagnodon_verifier_dist(
 
 	include_spip('inc/campagnodon.utils');
 	$mode_options = campagnodon_mode_options($campagne['origine']);
+
+	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles(
+		$form_type,
+		$mode_options,
+		$arg_souscriptions_perso
+	);
 
 	$config_montants = form_init_liste_montants_campagne(
 		$form_type,
@@ -251,7 +261,19 @@ function formulaires_campagnodon_verifier_dist(
 		}
 	}
 
-$erreurs['message_erreur'] = 'ceci est un test';
+	foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
+		// On doit checker le 'pour' le cas échéant.
+		if (_request('souscription_optionnelle_'.$cle) == '1') {
+			if (
+				array_key_exists('pour', $souscription_optionnelle)
+				&& !empty($souscription_optionnelle['pour'])
+				&& !in_array($choix_type, $souscription_optionnelle['pour'])
+			) {
+				$erreurs['souscription_optionnelle_'.$cle] = _T('campagnodon_form:erreur_valeur_invalide');
+			}
+		}
+	}
+
 	return $erreurs;
 }
 
@@ -267,15 +289,20 @@ function formulaires_campagnodon_traiter_dist(
 ) {
 	try {
 		spip_log('traiter_dist' . $form_type . ':'. $id_campagne);
-		$type = $form_type; // TODO: lire la valeur du champ
 
 		include_spip('inc/campagnodon/form/init');
 		include_spip('inc/campagnodon/form/utils');
 
 		$campagne = form_utils_get_campagne_ouverte($id_campagne);
 		if (empty($campagne)) {
-			throw new CampagnodonException('Campagne invalide au moment de l\'enregistrement', 'campagnodon:campagne_invalide');
+			throw new CampagnodonException(
+				'Campagne invalide au moment de l\'enregistrement',
+				'campagnodon:campagne_invalide'
+			);
 		}
+
+		$choix_type = _request('choix_type');
+		$choix_recurrence = _request('choix_recurrence');
 
 		$config_montants = form_init_liste_montants_campagne(
 			$form_type,
@@ -286,34 +313,49 @@ function formulaires_campagnodon_traiter_dist(
 			$arg_liste_montants_adhesion,
 			$arg_liste_montants_adhesion_recurrent
 		);
-		$recu_fiscal = $form_type === 'adhesion' || _request('recu_fiscal') == '1'; // on veut toujours un reçu pour les adhésions
-		$adhesion_avec_don = $form_type === 'adhesion' && _request('adhesion_avec_don') == '1';
-		list ($montant, $montant_est_recurrent) = ($form_type !== 'adhesion' || $adhesion_avec_don) ? form_init_get_form_montant($config_montants) : null;
-		$montant_adhesion = ($form_type === 'adhesion') ? form_init_get_form_montant_adhesion($config_montants) : null;
 
-		die('FIXME');
-		$type_transaction = ($form_type === 'don' && $montant_est_recurrent) ? 'don_mensuel' : $form_type;
+			// On veut les coordonnées complètes dans ces cas:
+		$coordonnees_completes = $choix_type === 'adhesion' || _request('recu_fiscal') == '1';
+
+		$montant = form_utils_read_montant($config_montants, $choix_type, $choix_recurrence);
+
+		// Le type de transaction pour le système distant.
+		$type_transaction = $choix_type . (
+			empty($choix_recurrence) || $choix_recurrence === 'unique'
+			? ''
+			: '_' . $choix_recurrence
+		);
 
 		$montant_total = 0;
 		if ($montant) {
 			$montant_total+= $montant;
 		}
-		if ($montant_adhesion) {
-			$montant_total+= $montant_adhesion;
-		}
+		$montant_est_recurrent = !empty($choix_recurrence) && $choix_recurrence !== 'unique';
 
 		include_spip('inc/campagnodon.utils');
 		$mode_options = campagnodon_mode_options($campagne['origine']);
 		if (!$mode_options['type']) {
-			throw new CampagnodonException("Campagnodon non configuré, mode inconnu: '".$campagne['origine']."'.", 'campagnodon:erreur_sauvegarde');
+			throw new CampagnodonException(
+				"Campagnodon non configuré, mode inconnu: '".$campagne['origine']."'.",
+				'campagnodon:erreur_sauvegarde'
+			);
 		}
-		$fonction_nouvelle_contribution = campagnodon_fonction_connecteur($campagne['origine'], 'nouvelle_contribution');
+
+		$fonction_nouvelle_contribution = campagnodon_fonction_connecteur(
+			$campagne['origine'],
+			'nouvelle_contribution'
+		);
 		if (!$fonction_nouvelle_contribution) {
-			throw new CampagnodonException("Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '".$campagne['origine']."'.", 'campagnodon:erreur_sauvegarde');
+			throw new CampagnodonException(
+				"Campagnodon mal configuré, impossible de trouver le connecteur nouvelle_contribution pour le mode: '"
+					. $campagne['origine']."'.",
+				'campagnodon:erreur_sauvegarde'
+			);
 		}
+
 		$source = campagnodon_calcul_libelle_source($mode_options, $campagne);
 
-		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type); // FIXME: $form_type ou $type ?
+		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
 
 		$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
 			'id_campagnodon_campagne' => $id_campagne,
@@ -322,7 +364,10 @@ function formulaires_campagnodon_traiter_dist(
 			'statut_recurrence' => $montant_est_recurrent ? 'initialisation' : null
 		]);
 		if (!($id_campagnodon_transaction > 0)) {
-			throw new CampagnodonException('Erreur à la création de la transaction campagnodon.', 'campagnodon:erreur_sauvegarde');
+			throw new CampagnodonException(
+				'Erreur à la création de la transaction campagnodon.',
+				'campagnodon:erreur_sauvegarde'
+			);
 		}
 
 		$inserer_transaction = charger_fonction('inserer_transaction', 'bank');
@@ -334,12 +379,25 @@ function formulaires_campagnodon_traiter_dist(
 		];
 		if (!(
 			$id_transaction = $inserer_transaction($montant_total, $transaction_options)
-			and $hash = sql_getfetsel('transaction_hash', 'spip_transactions', 'id_transaction=' . intval($id_transaction))
+			and $hash = sql_getfetsel(
+				'transaction_hash',
+				'spip_transactions',
+				'id_transaction=' . intval($id_transaction)
+			)
 		)) {
-			throw new CampagnodonException('Erreur à la création de la transaction '.$id_campagnodon_transaction, 'campagnodon:erreur_sauvegarde');
+			throw new CampagnodonException(
+				'Erreur à la création de la transaction '.$id_campagnodon_transaction,
+				'campagnodon:erreur_sauvegarde'
+			);
 		}
 
-		$url_paiement = generer_url_public('campagnodon-payer', array('id_transaction'=>$id_transaction, 'transaction_hash'=>$hash), false, false);
+		$url_paiement = generer_url_public(
+			'campagnodon-payer',
+			array('id_transaction'=>$id_transaction,
+			'transaction_hash'=>$hash),
+			false,
+			false
+		);
 		$url_paiement_redirect = $url_paiement;
 		if (defined('_CAMPAGNODON_GERER_WIDGETS') && _CAMPAGNODON_GERER_WIDGETS === true) {
 			// On est ici dans un code hautement expérimental. Voir la doc de _CAMPAGNODON_GERER_WIDGETS.
@@ -353,7 +411,12 @@ function formulaires_campagnodon_traiter_dist(
 				), false, false);
 			}
 		}
-		$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
+		$url_transaction = generer_url_ecrire(
+			'campagnodon_transaction',
+			'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction),
+			false,
+			false
+		);
 
 		include_spip('inc/campagnodon.utils');
 		$transaction_idx_distant = get_transaction_idx_distant($mode_options, $id_campagnodon_transaction);
@@ -365,22 +428,29 @@ function formulaires_campagnodon_traiter_dist(
 			],
 			'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
 		)) {
-			throw new CampagnodonException('Erreur à la modification de la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon:erreur_sauvegarde');
+			throw new CampagnodonException(
+				'Erreur à la modification de la transaction campagnodon '.$id_campagnodon_transaction,
+				'campagnodon:erreur_sauvegarde'
+			);
 		}
 
-		$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $arg_souscriptions_perso); // FIXME: $form_type ou $type ?
+		$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles(
+			$form_type,
+			$mode_options,
+			$arg_souscriptions_perso
+		);
 
 		$contributions = null;
-		if ($type === 'don') {
+		if ($choix_type === 'don') {
 			$contributions = [
 				[
-					'financial_type' => campagnodon_traduit_financial_type($mode_options, $montant_est_recurrent ? 'don_mensuel' : 'don'),
+					'financial_type' => campagnodon_traduit_financial_type($mode_options, $type_transaction),
 					'amount' => $montant,
 					'currency' => 'EUR',
 					'source' => $source
 				]
 			];
-		} elseif ($type === 'adhesion') {
+		} elseif ($choix_type === 'adhesion') {
 			$contributions = [];
 			if ($adhesion_magazine_prix > 0) {
 				$contribution_magazine = [
@@ -398,13 +468,19 @@ function formulaires_campagnodon_traiter_dist(
 					}
 					$pdf_seulement_champ = $so['cle_distante'];
 					// FIXME: la façon dont est passé ce paramètre n'est vraiment pas propre.
-					$contribution_magazine['membership_option'] = $pdf_seulement_champ.':'.(_request('souscription_optionnelle_'.$cle) == '1' ? '1' : '0');
+					$contribution_magazine['membership_option'] =
+						$pdf_seulement_champ.':'
+						. (_request('souscription_optionnelle_'.$cle) == '1'
+								? '1'
+								: '0'
+					);
 				}
 
 				$contributions[] = $contribution_magazine;
 			}
 
 			$contributions[] = [
+				// FIXME: différencer l'adhésion avec renouvellement ??
 				'financial_type' => campagnodon_traduit_financial_type($mode_options, 'adhesion'),
 				'amount' => strval(intval($montant_adhesion) - intval($adhesion_magazine_prix)),
 				'currency' => 'EUR',
@@ -412,14 +488,14 @@ function formulaires_campagnodon_traiter_dist(
 				'source' => $source
 			];
 
-			if ($adhesion_avec_don) {
-				$contributions[] = [
-					'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don'),
-					'amount' => $montant,
-					'currency' => 'EUR',
-					'source' => $source
-				];
-			}
+			// if ($adhesion_avec_don) {
+			// 	$contributions[] = [
+			// 		'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don'),
+			// 		'amount' => $montant,
+			// 		'currency' => 'EUR',
+			// 		'source' => $source
+			// 	];
+			// }
 		} else {
 			throw new CampagnodonException("Type inconnu: '".$type."'", 'campagnodon:erreur_sauvegarde');
 		}
@@ -430,6 +506,7 @@ function formulaires_campagnodon_traiter_dist(
 				$distant_operation_type = 'donation';
 				break;
 			case 'adhesion':
+			case 'adhesion_annuel': // FIXME: différencier ?
 				$distant_operation_type = 'membership';
 				break;
 			case 'don_mensuel':
@@ -437,11 +514,13 @@ function formulaires_campagnodon_traiter_dist(
 				break;
 			// NB: et on a ce cas, qui est initié ailleurs dans le code
 			// case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
+			// case 'adhesion_annuel_echeance' TODO ??
 			// case 'don_mensuel_migre'...
 		}
 
 		$params = array(
-			'campagnodon_version' => '1', // numéro de version pour le format de donnée (pour s'assurer de la compatibilité des API)
+			// numéro de version pour le format de donnée (pour s'assurer de la compatibilité des API):
+			'campagnodon_version' => '1',
 			'email' => trim(_request('email')),
 			'source' => $source,
 			'operation_type' => $distant_operation_type,
@@ -456,13 +535,18 @@ function formulaires_campagnodon_traiter_dist(
 		if ($montant_est_recurrent) {
 			$params['is_recurring'] = true;
 		}
-		if ($recu_fiscal || $adhesion_avec_don) {
+		if ($coordonnees_completes) {
 			// FIXME: je n'ai pas réussi à faire marcher la phase de normalisation ci-dessous.
 			// $date_naissance = _request('date_naissance');
 			// $date_naissance_normalisee = null;
 			// if (!empty($date_naissance)) {
 			//   $verifier = charger_fonction('verifier', 'inc/');
-			//   $verifier($date_naissance, 'date', array('format' => 'amj', 'normaliser' => 'date'), $date_naissance_normalisee);
+			//   $verifier(
+			//	 	$date_naissance,
+			//	 	'date',
+			//	 	array('format' => 'amj', 'normaliser' => 'date'),
+			//	 	$date_naissance_normalisee
+			//	 );
 			// }
 
 			$params = array_merge($params, array(
@@ -492,6 +576,7 @@ function formulaires_campagnodon_traiter_dist(
 					// Cas particulier, on passe.
 					continue;
 				}
+
 				$params['optional_subscriptions'][] = array(
 					'name' => $cle,
 					'type' => $souscription_optionnelle['type'],
@@ -510,7 +595,10 @@ function formulaires_campagnodon_traiter_dist(
 				), 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
 			}
 		} catch (Exception $e) {
-			throw new CampagnodonException('Erreur nouvelle_contribution mode='.$campagne['origine'].': ' . $e->getMessage(), 'campagnodon:erreur_sauvegarde');
+			throw new CampagnodonException(
+				'Erreur nouvelle_contribution mode='.$campagne['origine'].': ' . $e->getMessage(),
+				'campagnodon:erreur_sauvegarde'
+			);
 		}
 
 		// $update_campagnodon_transaction = [];
@@ -519,7 +607,10 @@ function formulaires_campagnodon_traiter_dist(
 		//   $update_campagnodon_transaction,
 		//   'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
 		// )) {
-		//   throw new CampagnodonException("Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction." (insertion infos CiviCRM)", "campagnodon:erreur_sauvegarde");
+		//   throw new CampagnodonException(
+		//		"Erreur à la modification de la transaction campagnodon ".$id_campagnodon_transaction." (insertion infos CiviCRM)",
+		//		"campagnodon:erreur_sauvegarde"
+		//	);
 		// }
 
 		include_spip('inc/campagnodon.utils');
