@@ -54,6 +54,7 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 		$choix_recurrence_desc['don'] = [
 			'unique' => [
 				'valeur' => 'unique',
+				'pour_choix_type' => 'don',
 				'label' => _T('campagnodon_form:je_donne_une_fois')
 			]
 		];
@@ -61,6 +62,7 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
 			$choix_recurrence_desc['don']['mensuel'] = [
 				'valeur' => 'mensuel',
+				'pour_choix_type' => 'don',
 				'label' => _T('campagnodon_form:je_donne_recurrent')
 			];
 		}
@@ -72,6 +74,7 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 		$choix_recurrence_desc['adhesion'] = [
 			'unique' => [
 				'valeur' => 'unique',
+				'pour_choix_type' => 'adhesion',
 				'label' => _T('campagnodon_form:jadhere_pour_un_an')
 			]
 		];
@@ -79,6 +82,7 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
 			$choix_recurrence_desc['adhesion']['annuel'] = [
 				'valeur' => 'annuel',
+				'pour_choix_type' => 'adhesion',
 				'label' => _T('campagnodon_form:jadhere_avec_renouvellement_automatique')
 			];
 		}

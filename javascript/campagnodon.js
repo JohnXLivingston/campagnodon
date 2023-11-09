@@ -117,7 +117,8 @@ function campagnodon_formulaire_choix_type($form, premier_appel = false) {
       $radio.attr('disabled', false);
     })
     // Si aucun n'est coché, on coche le premier.
-    if ($form.find(selecteur_radio_a_activer).find(':checked').length === 0) {
+    // NB: .find(':checked') ne semble pas marcher, alors que .is(':checked') oui...
+    if ($form.find(selecteur_radio_a_activer).filter(function () { return $(this).is(':checked'); }).length === 0) {
       // Nb: on va aussi déclencher le onclick, pour raffraichir la suite.
       $form.find(selecteur_radio_a_activer).first().prop('checked', true).trigger('click');
     }

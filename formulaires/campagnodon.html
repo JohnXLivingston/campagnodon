@@ -56,9 +56,10 @@
                 required="required"
                 id="choix_recurrence_#GET{recurrence_pour_combinaison_courant}_#GET{val}"
                 value="#GET{val}"
-                [
-                  (#ENV{choix_recurrence}|=={#GET{val}}|oui)
-                  checked="checked"
+                [(#ENV{choix_recurrence}|=={#GET{val}}|oui)
+                  [(#ENV{choix_type}|=={#GET{recurrence_description/pour_choix_type}}|oui)
+                    checked="checked"
+                  ]
                 ]
               >
               <label for="choix_recurrence_#GET{recurrence_pour_combinaison_courant}_#GET{val}">
