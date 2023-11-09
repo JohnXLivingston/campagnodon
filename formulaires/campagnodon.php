@@ -319,7 +319,7 @@ function formulaires_campagnodon_traiter_dist(
 
 		$montant = form_utils_read_montant($config_montants, $choix_type, $choix_recurrence);
 
-		// Le type de transaction pour le système distant.
+		// Le type de transaction campagnodon (don, don_mensuel, adhesion, adhesion_annuel).
 		$type_transaction = $choix_type . (
 			empty($choix_recurrence) || $choix_recurrence === 'unique'
 			? ''
@@ -501,16 +501,19 @@ function formulaires_campagnodon_traiter_dist(
 		}
 
 		$distant_operation_type = $type_transaction;
+		// TODO: mutualiser ce code.
 		switch ($type_transaction) {
 			case 'don':
 				$distant_operation_type = 'donation';
 				break;
 			case 'adhesion':
-			case 'adhesion_annuel': // FIXME: différencier ?
 				$distant_operation_type = 'membership';
 				break;
 			case 'don_mensuel':
 				$distant_operation_type = 'monthly_donation';
+				break;
+			case 'adhesion_annuel':
+				$distant_operation_type = 'membership_yearly';
 				break;
 			// NB: et on a ce cas, qui est initié ailleurs dans le code
 			// case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;

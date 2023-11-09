@@ -60,6 +60,13 @@
               </div>
             ]
           ]
+          [(#TYPE_TRANSACTION|=={adhesion_annuel}|oui)
+            [(#AUTORISER{campagnodon_declencher_mensualite,campagnodon_transactions,#ID_CAMPAGNODON_TRANSACTION}|oui)
+              <div class="actions">
+                [(#BOUTON_ACTION{<:campagnodon:bouton_declencher_annualite:>,#URL_ACTION_AUTEUR{campagnodon_declencher_annualite,#ID_CAMPAGNODON_TRANSACTION,#SELF},ajax,<:campagnodon:bouton_declencher_mensualite_confirmation:>})]
+              </div>
+            ]
+          ]
         </BOUCLE_transaction>
       </div></td>
     </tr>

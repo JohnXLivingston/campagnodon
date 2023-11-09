@@ -291,15 +291,44 @@ function campagnodon_bank_abos_decrire_echeance($flux) {
 		return $flux;
 	}
 
-	spip_log('campagnodon_bank_abos_decrire_echeance: campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+	spip_log(__FUNCTION__ . ': campagnodon doit gérer', 'campagnodon'._LOG_DEBUG);
+
+	// Pour avoir la récurrence souhaitée, il faut remonter la transaction campagnodon.
+	// Note: _campagnodon_get_bank_transaction a déjà vérifié le parrain.
+	$campagnodon_transaction = sql_fetsel(
+		'*',
+		'spip_campagnodon_transactions',
+		'id_transaction=' . intval($transaction['id_transaction'])
+	);
+	if (!$campagnodon_transaction) {
+		spip_log(
+			__FUNCTION__.': Transaction Campagnodon introuvable pour id_transaction='
+			. $transaction['id_transaction'] . '.',
+			'campagnodon'._LOG_ERREUR
+		);
+		return $flux;
+	}
+
+	$freq = 'monthly';
+	if (substr($campagnodon_transaction['type_transaction'], -7) === '_annuel') {
+		$freq = 'yearly';
+	}
+	spip_log(
+		__FUNCTION__ . ': freq= ' . $freq . ' pour type_transaction=' . $campagnodon_transaction['type_transaction'],
+		'campagnodon'._LOG_DEBUG
+	);
+
 
 	$flux['data']['montant'] = $transaction['montant'];
 	$flux['data']['montant_init'] = $transaction['montant'];
 	$flux['data']['count_init'] = 0;
 	$flux['data']['count'] = 0;
-	$flux['data']['freq'] = 'monthly';
+	$flux['data']['freq'] = $freq;
 	$flux['data']['date_start'] = '';
+
 	if (defined('_CAMPAGNODON_DON_RECURRENT_JOUR') && is_numeric(_CAMPAGNODON_DON_RECURRENT_JOUR)) {
+		# ATTENTION: SPIP bank semble avoir retiré le support de cette fonctionnalité
+		# (du moins, on ne peut mettre de date dans le futur)
 		$day = intval(_CAMPAGNODON_DON_RECURRENT_JOUR);
 		$date_start = new DateTime('now');
 		$date_start->setDate($date_start->format('Y'), $date_start->format('m'), _CAMPAGNODON_DON_RECURRENT_JOUR);
@@ -308,6 +337,7 @@ function campagnodon_bank_abos_decrire_echeance($flux) {
 		spip_log(__FUNCTION__.' La date de début pour le paiement mensuel sera: '.$date_start);
 		$flux['data']['date_start'] = $date_start;
 	}
+
 	spip_log('campagnodon_bank_abos_decrire_echeance: voici les infos remontées: '.print_r($flux['data'], true), 'campagnodon'._LOG_DEBUG);
 	return $flux;
 }
@@ -377,6 +407,7 @@ function campagnodon_bank_abos_activer_abonnement($flux) {
  * @return bool|int id_transaction L'id de la transaction spip bank créée.
  */
 function campagnodon_bank_abos_preparer_echeance($flux) {
+	// TODO: gerer les adhesion annuelles.
 	if ($flux['data']) {
 		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
 		return $flux;
@@ -395,10 +426,28 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 	spip_log(__FUNCTION__.': campagnodon doit gérer l\'abonnement='.$abo_uid, 'campagnodon'._LOG_DEBUG);
 
 	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction'];
+	$type_transaction = '';
+	switch ($campagnodon_transaction_parent['type_transaction']) {
+		case 'don_mensuel':
+		case 'don_mensuel_echeance':
+		case 'don_mensuel_migre':
+			$type_transaction = 'don_mensuel_echeance';
+			break;
+		case 'adhesion_annuel':
+		case 'adhesion_annuel_echeance':
+			$type_transaction = 'don_annuel_echeance';
+			break;
+		default:
+			spip_log(
+				__FUNCTION__.': Je ne sais pas quel type de transaction utiliser (abo='.$abo_uid.')',
+				'campagnodon'._LOG_ERREUR
+			);
+			return $flux;
+	}
 
 	$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
 		'id_campagnodon_campagne' => $campagnodon_transaction_parent['id_campagnodon_campagne'],
-		'type_transaction' => 'don_mensuel_echeance',
+		'type_transaction' => $type_transaction,
 		'mode' => $campagnodon_transaction_parent['mode'],
 		'id_campagnodon_transaction_parent' => $id_campagnodon_transaction_parent
 	]);

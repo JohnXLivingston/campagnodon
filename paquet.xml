@@ -14,6 +14,7 @@
   <auteur>John Livingston</auteur>
   <licence>AGPLv3</licence>
  
+  <necessite nom="switchcase"/>
   <necessite nom="bank" compatibilite="[4.7.0;["/>
   <necessite nom="spip_bonux" compatibilite="[3.8.0;["/>
   <necessite nom="pays" compatibilite="[3.4.9;["/>

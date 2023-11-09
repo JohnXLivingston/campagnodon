@@ -221,6 +221,12 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 			case 'don_mensuel_migre':
 				$distant_operation_type = 'monthly_donation_migrated';
 				break;
+			case 'adhesion_annuel':
+				$distant_operation_type = 'membership_yearly';
+				break;
+			case 'adhesion_annuel_echeance':
+				$distant_operation_type = 'membership_yearly_due';
+				break;
 		}
 		$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 		$params_migrer_contribution = [
@@ -284,7 +290,10 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 		return 0;
 	}
 
-	if ($campagnodon_transaction['type_transaction'] === 'don_mensuel_echeance') {
+	if (
+		$campagnodon_transaction['type_transaction'] === 'don_mensuel_echeance'
+		|| $campagnodon_transaction['type_transaction'] === 'adhesion_annuel_echeance'
+	) {
 		if ($campagnodon_transaction['statut_distant'] === null) {
 			spip_log(
 				__FUNCTION__.' La transaction campagnodon '.$id_campagnodon_transaction
@@ -316,7 +325,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 			}
 
 			$distant_operation_type = $campagnodon_transaction['type_transaction'];
-			// TODO: mutualiser ce code. NB: ici normalement seul le cas don_mensuel_echeance est utile.
+			// TODO: mutualiser ce code. NB: ici normalement seul le cas don_mensuel_echeance/adhesion_annuel_echeance sont utiles.
 			switch ($campagnodon_transaction['type_transaction']) {
 				case 'don':
 					$distant_operation_type = 'donation';
@@ -333,13 +342,24 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 				case 'don_mensuel_migre':
 					$distant_operation_type = 'monthly_donation_migrated';
 					break;
+				case 'adhesion_annuel':
+					$distant_operation_type = 'membership_yearly';
+					break;
+				case 'adhesion_annuel_echeance':
+					$distant_operation_type = 'membership_yearly_due';
+					break;
 			}
 			$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 			$params_garantir = [
 				// 'payment_url' => $url_paiement, TODO?
 				'transaction_url' => $url_transaction,
 				'operation_type' => $distant_operation_type,
-				'financial_type' => campagnodon_traduit_financial_type($mode_options, 'don_mensuel_echeance'),
+				'financial_type' => campagnodon_traduit_financial_type(
+					$mode_options,
+					(false === strstr($campagnodon_transaction['type_transaction'], 'adhesion'))
+						? 'don_mensuel_echeance'
+						: 'adhesion' // FIXME: un autre financial_type pour les adhésions ?
+				),
 				'currency' => 'EUR',
 				'amount' => $transaction['montant']
 			];

@@ -55,7 +55,10 @@ function autoriser_campagnodon_declencher_mensualite_dist($faire, $type, $id, $q
 			spip_log(__FUNCTION__.' Impossible de remonter la transaction campagnodon='.$id, 'campagnodon'._LOG_ERREUR);
 			return false;
 		}
-		if ($campagnodon_transaction['type_transaction'] !== 'don_mensuel') {
+		if (
+			$campagnodon_transaction['type_transaction'] !== 'don_mensuel'
+			&& $campagnodon_transaction['type_transaction'] !== 'adhesion_annuel'
+		) {
 			return false;
 		}
 		if ($campagnodon_transaction['id_campagnodon_transaction_parent']) {
