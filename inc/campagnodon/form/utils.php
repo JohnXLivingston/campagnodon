@@ -44,20 +44,20 @@ function form_utils_read_montant($config_montants, $choix_type, $choix_recurrenc
 
 	// On doit vérifier que $v_montant existe dans $config_montants['propositions'],
 	// pour cette combinaison type/recurrence.
-	$pour_type = $choix_type;
+	$pour_combinaison = $choix_type;
 	if (!empty($choix_recurrence) && $choix_recurrence !== 'unique') {
-		$pour_type.= '_recurrent';
+		$pour_combinaison.= '_recurrent';
 	}
 	$trouve = false;
 	foreach ($config_montants['propositions'] as $proposition) {
-		if ($proposition['pour_type'] === $pour_type && ''.$proposition['valeur'] === $v_montant) {
+		if ($proposition['pour_combinaison'] === $pour_combinaison && ''.$proposition['valeur'] === $v_montant) {
 			$trouve = true;
 			break;
 		}
 	}
 	if (!$trouve) {
 		spip_log(
-			'La valeur "'.$v_montant.'" ne fait pas parti de la liste de choix pour '.$pour_type,
+			'La valeur "'.$v_montant.'" ne fait pas parti de la liste de choix pour '.$pour_combinaison,
 			'campagnodon'._LOG_DEBUG
 		);
 		return null;

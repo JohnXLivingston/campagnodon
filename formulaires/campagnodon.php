@@ -261,6 +261,7 @@ function formulaires_campagnodon_verifier_dist(
 		}
 	}
 
+$erreurs['message_erreur'] = 'ceci est un test';
 	return $erreurs;
 }
 

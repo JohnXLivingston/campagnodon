@@ -43,8 +43,8 @@
             On va générer autant de fieldset (spécifiques au type courant).
             C'est le javascript qui va s'occuper d'afficher les bonnes valeurs, et de sélectionner une valeur par défaut.
           ]
-          #SET{recurrence_pour_type_courant, #CLE}
-          <fieldset class="campagnodon-choix" campagnodon_recurrence_pour_type="[(#GET{recurrence_pour_type_courant})]">
+          #SET{recurrence_pour_combinaison_courant, #CLE}
+          <fieldset class="campagnodon-choix" campagnodon_recurrence_pour_combinaison="[(#GET{recurrence_pour_combinaison_courant})]">
             <BOUCLE_recurrence(DATA){source table, #VALEUR}>
               #SET{recurrence_description,#VALEUR}
               #SET{val, #GET{recurrence_description/valeur}}
@@ -53,14 +53,14 @@
                 name="choix_recurrence"
                 class="radio"
                 required="required"
-                id="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}"
+                id="choix_recurrence_#GET{recurrence_pour_combinaison_courant}_#GET{val}"
                 value="#GET{val}"
                 [
                   (#ENV{choix_recurrence}|=={#GET{val}}|oui)
                   checked="checked"
                 ]
               >
-              <label for="choix_recurrence_#GET{recurrence_pour_type_courant}_#GET{val}">
+              <label for="choix_recurrence_#GET{recurrence_pour_combinaison_courant}_#GET{val}">
                 [(#GET{recurrence_description/label})]
               </label>
             </BOUCLE_recurrence>
@@ -89,8 +89,15 @@
                         required="required"
                         id="#GET{montant_description/id}"
                         value="#GET{val}"
-                        [(#ENV{montant}|=={#GET{val}}|oui)checked="checked"]
-                        campagnodon_pour_type="#GET{montant_description/pour_type}"
+                        [(#ENV{montant}|=={#GET{val}}|oui)
+                          [(#REM) Il faut en plus vérifier que choix_type et choix_recurrence correspondent]
+                          [(#ENV{choix_type}|=={#GET{montant_description/pour_type}}|oui)
+                            [(#ENV{choix_recurrence}|=={#GET{montant_description/pour_recurrence}}|oui)
+                              checked="checked"
+                            ]
+                          ]
+                        ]
+                        campagnodon_pour_combinaison="#GET{montant_description/pour_combinaison}"
                       />
                       <div>
                         [(#GET{val}|=={libre}|oui)

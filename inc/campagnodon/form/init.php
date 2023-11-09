@@ -166,18 +166,18 @@ function form_init_liste_montants_campagne(
 		'adhesion_recurrent' => false,
 	];
 
-	$_ajoute_propositions = function ($type, $arg_liste) use (&$r) {
+	$_ajoute_propositions = function ($choix_type, $choix_recurrence, $combinaison, $arg_liste) use (&$r) {
 		$liste_montants = [];
 		$avec_libre = false;
 
 		// On commence par récupérer une liste des montants.
 		if (empty($arg_liste)) {
 			// on n'a rien personnalisé dans le formulaire courant, on prend la config par défaut
-			if (!form_init_parse_config_montant($liste_montants, campagnodon_montants_par_defaut($type))) {
-				throw new Error('Montant invalide dans la configuration du formulaire ('.$type.').');
+			if (!form_init_parse_config_montant($liste_montants, campagnodon_montants_par_defaut($combinaison))) {
+				throw new Error('Montant invalide dans la configuration du formulaire ('.$combinaison.').');
 			}
 			// Pour les dons, on ajoute toujours le montant libre.
-			if ($type === 'don' || $type === 'don_recurrent') {
+			if ($choix_type === 'don') {
 				$avec_libre = true;
 			}
 		} else {
@@ -189,7 +189,7 @@ function form_init_liste_montants_campagne(
 					continue;
 				}
 				if (!form_init_parse_config_montant($liste_montants, $montant)) {
-					throw new Error('Montant invalide dans la configuration du formulaire ('.$type."): '".$montant."'.");
+					throw new Error('Montant invalide dans la configuration du formulaire ('.$combinaison."): '".$montant."'.");
 				}
 			}
 		}
@@ -200,13 +200,15 @@ function form_init_liste_montants_campagne(
 				'valeur' => $valeur,
 				'label' => $montant_desc['label'],
 				'desc' => $montant_desc['desc'],
-				'pour_type' => $type,
+				'pour_combinaison' => $combinaison,
+				'pour_type' => $choix_type,
+				'pour_recurrence' => $choix_recurrence,
 				'grand' => !empty($montant_desc['desc']), // si la case doit être "grande"
-				'id' => 'montant_' . $type . '_' . $valeur, // l'ID html, doit être unique...
+				'id' => 'montant_' . $choix_type . '_' . $choix_recurrence . '_' . $valeur, // ID html doit être unique
 			];
 		}
 		if ($avec_libre) {
-			// Note: si jamais plusieurs "pour_type" acceptent les montants libres,
+			// Note: si jamais plusieurs "pour_combinaison" acceptent les montants libres,
 			// on va mettre autant de propositions.
 			// Cela a 2 avantages:
 			// - simplifier le code
@@ -216,18 +218,20 @@ function form_init_liste_montants_campagne(
 				'valeur' => 'libre',
 				'label' => _T('campagnodon_form:montant_libre'),
 				'desc' => _T('campagnodon_form:montant_libre_desc'),
-				'pour_type' => $type,
+				'pour_combinaison' => $combinaison,
+				'pour_type' => $choix_type,
+				'pour_recurrence' => $choix_recurrence,
 				'grand' => true,
-				'id' => 'montant_' . $type . '_libre', // l'ID html, doit être unique...
+				'id' => 'montant_' . $choix_type . '_' . $choix_recurrence . '_libre', // l'ID html, doit être unique...
 			];
 		}
 	};
 
 	try {
 		if ($form_type === 'don' || $form_type === 'don+adhesion') {
-			$_ajoute_propositions('don', $arg_liste_montants);
+			$_ajoute_propositions('don', 'unique', 'don', $arg_liste_montants);
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-				$_ajoute_propositions('don_recurrent', $arg_liste_montants_recurrent);
+				$_ajoute_propositions('don', 'mensuel', 'don_recurrent', $arg_liste_montants_recurrent);
 			}
 		}
 		if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
@@ -239,10 +243,10 @@ function form_init_liste_montants_campagne(
 				$tmp = $arg_liste_montants;
 			}
 
-			$_ajoute_propositions('adhesion', $tmp);
+			$_ajoute_propositions('adhesion', 'unique', 'adhesion', $tmp);
 			// TODO: passer par un campagnodon_adhesion_recurrente_active et un $arg_adhesion_recurrente ?
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-				$_ajoute_propositions('adhesion_recurrent', $arg_liste_montants_adhesion_recurrent);
+				$_ajoute_propositions('adhesion', 'annuel', 'adhesion_recurrent', $arg_liste_montants_adhesion_recurrent);
 			}
 		}
 	} catch (Throwable $e) {
