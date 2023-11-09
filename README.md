@@ -109,6 +109,7 @@ define('_CAMPAGNODON_DON_RECURRENT', true);
 ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).
 
 NB: _CAMPAGNODON_DON_RECURRENT_JOUR ne fonctionne pas comme souhaité. Il semblerait que ce soit une limitation de SPIP Bank.
+Cela semble même ne plus être possible avec SPIP Bank v6.
 ~~Si vous souhaitez définir une date personnalisée pour les dons récurrents (par ex, chez Attac, ça se fait les 5 du mois),
 vous pouvez definir cette variable optionnelle:~~
 
