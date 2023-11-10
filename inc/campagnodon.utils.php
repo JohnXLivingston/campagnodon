@@ -480,7 +480,7 @@ function campagnodon_montants_par_defaut($type) {
 	if ($type === 'don_recurrent') {
 		return ['6','15','30','50'];
 	}
-	if ($type === 'adhesion') {
+	if ($type === 'adhesion' || $type === 'adhesion_recurrent') {
 		return [
 			'13[-450]',
 			'21[450-900]',
