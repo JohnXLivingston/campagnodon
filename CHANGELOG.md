@@ -4,6 +4,16 @@
 
 TODO: nouveau formulaire d'adhésion (unifié, et gestion des adhésions renouvelables).
 
+### Nouvelles fonctionnalités, et changements majeurs
+
+* Nouveau formulaire mixte don + adhésion.
+* Adhésions à prix libre.
+* Attention: il n'est plus possible de faire on don libre en plus de l'adhésion, cela est jugé redondant avec l'adhésion à prix libre.
+* Renouvellement automatique des adhésions.
+
+### Autres modifications
+
+* Refonte complète du code du formulaire, pour simplifier les cas d'usages existants.
 * Quelques fix mineurs.
 
 ## 1.7.0
