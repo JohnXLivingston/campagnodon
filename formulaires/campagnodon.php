@@ -203,19 +203,20 @@ function formulaires_campagnodon_verifier_dist(
 		$erreurs['montant'] = _T('info_obligatoire');
 	} else {
 		// On vérifie qu'on est dans les bornes autorisées.
-		$don_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM)
-			? _CAMPAGNODON_DON_MINIMUM
-			: 1;
-		$don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM)
-			? _CAMPAGNODON_DON_MAXIMUM
-			: 10000000;
-
-		// Si c'est une adhésion, il faut en plus être au moins 1 euro au dessus du prix du magazine.
-		// FIXME: pour l'adhésion minimum (hors maganize),
-		//			je pars du principe que c'est la meme valeur que pour les dons.
-		//			Il faudrait peut être une borne spécifique aux adhésions.
-		if ($choix_type === 'adhesion' && $adhesion_magazine_prix + 1 > $don_min) {
-			$don_min = $adhesion_magazine_prix + 1;
+		if ($choix_type === 'adhesion') {
+			$don_min = defined('_CAMPAGNODON_ADHESION_MINIMUM') && is_numeric(_CAMPAGNODON_ADHESION_MINIMUM)
+				? _CAMPAGNODON_ADHESION_MINIMUM
+				: 5;
+			$don_max = defined('_CAMPAGNODON_ADHESION_MAXIMUM') && is_numeric(_CAMPAGNODON_ADHESION_MAXIMUM)
+				? _CAMPAGNODON_ADHESION_MAXIMUM
+				: 10000000;
+		} else {
+			$don_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM)
+				? _CAMPAGNODON_DON_MINIMUM
+				: 1;
+			$don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM)
+				? _CAMPAGNODON_DON_MAXIMUM
+				: 10000000;
 		}
 
 		if (
@@ -356,6 +357,22 @@ function formulaires_campagnodon_traiter_dist(
 		$source = campagnodon_calcul_libelle_source($mode_options, $campagne);
 
 		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
+		// Nouveauté avec la v2.0.0: si $montant_total trop faible, on rogne sur le prix du magazine
+		// en gardant au moins 1€ pour l'adhésion
+		if (
+			$choix_type === 'adhesion'
+			&& $adhesion_magazine_prix > 0
+			&& intval($montant_total) < $adhesion_magazine_prix + 1
+		) {
+			$adhesion_magazine_prix = intval($montant_total) - 1;
+			if ($adhesion_magazine_prix <= 0) {
+				// Normalement on ne devrait pas autoriser de montant d'adhésion inférieur à 2
+				throw new CampagnodonException(
+					"Campagnodon mal configuré, l'adhésion n'est pas suffisante pour couvrir au moins 1€ pour le magazine.",
+					'campagnodon:erreur_sauvegarde'
+				);
+			}
+		}
 
 		$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
 			'id_campagnodon_campagne' => $id_campagne,

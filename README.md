@@ -91,11 +91,23 @@ define('_CAMPAGNODON_MONTANTS', array(
 Ces variables **optionnelles** permettent de définir un montant minimum et un montant maximum.
 Si pas fourni, sera à 1€ et 10000000€.
 
-NB: il est possible de n'en définir qu'une.
+NB: il est possible de n'en définir qu'une sur les deux.
 
 ```php
 define('_CAMPAGNODON_DON_MINIMUM', 5);
 define('_CAMPAGNODON_DON_MAXIMUM', 5000);
+```
+
+### _CAMPAGNODON_ADHESION_MINIMUM et _CAMPAGNODON_ADHESION_MAXIMUM
+
+Ces variables **optionnelles** permettent de définir un montant minimum et un montant maximum.
+Si pas fourni, sera à 5€ et 10000000€.
+
+NB: il est possible de n'en définir qu'une sur les deux.
+
+```php
+define('_CAMPAGNODON_ADHESION_MINIMUM', 5);
+define('_CAMPAGNODON_ADHESION_MAXIMUM', 5000);
 ```
 
 ### _CAMPAGNODON_DON_RECURRENT
@@ -239,7 +251,7 @@ define('_CAMPAGNODON_MODES', array(
                                 'cle_distante' => 'custom_21' // le champ où stocker l'info coté CiviCRM (il s'agit d'un champs custom sur les memberships)
                         )
                 ),
-                'adhesion_magazine_prix' => 12, // Optionnel. Le prix de l'adhésion au magazine. L'adhésion aura alors un prix au moins égal à 12 + 1.
+                'adhesion_magazine_prix' => 12, // Optionnel. Le prix par défaut de l'adhésion au magazine. En cas d'adhésion à un prix inférieur, on garde 1€ pour l'adhésion, le reste pour le magazine (changement de comportement avec la v2.0.0).
                 'adhesion_type' => array(
                         'adhesion' => 1, // Le membership type (id numérique ou libellé)
                         'magazine' => 2 // Le membership type pour le magazine (id numérique ou libellé)

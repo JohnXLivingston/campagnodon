@@ -3,6 +3,8 @@
 ## 2.0.0 (Not Released Yet)
 
 TODO: nouveau formulaire d'adhésion (unifié, et gestion des adhésions renouvelables).
+TODO: traiter les adhésions mensuelles
+TODO: traiter les échéances pour les adhésions
 
 ### Nouvelles fonctionnalités, et changements majeurs
 
@@ -10,11 +12,13 @@ TODO: nouveau formulaire d'adhésion (unifié, et gestion des adhésions renouve
 * Adhésions à prix libre.
 * Attention: il n'est plus possible de faire on don libre en plus de l'adhésion, cela est jugé redondant avec l'adhésion à prix libre.
 * Renouvellement automatique des adhésions.
+* Magazine: avec les adhésions à prix libre, si le montant de l'adhésion est inférieur au prix du magazine, on garde 1€ pour l'adhésion, et le reste pour le magazine.
 
 ### Autres modifications
 
 * Refonte complète du code du formulaire, pour simplifier les cas d'usages existants.
 * Quelques fix mineurs.
+* Nouveaux paramètres _CAMPAGNODON_ADHESION_MINIMUM et _CAMPAGNODON_ADHESION_MINIMUM
 
 ## 1.7.0
 

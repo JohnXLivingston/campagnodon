@@ -321,15 +321,21 @@ function campagnodon_formulaire_adhesion_explication($form) {
       adhesion_magazine_prix = 0;
     }
     if (montant_adhesion !== null && !isNaN(montant_adhesion)) {
-      let montant_don = 0;
-      // TODO: est ce qu'on garde le principe des dons en plus de l'adhésion ? Si oui, traiter.
-      // if ($form.find('input[type=checkbox][name=adhesion_avec_don]:checked').length) {
-      //   montant_don = campagnodon_lire_montant($form);
-      //   if (montant_don === null || isNaN(montant_don)) {
-      //     montant_don = 0;
-      //   }
-      // }
-      let adhesion_sans_magazine = montant_adhesion - adhesion_magazine_prix + montant_don;
+      // Depuis la v2.0.0: si adhésion à prix libre < prix magazine:
+      // - on garde 1€ pour l'adhésion
+      // - le reste pour le magazine
+      if (montant_adhesion < adhesion_magazine_prix + 1) {
+        adhesion_magazine_prix = montant_adhesion - 1;
+      }
+      let adhesion_sans_magazine = montant_adhesion - adhesion_magazine_prix;
+      if (
+        adhesion_sans_magazine < 0
+        || adhesion_magazine_prix < 0
+      ) {
+        // Cas limite: si on saisi trop petit... on évite d'afficher un texte avec des montants négatifs
+        explication.text('');
+        return;
+      }
       let cout_adhesion = Math.round(adhesion_magazine_prix + (adhesion_sans_magazine * 0.34));
 
       let text = explication.attr('adhesion_explication');
