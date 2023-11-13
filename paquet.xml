@@ -1,12 +1,12 @@
 <paquet 
   prefix="campagnodon"
   categorie="communication"
-  version="1.7.0"
+  version="2.0.0"
   etat="stable"
   compatibilite="[3.2.0;4.2.*]"
   logo="campagnodon.svg"
   documentation="https://code.globenet.org/attacfr/campagnodon"
-  schema="1.7.0"
+  schema="2.0.0"
 >
  
   <nom>Campagnodon</nom>

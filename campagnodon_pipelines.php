@@ -400,14 +400,13 @@ function campagnodon_bank_abos_activer_abonnement($flux) {
 
 
 /**
- * preparer_echeance: on doit créer la transaction Campagnodon qui va accueillir une nouvelle mensualité.
+ * preparer_echeance: on doit créer la transaction Campagnodon qui va accueillir une nouvelle mensualité/annualité.
  * À noter qu'ici le paiement peut être réussi ou raté.
  *
  * @param array
  * @return bool|int id_transaction L'id de la transaction spip bank créée.
  */
 function campagnodon_bank_abos_preparer_echeance($flux) {
-	// TODO: gerer les adhesion annuelles.
 	if ($flux['data']) {
 		spip_log(__FUNCTION__.': il y a déjà quelque chose dans data, un autre plugin a dû répondre.', 'campagnodon'._LOG_DEBUG);
 		return $flux;
@@ -427,22 +426,15 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 
 	$id_campagnodon_transaction_parent = $campagnodon_transaction_parent['id_campagnodon_transaction'];
 	$type_transaction = '';
-	switch ($campagnodon_transaction_parent['type_transaction']) {
-		case 'don_mensuel':
-		case 'don_mensuel_echeance':
-		case 'don_mensuel_migre':
-			$type_transaction = 'don_mensuel_echeance';
-			break;
-		case 'adhesion_annuel':
-		case 'adhesion_annuel_echeance':
-			$type_transaction = 'don_annuel_echeance';
-			break;
-		default:
-			spip_log(
-				__FUNCTION__.': Je ne sais pas quel type de transaction utiliser (abo='.$abo_uid.')',
-				'campagnodon'._LOG_ERREUR
-			);
-			return $flux;
+	if ($campagnodon_transaction_parent['type_transaction'] === 'don_mensuel_migre') {
+		// Cas particulier historique (migration depuis SPIP Souscription).
+		$type_transaction = 'don_mensuel_echeance';
+	} elseif (substr($campagnodon_transaction_parent['type_transaction'], -9) === '_echeance') {
+		// On a déjà le suffix _echeance
+		$type_transaction = $campagnodon_transaction_parent['type_transaction'];
+	} else {
+		// On ajoute le suffixe _echeance
+		$type_transaction = $campagnodon_transaction_parent['type_transaction'] . '_echeance';
 	}
 
 	$id_campagnodon_transaction = sql_insertq('spip_campagnodon_transactions', [
@@ -464,7 +456,9 @@ function campagnodon_bank_abos_preparer_echeance($flux) {
 		'force' => true
 		// FIXME: faut-il ajouter ceci ? 'abo_uid' => $abo_uid
 	];
-	$montant_total = $transaction_parent['montant']; // Le montant des échéances est le même que la transaction initiale.
+
+	// Le montant des échéances est le même que la transaction initiale:
+	$montant_total = $transaction_parent['montant'];
   $id_transaction = $inserer_transaction($montant_total, $transaction_options);
 	if (!$id_transaction) {
 		spip_log(__FUNCTION__.': Impossible de créer la transaction SPIP Bank', 'campagnodon'._LOG_ERREUR);

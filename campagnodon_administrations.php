@@ -14,7 +14,8 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 }
 
 
-if (!defined('_ECRIRE_INC_VERSION')) { return;
+if (!defined('_ECRIRE_INC_VERSION')) {
+	return;
 }
 
 function campagnodon_upgrade($nom_meta_base_version, $version_cible) {
@@ -22,6 +23,14 @@ function campagnodon_upgrade($nom_meta_base_version, $version_cible) {
 
 	$maj['create'] = [
 		['maj_tables',	['spip_campagnodon_transactions', 'spip_campagnodon_campagnes']]
+	];
+
+	$maj['2.0.0'] = [
+		array(
+			'sql_alter',
+			'TABLE spip_campagnodon_transactions '
+			. ' CHANGE type_transaction type_transaction varchar(30) NOT NULL DEFAULT \'don\''
+		)
 	];
 
   include_spip('base/upgrade');
