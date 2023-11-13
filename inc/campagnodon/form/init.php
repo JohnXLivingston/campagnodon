@@ -177,10 +177,8 @@ function form_init_liste_montants_campagne(
 			if (!form_init_parse_config_montant($liste_montants, campagnodon_montants_par_defaut($combinaison))) {
 				throw new Error('Montant invalide dans la configuration du formulaire ('.$combinaison.').');
 			}
-			// Pour les dons, on ajoute toujours le montant libre.
-			if ($choix_type === 'don') {
-				$avec_libre = true;
-			}
+			// Pour les dons et les adhésions, on ajoute toujours le montant libre.
+			$avec_libre = true;
 		} else {
 			// on a donné des montants dans la configuration du formulaire, on les prend en compte.
 			$liste = explode(',', $arg_liste);
