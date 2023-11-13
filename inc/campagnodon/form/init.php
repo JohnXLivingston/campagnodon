@@ -227,6 +227,11 @@ function form_init_liste_montants_campagne(
 				'grand' => true,
 				'id' => 'montant_' . $choix_type . '_' . $choix_recurrence . '_libre', // l'ID html, doit être unique...
 			];
+
+			list($montant_min, $montant_max) = form_init_montant_min_max($choix_type);
+			// on va ajouter uniquement la borne "min" sur l'input, la max n'a pas de sens.
+			$plibre['montant_minimum'] = $montant_min;
+
 			if ($choix_type === 'adhesion') {
 				// Pour les adhésions, on met le montant libre en premier.
 				array_unshift($r['propositions'], $plibre);
@@ -359,4 +364,27 @@ function form_init_liste_souscriptions_optionnelles($form_type, $mode_options, $
 		}
 	}
 	return $r;
+}
+
+/**
+ * Retourne les bornes min et max pour le montant.
+ * @param string $choix_type: le type d'opération choisi
+ */
+function form_init_montant_min_max($choix_type) {
+	if ($choix_type === 'adhesion') {
+		$montant_min = defined('_CAMPAGNODON_ADHESION_MINIMUM') && is_numeric(_CAMPAGNODON_ADHESION_MINIMUM)
+			? _CAMPAGNODON_ADHESION_MINIMUM
+			: 5;
+		$montant_max = defined('_CAMPAGNODON_ADHESION_MAXIMUM') && is_numeric(_CAMPAGNODON_ADHESION_MAXIMUM)
+			? _CAMPAGNODON_ADHESION_MAXIMUM
+			: 10000000;
+	} else {
+		$montant_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM)
+			? _CAMPAGNODON_DON_MINIMUM
+			: 1;
+		$montant_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM)
+			? _CAMPAGNODON_DON_MAXIMUM
+			: 10000000;
+	}
+	return [$montant_min, $montant_max];
 }

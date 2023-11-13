@@ -203,26 +203,11 @@ function formulaires_campagnodon_verifier_dist(
 		$erreurs['montant'] = _T('info_obligatoire');
 	} else {
 		// On vérifie qu'on est dans les bornes autorisées.
-		if ($choix_type === 'adhesion') {
-			$don_min = defined('_CAMPAGNODON_ADHESION_MINIMUM') && is_numeric(_CAMPAGNODON_ADHESION_MINIMUM)
-				? _CAMPAGNODON_ADHESION_MINIMUM
-				: 5;
-			$don_max = defined('_CAMPAGNODON_ADHESION_MAXIMUM') && is_numeric(_CAMPAGNODON_ADHESION_MAXIMUM)
-				? _CAMPAGNODON_ADHESION_MAXIMUM
-				: 10000000;
-		} else {
-			$don_min = defined('_CAMPAGNODON_DON_MINIMUM') && is_numeric(_CAMPAGNODON_DON_MINIMUM)
-				? _CAMPAGNODON_DON_MINIMUM
-				: 1;
-			$don_max = defined('_CAMPAGNODON_DON_MAXIMUM') && is_numeric(_CAMPAGNODON_DON_MAXIMUM)
-				? _CAMPAGNODON_DON_MAXIMUM
-				: 10000000;
-		}
-
+		list($montant_min, $montant_max) = form_init_montant_min_max($choix_type);
 		if (
-			$erreur = $verifier($montant, 'entier', array('min' => $don_min))
+			$erreur = $verifier($montant, 'entier', array('min' => $montant_min))
 			or // on teste en 2 fois, pour que le message d'erreur n'affiche qu'une seule borne.
-			$erreur = $verifier($montant, 'entier', array('max' => $don_max))
+			$erreur = $verifier($montant, 'entier', array('max' => $montant_max))
 		) {
 			$erreurs['montant'] = $erreur;
 		}

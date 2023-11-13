@@ -112,6 +112,7 @@
                               aria-label="#GET{montant_description/label}"
                               title="#GET{montant_description/desc}"
                               id="#GET{montant_description/id}_montant"
+                              [min="(#GET{montant_description/montant_minimum})"]
                             />&nbsp;€
                         ]
                         [(#GET{val}|=={libre}|non)
