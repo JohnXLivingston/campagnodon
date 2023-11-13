@@ -502,26 +502,7 @@ function formulaires_campagnodon_traiter_dist(
 			throw new CampagnodonException("Type inconnu: '".$type."'", 'campagnodon:erreur_sauvegarde');
 		}
 
-		$distant_operation_type = $type_transaction;
-		// TODO: mutualiser ce code.
-		switch ($type_transaction) {
-			case 'don':
-				$distant_operation_type = 'donation';
-				break;
-			case 'adhesion':
-				$distant_operation_type = 'membership';
-				break;
-			case 'don_mensuel':
-				$distant_operation_type = 'monthly_donation';
-				break;
-			case 'adhesion_annuel':
-				$distant_operation_type = 'yearly_membership';
-				break;
-			// NB: et on a ce cas, qui est initié ailleurs dans le code
-			// case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;
-			// case 'adhesion_annuel_echeance' TODO ??
-			// case 'don_mensuel_migre'...
-		}
+		$distant_operation_type = form_utils_operation_type_distant($type_transaction);
 
 		$params = array(
 			// numéro de version pour le format de donnée (pour s'assurer de la compatibilité des API):

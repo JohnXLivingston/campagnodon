@@ -203,31 +203,8 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 			}
 		}
 
-		$distant_operation_type = $campagnodon_transaction['type_transaction'];
-		// TODO: mutualiser ce code.
-		switch ($campagnodon_transaction['type_transaction']) {
-			case 'don':
-				$distant_operation_type = 'donation';
-				break;
-			case 'adhesion':
-				$distant_operation_type = 'membership';
-				break;
-			case 'don_mensuel':
-				$distant_operation_type = 'monthly_donation';
-				break;
-			case 'don_mensuel_echeance':
-				$distant_operation_type = 'monthly_donation_due';
-				break;
-			case 'don_mensuel_migre':
-				$distant_operation_type = 'monthly_donation_migrated';
-				break;
-			case 'adhesion_annuel':
-				$distant_operation_type = 'yearly_membership';
-				break;
-			case 'adhesion_annuel_echeance':
-				$distant_operation_type = 'yearly_membership_due';
-				break;
-		}
+		$distant_operation_type = form_utils_operation_type_distant($campagnodon_transaction['type_transaction']);
+
 		$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 		$params_migrer_contribution = [
 			'trxn_id' => $campagnodon_transaction['migre_cle'],
@@ -324,31 +301,9 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 				return 0;
 			}
 
-			$distant_operation_type = $campagnodon_transaction['type_transaction'];
-			// TODO: mutualiser ce code. NB: ici normalement seul le cas don_mensuel_echeance/adhesion_annuel_echeance sont utiles.
-			switch ($campagnodon_transaction['type_transaction']) {
-				case 'don':
-					$distant_operation_type = 'donation';
-					break;
-				case 'adhesion':
-					$distant_operation_type = 'membership';
-					break;
-				case 'don_mensuel':
-					$distant_operation_type = 'monthly_donation';
-					break;
-				case 'don_mensuel_echeance':
-					$distant_operation_type = 'monthly_donation_due';
-					break;
-				case 'don_mensuel_migre':
-					$distant_operation_type = 'monthly_donation_migrated';
-					break;
-				case 'adhesion_annuel':
-					$distant_operation_type = 'yearly_membership';
-					break;
-				case 'adhesion_annuel_echeance':
-					$distant_operation_type = 'yearly_membership_due';
-					break;
-			}
+			// NB: ici normalement seul les cas don_mensuel_echeance/adhesion_annuel_echeance sont utiles.
+			$distant_operation_type = form_utils_operation_type_distant($campagnodon_transaction['type_transaction']);
+
 			$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
 			$params_garantir = [
 				// 'payment_url' => $url_paiement, TODO?

@@ -71,3 +71,29 @@ function form_utils_read_montant($config_montants, $choix_type, $choix_recurrenc
 
 	return $v_montant;
 }
+
+/**
+ * Traduit le type de transaction campagnodon SPIP en type distant.
+ * Si le type n'est pas connu, retourne $type_transaction tel quel
+ * (charge au système distant de rejeter si besoin).
+ * @param string $type_transaction le type de transaction
+ */
+function form_utils_operation_type_distant($type_transaction) {
+	switch ($type_transaction) {
+		case 'don':
+			return 'donation';
+		case 'adhesion':
+			return 'membership';
+		case 'don_mensuel':
+			return 'monthly_donation';
+		case 'don_mensuel_echeance':
+			return 'monthly_donation_due';
+		case 'don_mensuel_migre':
+			return 'monthly_donation_migrated';
+		case 'adhesion_annuel':
+			return 'yearly_membership';
+		case 'adhesion_annuel_echeance':
+			return 'yearly_membership_due';
+	}
+	return $type_transaction;
+}
