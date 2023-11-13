@@ -215,16 +215,26 @@ function form_init_liste_montants_campagne(
 			// - simplifier le code
 			// - si un jour on veut mettre des attribut min/max sur les input,
 			//		on pourra avoir des bornes différentes pour chaque cas.
-			$r['propositions'][] = [
+			$plibre = [
 				'valeur' => 'libre',
 				'label' => _T('campagnodon_form:montant_libre'),
-				'desc' => _T('campagnodon_form:montant_libre_desc'),
+				// Pour la description, on met un segment différent pour les adhésions.
+				// Ça permettra de le personnaliser si on a envi (en jouant sur la surcharge de libellé de SPIP)
+				'desc' => $choix_type === 'adhesion'
+					? _T('campagnodon_form:montant_libre_adhesion_desc')
+					: _T('campagnodon_form:montant_libre_desc'),
 				'pour_combinaison' => $combinaison,
 				'pour_type' => $choix_type,
 				'pour_recurrence' => $choix_recurrence,
 				'grand' => true,
 				'id' => 'montant_' . $choix_type . '_' . $choix_recurrence . '_libre', // l'ID html, doit être unique...
 			];
+			if ($choix_type === 'adhesion') {
+				// Pour les adhésions, on met le montant libre en premier.
+				array_unshift($r['propositions'], $plibre);
+			} else {
+				array_push($r['propositions'], $plibre);
+			}
 		}
 	};
 
