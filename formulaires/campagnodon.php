@@ -515,7 +515,7 @@ function formulaires_campagnodon_traiter_dist(
 				$distant_operation_type = 'monthly_donation';
 				break;
 			case 'adhesion_annuel':
-				$distant_operation_type = 'membership_yearly';
+				$distant_operation_type = 'yearly_membership';
 				break;
 			// NB: et on a ce cas, qui est initié ailleurs dans le code
 			// case 'don_mensuel_echeance': $distant_operation_type = 'monthly_donation_due'; break;

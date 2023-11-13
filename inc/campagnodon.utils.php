@@ -222,10 +222,10 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 				$distant_operation_type = 'monthly_donation_migrated';
 				break;
 			case 'adhesion_annuel':
-				$distant_operation_type = 'membership_yearly';
+				$distant_operation_type = 'yearly_membership';
 				break;
 			case 'adhesion_annuel_echeance':
-				$distant_operation_type = 'membership_yearly_due';
+				$distant_operation_type = 'yearly_membership_due';
 				break;
 		}
 		$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
@@ -343,10 +343,10 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 					$distant_operation_type = 'monthly_donation_migrated';
 					break;
 				case 'adhesion_annuel':
-					$distant_operation_type = 'membership_yearly';
+					$distant_operation_type = 'yearly_membership';
 					break;
 				case 'adhesion_annuel_echeance':
-					$distant_operation_type = 'membership_yearly_due';
+					$distant_operation_type = 'yearly_membership_due';
 					break;
 			}
 			$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
