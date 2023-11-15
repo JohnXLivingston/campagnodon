@@ -174,6 +174,8 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 		return 0;
 	}
 
+	include_spip('inc/campagnodon/form/utils');
+
 	$mode = $campagnodon_transaction['mode'];
 	$mode_options = campagnodon_mode_options($mode);
 
@@ -274,7 +276,8 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 		if ($campagnodon_transaction['statut_distant'] === null) {
 			spip_log(
 				__FUNCTION__.' La transaction campagnodon '.$id_campagnodon_transaction
-				.' est une echeance de don mensuel, et n\'a pas encore été synchronisée avec le système distant.'
+				.' est une echeance ' . $campagnodon_transaction['type_transaction']
+				.', et n\'a pas encore été synchronisée avec le système distant.'
 				.' Il est temps d\'appeler le connecteur garantir_echeance_existe pour la créer si nécessaire.',
 				'campagnodon'._LOG_DEBUG
 			);
