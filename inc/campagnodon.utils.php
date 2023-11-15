@@ -175,6 +175,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 	}
 
 	include_spip('inc/campagnodon/form/utils');
+	include_spip('inc/campagnodon/form/init');
 
 	$mode = $campagnodon_transaction['mode'];
 	$mode_options = campagnodon_mode_options($mode);
@@ -292,7 +293,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 			}
 
 			if (!$campagnodon_transaction['id_campagnodon_transaction_parent']) {
-				spip_log(__FUNCTION.' La transaction campagnodon '.$id_campagnodon_transaction.' est une echeance mensuelle et n\'a pas d\'ID de parent, ce n\'est pas normal.', 'campagnodon'._LOG_ERREUR);
+				spip_log(__FUNCTION.' La transaction campagnodon '.$id_campagnodon_transaction.' est une echeance et n\'a pas d\'ID de parent, ce n\'est pas normal.', 'campagnodon'._LOG_ERREUR);
 				campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
 				return 0;
 			}
@@ -308,19 +309,81 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 			$distant_operation_type = form_utils_operation_type_distant($campagnodon_transaction['type_transaction']);
 
 			$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);
+
 			$params_garantir = [
 				// 'payment_url' => $url_paiement, TODO?
 				'transaction_url' => $url_transaction,
 				'operation_type' => $distant_operation_type,
-				'financial_type' => campagnodon_traduit_financial_type(
-					$mode_options,
-					(false === strstr($campagnodon_transaction['type_transaction'], 'adhesion'))
-						? 'don_mensuel_echeance'
-						: 'adhesion' // FIXME: un autre financial_type pour les adhésions ?
-				),
-				'currency' => 'EUR',
-				'amount' => $transaction['montant']
 			];
+
+			if (substr($campagnodon_transaction['type_transaction'], 0, 9) === 'adhesion_') {
+				spip_log(
+					__FUNCTION__.': on est sur une échéance d\'adhésion, on créé les contributions qui vont bien.',
+					'campagnodon'._LOG_DEBUG
+				);
+				// FIXME: pour les adhésions mensuelles, voir comment faire pour le magazine.
+
+				$params_garantir['contributions'] = [];
+
+				// On traite le cas du magazine, le cas échéant.
+				$montant_total = $transaction['montant'];
+				$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, 'adhesion');
+				if (
+					$adhesion_magazine_prix > 0
+					&& intval($montant_total) < $adhesion_magazine_prix + 1
+				) {
+					$adhesion_magazine_prix = intval($montant_total) - 1;
+					if ($adhesion_magazine_prix <= 0) {
+						spip_log(
+							__FUNCTION__
+							." J'arrive à un prix de magazine nul pour spip_campagnodon_transactions="
+							.$id_campagnodon_transaction,
+							'campagnodon'._LOG_ERREUR
+						);
+						campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
+						return 0;
+					}
+				}
+
+				if ($adhesion_magazine_prix > 0) {
+					$params_garantir['contributions'][] = [
+						'financial_type' => campagnodon_traduit_financial_type($mode_options, 'adhesion_magazine'),
+						'amount' => strval($adhesion_magazine_prix),
+						'currency' => 'EUR',
+						'membership' => form_utils_traduit_adhesion_type($mode_options, 'magazine'),
+						// Note: on n'a pas besoin de membership_option pour le magazine PDF:
+						// L'abonnement côté CiviCRM va être prolongé, et garder son attribut.
+						// 'source' => $source
+					];
+				} else {
+					$adhesion_magazine_prix = 0; // juste par sécurité.
+				}
+
+				$params_garantir['contributions'][] = [
+					'financial_type' => campagnodon_traduit_financial_type(
+						$mode_options,
+						'adhesion' // Note: pour les adhésions, un seul financial_type.
+					),
+					'currency' => 'EUR',
+					'amount' => strval(intval($montant_total) - intval($adhesion_magazine_prix)),
+					'membership' => form_utils_traduit_adhesion_type($mode_options, 'adhesion')
+				];
+			} else {
+				spip_log(
+					__FUNCTION__.': on est sur une échéance d\'adhésion, on créé les contributions qui vont bien.',
+					'campagnodon'._LOG_DEBUG
+				);
+				$params_garantir['contributions'] = [
+					[
+						'financial_type' => campagnodon_traduit_financial_type(
+							$mode_options,
+							'don_mensuel_echeance'
+						),
+						'currency' => 'EUR',
+						'amount' => $transaction['montant']
+					]
+				];
+			}
 			// Pour les paiements récurrents, on a spip_transactions.date_paiement qui peut être dans le futur !
 			// En effet, dans le cas de paiements SEPA, on a une première requête pour tester environ 15 jours avant.
 			// La date à retenir est celle du prélèvement effectif !
@@ -397,8 +460,20 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 	$failed = false;
 	$nouveau_statut_distant = null;
 	$nouveau_statut_recurrence_distant = null;
+	$ignore_double_membership = false;
+	if (substr($campagnodon_transaction['type_transaction'], -9) === '_echeance') {
+		// on est sur une échéance... on ignore toujours les double membership dans ce cas.
+		$ignore_double_membership = true;
+	}
 	try {
-		$resultat = $fonction_maj_statut($mode_options, $campagnodon_transaction['transaction_distant'], $statut_distant, $mode_paiement_distant, $campagnodon_transaction['statut_recurrence']);
+		$resultat = $fonction_maj_statut(
+			$mode_options,
+			$campagnodon_transaction['transaction_distant'],
+			$statut_distant,
+			$mode_paiement_distant,
+			$campagnodon_transaction['statut_recurrence'],
+			$ignore_double_membership
+		);
 		if (false === $resultat) {
 			spip_log(__FUNCTION__.' Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions='.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
 			$failed = true;

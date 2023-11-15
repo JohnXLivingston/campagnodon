@@ -3,7 +3,7 @@
 if (!defined('_ECRIRE_INC_VERSION')) return;
 
 /**
- * Cette fonction doit créer (le cas échéant) la transaction correspondante à une nouvelle échéance de don mensuel.
+ * Cette fonction doit créer (le cas échéant) la transaction correspondante à une nouvelle échéance de don/adhésion récurrent.
  * Retourne `true` en cas de succès.
  * NB: si la transaction a déjà été créé, il faut également retourner `true` (il pourrait y avoir des appels concurrents).
  * 

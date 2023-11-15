@@ -15,8 +15,11 @@ if (!defined('_ECRIRE_INC_VERSION')) return;
  * Le mode de paiement. Les valeurs peuvent etre assez diverses (cheque, payzen, ...)
  * @param $statut_recurrence
  * Le statut du don récurrent, le cas échéant. Cette info est sur la transaction initiale.
+ * @param $ignore_double_membership
+ * Si True, on ignore la recherche de double adhésions.
+ * À utiliser sur les échéances d'adhésion, où on veut toujours prolonger.
  */
-function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx, $statut, $mode_paiement_distant, $statut_recurrence) {
+function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx, $statut, $mode_paiement_distant, $statut_recurrence, $ignore_double_membership) {
   include_spip('inc/campagnodon/connecteur/civicrm/class.api');
   $civi_api = new campagnodon_civicrm_api3($mode_options['api_options']);
 
@@ -48,6 +51,7 @@ function inc_campagnodon_connecteur_civicrm_maj_statut_dist($mode_options, $idx,
     'status' => $statut_distant,
     'recurring_status' => $statut_recurrence_distant,
     'payment_instrument' => $mode_paiement_distant,
+    'ignore_double_membership' => $ignore_double_membership ? '1' : '',
   ));
   if (!$result) {
     throw new Exception("Erreur CiviCRM " . $civi_api->errorMsg());
