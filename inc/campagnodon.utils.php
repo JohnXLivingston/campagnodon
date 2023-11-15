@@ -460,19 +460,13 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 	$failed = false;
 	$nouveau_statut_distant = null;
 	$nouveau_statut_recurrence_distant = null;
-	$ignore_double_membership = false;
-	if (substr($campagnodon_transaction['type_transaction'], -9) === '_echeance') {
-		// on est sur une échéance... on ignore toujours les double membership dans ce cas.
-		$ignore_double_membership = true;
-	}
 	try {
 		$resultat = $fonction_maj_statut(
 			$mode_options,
 			$campagnodon_transaction['transaction_distant'],
 			$statut_distant,
 			$mode_paiement_distant,
-			$campagnodon_transaction['statut_recurrence'],
-			$ignore_double_membership
+			$campagnodon_transaction['statut_recurrence']
 		);
 		if (false === $resultat) {
 			spip_log(__FUNCTION__.' Il semblerait que la synchronisation a échoué pour spip_campagnodon_transactions='.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
