@@ -271,8 +271,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 	}
 
 	if (
-		$campagnodon_transaction['type_transaction'] === 'don_mensuel_echeance'
-		|| $campagnodon_transaction['type_transaction'] === 'adhesion_annuel_echeance'
+		substr($campagnodon_transaction['type_transaction'], -9) === '_echeance'
 	) {
 		if ($campagnodon_transaction['statut_distant'] === null) {
 			spip_log(
@@ -305,7 +304,8 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 				return 0;
 			}
 
-			// NB: ici normalement seul les cas don_mensuel_echeance/adhesion_annuel_echeance sont utiles.
+			// NB: ici normalement seul les cas don_mensuel_echeance/adhesion_annuel_echeance
+			// (et autres variantes) sont utiles.
 			$distant_operation_type = form_utils_operation_type_distant($campagnodon_transaction['type_transaction']);
 
 			$url_transaction = generer_url_ecrire('campagnodon_transaction', 'id_campagnodon_transaction='.htmlspecialchars($id_campagnodon_transaction), false, false);

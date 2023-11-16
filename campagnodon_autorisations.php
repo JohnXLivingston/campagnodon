@@ -60,8 +60,8 @@ function autoriser_campagnodon_declencher_mensualite_dist($faire, $type, $id, $q
 			return false;
 		}
 		if (
-			$campagnodon_transaction['type_transaction'] !== 'don_mensuel'
-			&& $campagnodon_transaction['type_transaction'] !== 'adhesion_annuel'
+			substr($campagnodon_transaction['type_transaction'], -8) !== '_mensuel'
+			&& substr($campagnodon_transaction['type_transaction'], -7) !== '_annuel'
 		) {
 			return false;
 		}

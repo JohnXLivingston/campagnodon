@@ -79,21 +79,65 @@ function form_utils_read_montant($config_montants, $choix_type, $choix_recurrenc
  * @param string $type_transaction le type de transaction
  */
 function form_utils_operation_type_distant($type_transaction) {
-	switch ($type_transaction) {
-		case 'don':
-			return 'donation';
-		case 'adhesion':
-			return 'membership';
-		case 'don_mensuel':
-			return 'monthly_donation';
-		case 'don_mensuel_echeance':
-			return 'monthly_donation_due';
-		case 'don_mensuel_migre':
-			return 'monthly_donation_migrated';
-		case 'adhesion_annuel':
-			return 'yearly_membership';
-		case 'adhesion_annuel_echeance':
-			return 'yearly_membership_due';
+	// On a une valeur de la forme:
+	// 	don_mensuel_echeance
+	// À transformer en:
+	//	monthly_donation_due
+	$a = explode('_', $type_transaction);
+
+	if (count($a) < 1 || count($a) > 3) {
+		// Pas le bon nombre de morceau => invalide => on ne touche pas.
+		return $type_transaction;
 	}
+
+	$r = '';
+	if ($a[0] === 'don') {
+		$r = 'donation';
+	} elseif ($a[0] === 'adhesion') {
+		$r = 'membership';
+	} else {
+		// Invalide...
+		return $type_transaction;
+	}
+
+	if (count($a) === 1) {
+		return $r;
+	}
+
+	if ($a[1] === 'mensuel') {
+		$r = 'monthly_' . $r;
+	} elseif ($a[2] === 'annuel') {
+		$r = 'yearly_' . $r;
+	} else {
+		return $type_transaction;
+	}
+
+	if (count($a) === 2) {
+		return $r;
+	}
+
+	if ($a[2] === 'echeance') {
+		return $r . '_due';
+	}
+
+	return $type_transaction;
+
+	// Pour mémoire, l'ancien code:
+	// switch ($type_transaction) {
+	// 	case 'don':
+	// 		return 'donation';
+	// 	case 'adhesion':
+	// 		return 'membership';
+	// 	case 'don_mensuel':
+	// 		return 'monthly_donation';
+	// 	case 'don_mensuel_echeance':
+	// 		return 'monthly_donation_due';
+	// 	case 'don_mensuel_migre':
+	// 		return 'monthly_donation_migrated';
+	// 	case 'adhesion_annuel':
+	// 		return 'yearly_membership';
+	// 	case 'adhesion_annuel_echeance':
+	// 		return 'yearly_membership_due';
+	// }
 	return $type_transaction;
 }
