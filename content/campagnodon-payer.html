@@ -1,20 +1,16 @@
 <BOUCLE_payer(TRANSACTIONS){id_transaction}{transaction_hash}>
   <BOUCLE_campagnodon_transactions(CAMPAGNODON_TRANSACTIONS){id_transaction}>
     <h1 class="campagnodon_payer">
-      [(#TYPE_TRANSACTION|switchcase{adhesion,<:campagnodon_form:titre_page_payer_adhesion:>,<:campagnodon_form:titre_page_payer_don:>})]
+      [(#TYPE_TRANSACTION|substr{0,8}|switchcase{adhesion,<:campagnodon_form:titre_page_payer_adhesion:>,<:campagnodon_form:titre_page_payer_don:>})]
     </h1>
     <div class="campagnodon_payer_formulaire">
       <p class="">
         <span class="montant"><:campagnodon_form:label_montant:> <strong>[(#_payer:MONTANT|affiche_monnaie)]</strong><br /></span>
       </p>
-      #SWITCH{#TYPE_TRANSACTION}
-      [(#CASE{don_mensuel})
+      [(#TYPE_TRANSACTION|match{_mensuel|_annuel}|oui)
         <INCLURE{fond=modeles/payer_abonnement,id_transaction,transaction_hash,title=<:campagnodon_form:titre_choix_mode_paiement:>} />
       ]
-      [(#CASE{adhesion_annuel})
-        <INCLURE{fond=modeles/payer_abonnement,id_transaction,transaction_hash,title=<:campagnodon_form:titre_choix_mode_paiement:>} />
-      ]
-      [(#CASE_DEFAULT)
+      [(#TYPE_TRANSACTION|match{_mensuel|_annuel}|non)
         <INCLURE{fond=modeles/payer_acte,id_transaction,transaction_hash,title=<:campagnodon_form:titre_choix_mode_paiement:>} />
       ]
     </div>
