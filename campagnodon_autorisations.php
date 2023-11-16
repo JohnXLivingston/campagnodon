@@ -20,7 +20,7 @@ if (!defined('_ECRIRE_INC_VERSION')) {
  * Cette fonction doit être présente pour que le pipeline soit pris en compte.
  * Elle n'a rien de particulier à faire.
  */
-function campagnodon_autoriser($flux){
+function campagnodon_autoriser($flux) {
 	return $flux;
 }
 
@@ -50,7 +50,11 @@ function autoriser_campagnodon_declencher_mensualite_dist($faire, $type, $id, $q
 		return false;
 	}
 	if ($id) {
-		$campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id));
+		$campagnodon_transaction = sql_fetsel(
+			'*',
+			'spip_campagnodon_transactions',
+			'id_campagnodon_transaction='.sql_quote($id)
+		);
 		if (!$campagnodon_transaction) {
 			spip_log(__FUNCTION__.' Impossible de remonter la transaction campagnodon='.$id, 'campagnodon'._LOG_ERREUR);
 			return false;

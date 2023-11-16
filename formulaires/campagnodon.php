@@ -353,7 +353,8 @@ function formulaires_campagnodon_traiter_dist(
 			if ($adhesion_magazine_prix <= 0) {
 				// Normalement on ne devrait pas autoriser de montant d'adhésion inférieur à 2
 				throw new CampagnodonException(
-					"Campagnodon mal configuré, l'adhésion n'est pas suffisante pour couvrir au moins 1€ pour le magazine.",
+					"Campagnodon mal configuré, l'adhésion n'est pas suffisante pour couvrir"
+					. ' au moins 1€ pour le magazine.',
 					'campagnodon:erreur_sauvegarde'
 				);
 			}
@@ -556,7 +557,10 @@ function formulaires_campagnodon_traiter_dist(
 		foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
 			if (_request('souscription_optionnelle_'.$cle) == '1') {
 				if (!$souscription_optionnelle['type']) {
-					throw new CampagnodonException("Campagnodon mal configuré, souscription_optionnelle mal configurée: '".$cle."'.", 'campagnodon:erreur_sauvegarde');
+					throw new CampagnodonException(
+						"Campagnodon mal configuré, souscription_optionnelle mal configurée: '".$cle."'.",
+						'campagnodon:erreur_sauvegarde'
+					);
 				}
 				if (substr($souscription_optionnelle['type'], 0, 8) === 'special:') {
 					// Cas particulier, on passe.
