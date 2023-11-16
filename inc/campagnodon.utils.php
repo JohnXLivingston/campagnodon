@@ -501,13 +501,18 @@ function campagnodon_montants_par_defaut($type) {
 		return _CAMPAGNODON_MONTANTS[$type];
 	}
 
+	// Cas particulier: adhesion_recurrent: on prend la même chose que adhesion tout court
+	if ($type === 'adhesion_recurrent') {
+		return campagnodon_montants_par_defaut('adhesion');
+	}
+
 	if ($type === 'don') {
 		return ['30','50','100','200'];
 	}
 	if ($type === 'don_recurrent') {
 		return ['6','15','30','50'];
 	}
-	if ($type === 'adhesion' || $type === 'adhesion_recurrent') {
+	if ($type === 'adhesion') {
 		return [
 			'13[-450]',
 			'21[450-900]',

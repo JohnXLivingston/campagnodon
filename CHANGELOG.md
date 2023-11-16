@@ -11,7 +11,7 @@ TODO: traiter les échéances pour les adhésions
 * Nouveau formulaire mixte don + adhésion.
 * Adhésions à prix libre.
 * Attention: il n'est plus possible de faire on don libre en plus de l'adhésion, cela est jugé redondant avec l'adhésion à prix libre.
-* Renouvellement automatique des adhésions.
+* Renouvellement automatique des adhésions (mensuel ou annuel).
 * Magazine: avec les adhésions à prix libre, si le montant de l'adhésion est inférieur au prix du magazine, on garde 1€ pour l'adhésion, et le reste pour le magazine.
 
 ### Autres modifications
