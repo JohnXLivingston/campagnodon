@@ -111,7 +111,7 @@ function form_utils_operation_type_distant($type_transaction) {
 
 	if ($a[1] === 'mensuel') {
 		$r = 'monthly_' . $r;
-	} elseif ($a[2] === 'annuel') {
+	} elseif ($a[1] === 'annuel') {
 		$r = 'yearly_' . $r;
 	} else {
 		return $type_transaction;
