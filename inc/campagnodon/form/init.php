@@ -55,16 +55,19 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 			'unique' => [
 				'valeur' => 'unique',
 				'pour_choix_type' => 'don',
-				'label' => _T('campagnodon_form:je_donne_une_fois')
+				'label' => _T('campagnodon_form:je_donne_unique')
 			]
 		];
 
 		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-			$choix_recurrence_desc['don']['mensuel'] = [
-				'valeur' => 'mensuel',
-				'pour_choix_type' => 'don',
-				'label' => _T('campagnodon_form:je_donne_recurrent')
-			];
+			$recurrences = form_init_recurrences('don');
+			foreach ($recurrences as $choix_recurrence) {
+				$choix_recurrence_desc['don'][$choix_recurrence] = [
+					'valeur' => $choix_recurrence,
+					'pour_choix_type' => 'don',
+					'label' => _T('campagnodon_form:je_donne_' . $choix_recurrence)
+				];
+			}
 		}
 	}
 
@@ -75,16 +78,19 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 			'unique' => [
 				'valeur' => 'unique',
 				'pour_choix_type' => 'adhesion',
-				'label' => _T('campagnodon_form:jadhere_pour_un_an')
+				'label' => _T('campagnodon_form:jadhere_unique')
 			]
 		];
 
 		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-			$choix_recurrence_desc['adhesion']['annuel'] = [
-				'valeur' => 'annuel',
-				'pour_choix_type' => 'adhesion',
-				'label' => _T('campagnodon_form:jadhere_avec_renouvellement_automatique')
-			];
+			$recurrences = form_init_recurrences('adhesion');
+			foreach ($recurrences as $choix_recurrence) {
+				$choix_recurrence_desc['adhesion'][$choix_recurrence] = [
+					'valeur' => $choix_recurrence,
+					'pour_choix_type' => 'adhesion',
+					'label' => _T('campagnodon_form:jadhere_' . $choix_recurrence)
+				];
+			}
 		}
 	}
 	return $choix_recurrence_desc;
@@ -249,7 +255,14 @@ function form_init_liste_montants_campagne(
 		if ($form_type === 'don' || $form_type === 'don+adhesion') {
 			$_ajoute_propositions('don', 'unique', $arg_liste_montants);
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-				$_ajoute_propositions('don', 'mensuel', $arg_liste_montants_recurrent);
+				$recurrences = form_init_recurrences('don');
+				foreach ($recurrences as $choix_recurrence) {
+					$_ajoute_propositions(
+						'don',
+						$choix_recurrence,
+						$arg_liste_montants_recurrent
+					);
+				}
 			}
 		}
 		if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
@@ -264,17 +277,14 @@ function form_init_liste_montants_campagne(
 			$_ajoute_propositions('adhesion', 'unique', $tmp);
 			// TODO: passer par un campagnodon_adhesion_recurrente_active et un $arg_adhesion_recurrente ?
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-				// // TODO: pourvoir configurer si on veut mensuel et/ou annuel ?
-				// $_ajoute_propositions(
-				// 	'adhesion',
-				// 	'mensuel',
-				// 	$tmp
-				// );
-				$_ajoute_propositions(
-					'adhesion',
-					'annuel',
-					$tmp
-				);
+				$recurrences = form_init_recurrences('adhesion');
+				foreach ($recurrences as $choix_recurrence) {
+					$_ajoute_propositions(
+						'adhesion',
+						$choix_recurrence,
+						$tmp
+					);
+				}
 			}
 		}
 	} catch (Throwable $e) {
@@ -442,4 +452,31 @@ function form_init_montants_annuels_vers_mensuel($valeurs) {
 		$r[$cle] = strval($nouveau_montant) . $autre;
 	}
 	return $r;
+}
+
+/**
+ * Retourne les récurrences à traiter pour le type (don/adhésion).
+ * @param $choix_type 'don' ou 'adhesion'
+ */
+function form_init_recurrences($choix_type) {
+	if (
+		defined('_CAMPAGNODON_RECURRENCES')
+		&& is_array(_CAMPAGNODON_RECURRENCES)
+		&& array_key_exists($choix_type, _CAMPAGNODON_RECURRENCES)
+		&& is_array(_CAMPAGNODON_RECURRENCES[$choix_type])
+	) {
+		return array_filter(
+			_CAMPAGNODON_RECURRENCES[$choix_type],
+			function ($e) {
+				return $e === 'mensuel' || $e === 'annuel';
+			}
+		);
+	}
+	if ($choix_type === 'don') {
+		return ['mensuel'];
+	}
+	if ($choix_type === 'adhesion') {
+		return ['mensuel', 'annuel'];
+	}
+	return [];
 }

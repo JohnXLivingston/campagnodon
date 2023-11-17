@@ -119,13 +119,31 @@ define('_CAMPAGNODON_ADHESION_MAXIMUM', 5000);
 
 ### _CAMPAGNODON_DON_RECURRENT
 
-Pour activer les dons récurrents:
+Pour activer les dons et adhésions récurrent⋅es:
 
 ```php
 define('_CAMPAGNODON_DON_RECURRENT', true);
 ```
 
+Vous pouvez éventuellement préciser les récurrences possibles pour chaque type (don/adhésion).
+Pour cela, vous pouvez définir `_CAMPAGNODON_RECURRENCES` comme suit:
+
+```php
+define('_CAMPAGNODON_RECURRENCES', [
+        'don' => ['mensuel'],
+        'adhesion' => ['mensuel', 'annuel']
+]);
+```
+
+Si _CAMPAGNODON_RECURRENCES est manquant, ou si une clé est absente, les valeurs par défaut sont appliquées:
+
+* `'don' => ['mensuel']`
+* `'adhesion' => ['mensuel', 'annuel']`
+
+Pour désactiver, utilisez un tableau vide.
+
 ATTENTION: votre prestataire de paiement doit être compatible (voir la doc de SPIP Bank).
+Y compris avec les récurrences choisies.
 
 NB: _CAMPAGNODON_DON_RECURRENT_JOUR ne fonctionne pas comme souhaité. Il semblerait que ce soit une limitation de SPIP Bank.
 Cela semble même ne plus être possible avec SPIP Bank v6.
