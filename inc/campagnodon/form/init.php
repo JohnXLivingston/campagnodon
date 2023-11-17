@@ -161,9 +161,7 @@ function form_init_liste_montants_campagne(
 	include_spip('inc/campagnodon.utils');
 
 	$r = [
-		'propositions' => [],
-		'don_recurrent' => false,
-		'adhesion_recurrent' => false,
+		'propositions' => []
 	];
 
 	$_ajoute_propositions = function ($choix_type, $choix_recurrence, $arg_liste) use (&$r) {
@@ -266,10 +264,16 @@ function form_init_liste_montants_campagne(
 			$_ajoute_propositions('adhesion', 'unique', $tmp);
 			// TODO: passer par un campagnodon_adhesion_recurrente_active et un $arg_adhesion_recurrente ?
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
+				// // TODO: pourvoir configurer si on veut mensuel et/ou annuel ?
+				// $_ajoute_propositions(
+				// 	'adhesion',
+				// 	'mensuel',
+				// 	$tmp
+				// );
 				$_ajoute_propositions(
 					'adhesion',
 					'annuel',
-					$arg_liste_montants_adhesion
+					$tmp
 				);
 			}
 		}
