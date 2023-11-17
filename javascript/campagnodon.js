@@ -83,13 +83,13 @@ function campagnodon_formulaire_choix_type($form, premier_appel = false) {
   let selecteur_a_visibiliser
   if ($radio_choix_type.length === 0) {
     // on déselectionne tout.
-    selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_combinaison]'
+    selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_type]'
     selecteur_a_invisibiliser = '[uniquement_pour_adhesion],[uniquement_pour_don]'
   } else {
     // Sinon on doit désactiver les radio des fieldset ne correspondant pas au type courant,
     const choix_type = $radio_choix_type.attr('value')
-    selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_combinaison][campagnodon_recurrence_pour_combinaison!=' + choix_type + ']'
-    selecteur_fieldset_a_activer = 'fieldset[campagnodon_recurrence_pour_combinaison=' + choix_type + ']'
+    selecteur_fieldset_a_desactiver = 'fieldset[campagnodon_recurrence_pour_type][campagnodon_recurrence_pour_type!=' + choix_type + ']'
+    selecteur_fieldset_a_activer = 'fieldset[campagnodon_recurrence_pour_type=' + choix_type + ']'
 
     if (choix_type === 'don') {
       selecteur_a_invisibiliser = '[uniquement_pour_adhesion]'
@@ -186,9 +186,10 @@ function campagnodon_formulaire_filtre_montants($form) {
   } else {
     // Sinon, on construit le selecteur qui va bien:
     let campagnodon_pour_combinaison = $radio_choix_type.val(); // don ou adhesion
-    if ($is_choix_recurrence && $radio_choix_recurrence.val() !== 'unique') {
-      // FIXME: gérer d'autres types de récurrence que 'don mensuel' et 'adhesion annuelle' ?
-      campagnodon_pour_combinaison += '_recurrent';
+    if ($is_choix_recurrence && $radio_choix_recurrence.val()) {
+      campagnodon_pour_combinaison += '_' + $radio_choix_recurrence.val();
+    } else {
+      campagnodon_pour_combinaison += '_unique';
     }
     selecteur_radio_a_activer = 'input[name=montant][campagnodon_pour_combinaison=' + campagnodon_pour_combinaison + ']';
     selecteur_radio_a_desactiver = 'input[name=montant][campagnodon_pour_combinaison!=' + campagnodon_pour_combinaison + ']';

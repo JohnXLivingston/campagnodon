@@ -491,28 +491,55 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 	return 1;
 }
 
-function campagnodon_montants_par_defaut($type) {
+/**
+ * Retourne la liste des montants par défauts en fonction du type et de la récurrence.
+ * Sous la forme d'un tableau de chaînes.
+ * @param $choix_type 'adhesion', 'don'
+ * @param $choix_recurrence 'unique', 'mensuel', 'annuel'
+ */
+function campagnodon_montants_par_defaut($choix_type, $choix_recurrence) {
+	$key = $choix_recurrence === 'unique' ? $choix_type : $choix_type . '_' . $choix_recurrence;
 	if (
 		defined('_CAMPAGNODON_MONTANTS')
 		&& is_array(_CAMPAGNODON_MONTANTS)
-		&& array_key_exists($type, _CAMPAGNODON_MONTANTS)
-		&& is_array(_CAMPAGNODON_MONTANTS[$type])
+		&& array_key_exists($key, _CAMPAGNODON_MONTANTS)
+		&& is_array(_CAMPAGNODON_MONTANTS[$key])
 	) {
-		return _CAMPAGNODON_MONTANTS[$type];
+		return _CAMPAGNODON_MONTANTS[$key];
 	}
 
-	// Cas particulier: adhesion_recurrent: on prend la même chose que adhesion tout court
-	if ($type === 'adhesion_recurrent') {
-		return campagnodon_montants_par_defaut('adhesion');
+	// Rétro compatibilité avec la conf des versions antérieures à la v2:
+	if ($choix_type === 'don' && $choix_recurrence === 'mensuel') {
+		if (
+			defined('_CAMPAGNODON_MONTANTS')
+			&& is_array(_CAMPAGNODON_MONTANTS)
+			&& array_key_exists('don_recurrent', _CAMPAGNODON_MONTANTS)
+			&& is_array(_CAMPAGNODON_MONTANTS['don_recurrent'])
+		) {
+			return _CAMPAGNODON_MONTANTS['don_recurrent'];
+		}
 	}
 
-	if ($type === 'don') {
+	// Cas particulier: en annuel on prend la même chose que adhesion tout court
+	if ($choix_recurrence === 'annuel') {
+		return campagnodon_montants_par_defaut($choix_type, 'unique');
+	}
+
+	if ($choix_recurrence === 'mensuel') {
+		if ($choix_type === 'don') {
+			return ['6','15','30','50'];
+		}
+		if ($choix_type === 'adhesion') {
+			// On calcule automatiquement à partir des valeurs par défaut pour 'adhesion/annuel'.
+			$valeurs = campagnodon_montants_par_defaut($choix_type, 'annuel');
+			include_spip('inc/campagnodon/form/init');
+			return form_init_montants_annuels_vers_mensuel($valeurs);
+		}
+	}
+	if ($choix_type === 'don') {
 		return ['30','50','100','200'];
 	}
-	if ($type === 'don_recurrent') {
-		return ['6','15','30','50'];
-	}
-	if ($type === 'adhesion') {
+	if ($choix_type === 'adhesion') {
 		return [
 			'13[-450]',
 			'21[450-900]',
@@ -656,3 +683,4 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
 	campagnodon_queue_synchronisation($id_campagnodon_transaction);
 	return true;
 }
+

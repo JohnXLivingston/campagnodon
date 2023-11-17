@@ -68,7 +68,9 @@ define('_CAMPAGNODON_MONTANTS', array(
         'don' => array( // le type d'opération: 'don' ou 'adhesion'
                 '30','50','100','200'
         ),
-        'don_recurrent' => array( // NB: ne s'applique que si _CAMPAGNODON_DON_RECURRENT est activé
+        // Note: avant la v2, c'était 'don_recurrent'.
+        // Le code sait gérer la rétro compatibilité.
+        'don_mensuel' => array( // NB: ne s'applique que si _CAMPAGNODON_DON_RECURRENT est activé
                 '6', '15', '30', '50'
         ),
         'adhesion' => array(
@@ -83,6 +85,11 @@ define('_CAMPAGNODON_MONTANTS', array(
                 '120[3000-4000]',
                 '160[4000-]'
         )
+        // Note: on peut également ajouter 'adhesion_annuel' et 'adhesion_mensuel'.
+        // Si pas configurés, les règles suivantes s'appliquent:
+        // - 'adhesion_annuel': reprend la valeur de 'adhesion'
+        // - 'adhesion_mensuel': calcule en divisant par 12 adhesion_annuel (ou adhesion),
+        //    en arrondissant vers le haut, et en éliminant les valeurs trop petites.
 ));
 ```
 

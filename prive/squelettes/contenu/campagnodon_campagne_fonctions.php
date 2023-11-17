@@ -52,13 +52,12 @@ function campagnodon_campagne_montants_par_defaut() {
 	include_spip('inc/campagnodon.utils');
 	$r = [];
 	foreach (['don', 'adhesion'] as $type) {
-		$r[$type] = implode(',', campagnodon_montants_par_defaut($type));
+		$r[$type] = implode(',', campagnodon_montants_par_defaut($type, 'unique'));
 	}
 	if (campagnodon_campagne_don_recurrent()) {
-		$r['don_recurrent'] = implode(',', campagnodon_montants_par_defaut('don_recurrent'));
+		$r['don_mensuel'] = implode(',', campagnodon_montants_par_defaut('don', 'mensuel'));
 		// FIXME: remplacer campagnodon_campagne_don_recurrent par un équivaleur pour les adhésions ?
-		// Pour les adhésions, pour l'instant on est en renouvellement annuel... Donc même liste.
-		$r['adhesion_recurrent'] = $r['adhesion'];
+		$r['adhesion_annuel'] = implode(',', campagnodon_montants_par_defaut('adhesion', 'annuel'));
 	}
 	return json_encode($r);
 }

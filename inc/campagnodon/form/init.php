@@ -156,8 +156,7 @@ function form_init_liste_montants_campagne(
 	$arg_liste_montants,
 	$arg_don_recurrent,
 	$arg_liste_montants_recurrent,
-	$arg_liste_montants_adhesion,
-	$arg_liste_montants_adhesion_recurrent
+	$arg_liste_montants_adhesion
 ) {
 	include_spip('inc/campagnodon.utils');
 
@@ -167,14 +166,15 @@ function form_init_liste_montants_campagne(
 		'adhesion_recurrent' => false,
 	];
 
-	$_ajoute_propositions = function ($choix_type, $choix_recurrence, $combinaison, $arg_liste) use (&$r) {
+	$_ajoute_propositions = function ($choix_type, $choix_recurrence, $arg_liste) use (&$r) {
 		$liste_montants = [];
 		$avec_libre = false;
+		$combinaison = $choix_type . '_' . $choix_recurrence;
 
 		// On commence par récupérer une liste des montants.
 		if (empty($arg_liste)) {
 			// on n'a rien personnalisé dans le formulaire courant, on prend la config par défaut
-			if (!form_init_parse_config_montant($liste_montants, campagnodon_montants_par_defaut($combinaison))) {
+			if (!form_init_parse_config_montant($liste_montants, campagnodon_montants_par_defaut($choix_type, $choix_recurrence))) {
 				throw new Error('Montant invalide dans la configuration du formulaire ('.$combinaison.').');
 			}
 			// Pour les dons et les adhésions, on ajoute toujours le montant libre.
@@ -182,6 +182,10 @@ function form_init_liste_montants_campagne(
 		} else {
 			// on a donné des montants dans la configuration du formulaire, on les prend en compte.
 			$liste = explode(',', $arg_liste);
+			// Cas particulier: l'adhésion mensuelle qu'on calcule automatiquement.
+			if ($choix_type === 'adhesion' && $choix_recurrence === 'mensuel') {
+				$liste = form_init_montants_annuels_vers_mensuel($liste);
+			}
 			foreach ($liste as $montant) {
 				if ($montant === 'libre') {
 					$avec_libre = true;
@@ -245,9 +249,9 @@ function form_init_liste_montants_campagne(
 
 	try {
 		if ($form_type === 'don' || $form_type === 'don+adhesion') {
-			$_ajoute_propositions('don', 'unique', 'don', $arg_liste_montants);
+			$_ajoute_propositions('don', 'unique', $arg_liste_montants);
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
-				$_ajoute_propositions('don', 'mensuel', 'don_recurrent', $arg_liste_montants_recurrent);
+				$_ajoute_propositions('don', 'mensuel', $arg_liste_montants_recurrent);
 			}
 		}
 		if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
@@ -259,14 +263,13 @@ function form_init_liste_montants_campagne(
 				$tmp = $arg_liste_montants;
 			}
 
-			$_ajoute_propositions('adhesion', 'unique', 'adhesion', $tmp);
+			$_ajoute_propositions('adhesion', 'unique', $tmp);
 			// TODO: passer par un campagnodon_adhesion_recurrente_active et un $arg_adhesion_recurrente ?
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
 				$_ajoute_propositions(
 					'adhesion',
 					'annuel',
-					'adhesion_recurrent',
-					$arg_liste_montants_adhesion_recurrent
+					$arg_liste_montants_adhesion
 				);
 			}
 		}
@@ -394,4 +397,45 @@ function form_init_montant_min_max($choix_type) {
 			: 10000000;
 	}
 	return [$montant_min, $montant_max];
+}
+
+/**
+ * Converti une configuration de montants annuels vers des montants mensuels.
+ * La règle est:
+ * - on divise par 12
+ * - on arrondi vers le haut
+ * - on retire ce qui est inférieur au minimum
+ * Pour le minimum, on prend le montant minimum pour les adhésions
+ * (à ce jour, cette fonction n'est utilisée que pour les adhésions).
+ * @param $montants un tableau de valeurs textuelles de configuration
+ * (cf format de form_init_parse_config_montant)
+ */
+function form_init_montants_annuels_vers_mensuel($valeurs) {
+	list($montant_min, $montant_max) = form_init_montant_min_max('adhesion');
+
+	$r = [];
+	foreach ($valeurs as $cle => $valeur) {
+		// On peut avoir les formes:
+		// - '5'
+		// - '5[100-1000]
+		// - 'libre' (cas particulier, on retourne tel quel)
+		// Pour être plus évolutif, on va considérer qu'on split au premier caractère non numérique,
+		// puis on recollera.
+		if ($valeur === 'libre') {
+			$r[$cle] = $valeur;
+			continue;
+		}
+
+		if (!preg_match('/^(\d+)(.*)?$/', $valeur, $matches)) {
+			continue;
+		}
+		$montant = $matches[1];
+		$autre = $matches[2] ?? '';
+		$nouveau_montant = ceil(intval($montant) / 12);
+		if ($nouveau_montant < $montant_min) {
+			continue;
+		}
+		$r[$cle] = strval($nouveau_montant) . $autre;
+	}
+	return $r;
 }

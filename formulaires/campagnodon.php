@@ -26,8 +26,7 @@ function formulaires_campagnodon_charger_dist(
 	$arg_souscriptions_perso = null,
 	$arg_don_recurrent = null,
 	$arg_liste_montants_recurrent = null,
-	$arg_liste_montants_adhesion = null,
-	$arg_liste_montants_adhesion_recurrent = null
+	$arg_liste_montants_adhesion = null
 ) {
 	if ($form_type !== 'don' && $form_type !== 'adhesion' && $form_type !== 'don+adhesion') {
 		spip_log('Type de formulaire Campagnodon inconnu: '.$form_type, 'campagnodon'._LOG_ERREUR);
@@ -55,8 +54,7 @@ function formulaires_campagnodon_charger_dist(
 		$arg_liste_montants,
 		$arg_don_recurrent,
 		$arg_liste_montants_recurrent,
-		$arg_liste_montants_adhesion,
-		$arg_liste_montants_adhesion_recurrent
+		$arg_liste_montants_adhesion
 	);
 	if (!$config_montants) {
 		spip_log('Liste de montants invalide', 'campagnodon'._LOG_ERREUR);
@@ -124,8 +122,7 @@ function formulaires_campagnodon_verifier_dist(
 	$arg_souscriptions_perso = null,
 	$arg_don_recurrent = null,
 	$arg_liste_montants_recurrent = null,
-	$arg_liste_montants_adhesion = null,
-	$arg_liste_montants_adhesion_recurrent = null
+	$arg_liste_montants_adhesion = null
 ) {
 	$erreurs = [];
 	$verifier = charger_fonction('verifier', 'inc/');
@@ -159,8 +156,7 @@ function formulaires_campagnodon_verifier_dist(
 		$arg_liste_montants,
 		$arg_don_recurrent,
 		$arg_liste_montants_recurrent,
-		$arg_liste_montants_adhesion,
-		$arg_liste_montants_adhesion_recurrent
+		$arg_liste_montants_adhesion
 	);
 	$civilites = form_init_liste_civilites($mode_options);
 
@@ -189,7 +185,7 @@ function formulaires_campagnodon_verifier_dist(
 	$choix_recurrence = _request('choix_recurrence');
 	if (
 		!array_key_exists($choix_type, $choix_recurrence_desc)
-		|| ! array_key_exists($choix_recurrence, $choix_recurrence_desc[$choix_type])
+		|| !array_key_exists($choix_recurrence, $choix_recurrence_desc[$choix_type])
 	) {
 		$erreurs['choix_recurrence'] = _T('campagnodon_form:erreur_valeur_invalide');
 	}
@@ -270,8 +266,7 @@ function formulaires_campagnodon_traiter_dist(
 	$arg_souscriptions_perso = null,
 	$arg_don_recurrent = null,
 	$arg_liste_montants_recurrent = null,
-	$arg_liste_montants_adhesion = null,
-	$arg_liste_montants_adhesion_recurrent = null
+	$arg_liste_montants_adhesion = null
 ) {
 	try {
 		spip_log('traiter_dist' . $form_type . ':'. $id_campagne);
@@ -296,8 +291,7 @@ function formulaires_campagnodon_traiter_dist(
 			$arg_liste_montants,
 			$arg_don_recurrent,
 			$arg_liste_montants_recurrent,
-			$arg_liste_montants_adhesion,
-			$arg_liste_montants_adhesion_recurrent
+			$arg_liste_montants_adhesion
 		);
 
 			// On veut les coordonnées complètes dans ces cas:

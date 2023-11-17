@@ -3,7 +3,7 @@
 <BOUCLE_campagne(CAMPAGNODON_CAMPAGNES){id_origine=#ENV{id}}{origine=#ENV{origine}}{statut=publie}>
 	<div class="campagnodon">
 		<div class="ajax">
-			<INCLURE{fond=modeles/formulaire,class=campagnodon,args=#LISTE{#ENV{type},#ID_CAMPAGNODON_CAMPAGNE,#ENV{montants},#ENV{souscriptions},#ENV{don_recurrent},#ENV{montants_recurrent},#ENV{montants_adhesion},#ENV{montants_adhesion_recurrent}}} />
+			<INCLURE{fond=modeles/formulaire,class=campagnodon,args=#LISTE{#ENV{type},#ID_CAMPAGNODON_CAMPAGNE,#ENV{montants},#ENV{souscriptions},#ENV{don_recurrent},#ENV{montants_recurrent},#ENV{montants_adhesion}}} />
 		</div>
 	</div>
 </BOUCLE_campagne>

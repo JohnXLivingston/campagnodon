@@ -35,6 +35,8 @@ function form_utils_traduit_adhesion_type($mode_options, $type) {
  * Retourne le montant saisi (en tenant comptes des montants libres le cas échéant).
  * Si le montant n'est pas libre, et n'est pas dans la liste configurée, retournen null.
  * @param $config_montants Correspond au retour de la fonction form_init_liste_montants_campagne
+ * @param $choix_type 'adhesion' ou 'don'
+ * @param $choix_recurrence 'unique', 'mensuel' ou 'annuel'. Si vide, on considère que c'est 'unique'.
  */
 function form_utils_read_montant($config_montants, $choix_type, $choix_recurrence) {
 	$v_montant = _request('montant');
@@ -42,12 +44,15 @@ function form_utils_read_montant($config_montants, $choix_type, $choix_recurrenc
 		return null;
 	}
 
+	if (empty($choix_recurrence)) {
+		// Ne devrait pas arriver, mais dans le doute.
+		$choix_recurrence = 'unique';
+	}
+
 	// On doit vérifier que $v_montant existe dans $config_montants['propositions'],
 	// pour cette combinaison type/recurrence.
-	$pour_combinaison = $choix_type;
-	if (!empty($choix_recurrence) && $choix_recurrence !== 'unique') {
-		$pour_combinaison.= '_recurrent';
-	}
+	$pour_combinaison = $choix_type . '_' . $choix_recurrence;
+
 	$trouve = false;
 	foreach ($config_montants['propositions'] as $proposition) {
 		if ($proposition['pour_combinaison'] === $pour_combinaison && ''.$proposition['valeur'] === $v_montant) {
