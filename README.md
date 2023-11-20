@@ -284,7 +284,7 @@ define('_CAMPAGNODON_MODES', array(
                                 'cle_distante' => 'custom_21' // le champ où stocker l'info coté CiviCRM (il s'agit d'un champs custom sur les memberships)
                         )
                 ),
-                'adhesion_magazine_prix' => 12, // Optionnel. Le prix par défaut de l'adhésion au magazine. En cas d'adhésion à un prix inférieur, on garde 1€ pour l'adhésion, le reste pour le magazine (changement de comportement avec la v2.0.0).
+                'adhesion_magazine_prix' => 12, // Optionnel. Le prix par défaut de l'adhésion au magazine. En cas d'adhésion à un prix inférieur, on garde 1€ pour l'adhésion, le reste pour le magazine (changement de comportement avec la v2.0.0). Si on active les adhésions en paiement mensuel, on divise par 12, et on arrondi vers le haut.
                 'adhesion_type' => array(
                         'adhesion' => 1, // Le membership type (id numérique ou libellé)
                         'magazine' => 2 // Le membership type pour le magazine (id numérique ou libellé)

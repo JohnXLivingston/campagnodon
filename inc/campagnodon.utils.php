@@ -335,12 +335,31 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 
 				// On traite le cas du magazine, le cas échéant.
 				$montant_total = $transaction['montant'];
-				$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, 'adhesion');
+				$magazine_mensuel = false;
+				if (substr($campagnodon_transaction['type_transaction'], 0, 16) === 'adhesion_mensuel') {
+					$magazine_mensuel = true;
+					spip_log(
+						__FUNCTION__.': On est en adhésion annuelle, je divise le prix du magazine par 12 le cas échéant',
+						'campagnodon'._LOG_DEBUG
+					);
+				}
+				$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix(
+					$mode_options,
+					'adhesion',
+					$magazine_mensuel
+				);
+
+				// Cas particulier: l'adhésion avec paiement mensuel... on divise par 12, et on arrondi vers le haut.
 				if (
 					$adhesion_magazine_prix > 0
 					&& intval($montant_total) < $adhesion_magazine_prix + 1
 				) {
 					$adhesion_magazine_prix = intval($montant_total) - 1;
+					spip_log(
+						__FUNCTION__.': Le prix du magazine est au dessus du montant, je le baisse à '
+						. $adhesion_magazine_prix,
+						'campagnodon'._LOG_DEBUG
+					);
 					if ($adhesion_magazine_prix <= 0) {
 						spip_log(
 							__FUNCTION__

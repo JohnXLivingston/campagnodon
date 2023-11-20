@@ -314,14 +314,18 @@ function form_init_liste_civilites($mode_options) {
 	);
 }
 
-function form_init_get_adhesion_magazine_prix($mode_options, $form_type) {
+function form_init_get_adhesion_magazine_prix($mode_options, $form_type, $mensuel = false) {
 	if (
 		($form_type === 'adhesion' || $form_type === 'don+adhesion')
 		&& is_array($mode_options)
 		&& array_key_exists('adhesion_magazine_prix', $mode_options)
 		&& ! empty($mode_options['adhesion_magazine_prix'])
 	) {
-		return intval($mode_options['adhesion_magazine_prix']);
+		$prix = intval($mode_options['adhesion_magazine_prix']);
+		if ($mensuel === true) {
+			$prix = ceil($prix / 12);
+		}
+		return $prix;
 	}
 	return 0;
 }

@@ -335,7 +335,18 @@ function formulaires_campagnodon_traiter_dist(
 
 		$source = campagnodon_calcul_libelle_source($mode_options, $campagne);
 
-		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type);
+		$magazine_mensuel = false;
+		if (
+			$choix_type === 'adhesion'
+			&& $choix_recurrence === 'mensuel'
+		) {
+			$magazine_mensuel = true;
+			spip_log(
+				__FUNCTION__.': On est en adhésion annuelle, je divise le prix du magazine par 12 le cas échéant',
+				'campagnodon'._LOG_DEBUG
+			);
+		}
+		$adhesion_magazine_prix = form_init_get_adhesion_magazine_prix($mode_options, $form_type, $magazine_mensuel);
 		// Nouveauté avec la v2.0.0: si $montant_total trop faible, on rogne sur le prix du magazine
 		// en gardant au moins 1€ pour l'adhésion
 		if (
