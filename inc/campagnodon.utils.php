@@ -683,4 +683,3 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
 	campagnodon_queue_synchronisation($id_campagnodon_transaction);
 	return true;
 }
-
