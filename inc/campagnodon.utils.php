@@ -323,6 +323,14 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 				);
 				// FIXME: pour les adhésions mensuelles, voir comment faire pour le magazine.
 
+				// Pour les adhésions avec paiement mensuel, il faudra ajouter un paramètre
+				// pour que le système distant ne renouvelle que quand nécessaire
+				// (et sinon ajoute les contributions aux adhésions déjà en cours)
+				$garder_adhesion_si_possible = false;
+				if ($campagnodon_transaction['type_transaction'] === 'adhesion_mensuel_echeance') {
+					$garder_adhesion_si_possible = true;
+				}
+
 				$params_garantir['contributions'] = [];
 
 				// On traite le cas du magazine, le cas échéant.
@@ -351,6 +359,7 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 						'amount' => strval($adhesion_magazine_prix),
 						'currency' => 'EUR',
 						'membership' => form_utils_traduit_adhesion_type($mode_options, 'magazine'),
+						'keep_current_membership_if_possible' => $garder_adhesion_si_possible
 						// Note: on n'a pas besoin de membership_option pour le magazine PDF:
 						// L'abonnement côté CiviCRM va être prolongé, et garder son attribut.
 						// 'source' => $source
@@ -366,7 +375,8 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 					),
 					'currency' => 'EUR',
 					'amount' => strval(intval($montant_total) - intval($adhesion_magazine_prix)),
-					'membership' => form_utils_traduit_adhesion_type($mode_options, 'adhesion')
+					'membership' => form_utils_traduit_adhesion_type($mode_options, 'adhesion'),
+					'keep_current_membership_if_possible' => $garder_adhesion_si_possible
 				];
 			} else {
 				spip_log(
