@@ -33,10 +33,21 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_adhesion_avec_don' => 'Je souhaite effectuer un don libre en plus de mon adhésion',
   'recu_fiscal_explication' => 'Pour un montant de _MONTANT_€, cela ne vous coûte réellement que _COUT_€ après déduction fiscale.',
   'adhesion_explication' => 'Pour une adhésion de _MONTANT_ADHESION_€, cela ne vous coûte réellement que _COUT_ADHESION_€ après déduction fiscale.',
+  'adhesion_mensuel_explication' =>
+    'L\'adhésion se fait sur l\'année civile, et le paiement sera reparti de manière égale tous les mois.'
+    .' Si vous souscrivez en cours d\'année, vous ne paierez que pour les mois restants.'
+    .' Pour une adhésion de _MONTANT_ADHESION_€/mois, soit _MONTANT_ADHESION_TOTAL_€/an,'
+    .' cela ne vous coûte réellement que _COUT_ADHESION_TOTAL_€ après déduction fiscale.',
   'adhesion_magazine_explication' =>
     "Le montant de l'adhésion comprend l'abonnement de _MAGAZINE_PRIX_€ au magazine. "
     ."Sur les _RESTANT_ADHESION_€ restants, 66% sont déductibles des impôts, dans la limite de 20% de vos revenus imposables. "
     ."Ainsi, votre adhésion ne vous coûtera que _COUT_ADHESION_€ après déduction fiscale.",
+  'adhesion_mensuel_magazine_explication' =>
+    'L\'adhésion se fait sur l\'année civile, et le paiement sera reparti de manière égale tous les mois.'
+    .' Si vous souscrivez en cours d\'année, vous ne paierez que pour les mois restants.'
+    .' Tous les mois, _MAGAZINE_PRIX_€ seront affectés aux magazine. '
+    .' Sur les _RESTANT_ADHESION_€/mois restants, soit _RESTANT_ADHESION_TOTAL_€/an,'
+    .' cela ne vous coûte réellement que _COUT_ADHESION_€ après déduction fiscale.',
   'recu_fiscal_champs_supplementaires' => 'Ces informations sont nécessaires en vue de l\'établissement du reçu qui vous sera envoyé permettant une déduction fiscale',
   'valider_don' => 'Je valide et je procède au don',
   'valider_adhesion' => 'Je valide et j\'adhère',

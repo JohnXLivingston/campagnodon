@@ -317,10 +317,17 @@ function campagnodon_formulaire_adhesion_explication($form) {
   const montant_adhesion = campagnodon_lire_montant($form);
   $form.find('[adhesion_explication]').each(function () {
     const explication = $(this);
+
+    // Cas particulier: les adhésion avec paiement mensuel...
+    const est_recurrence_mensuelle = $form.find('input[name=choix_recurrence]:checked:not(:disabled)').val() === 'mensuel';
     let adhesion_magazine_prix = parseInt(explication.attr('adhesion_magazine_prix'))
+
     if (adhesion_magazine_prix === undefined || isNaN(adhesion_magazine_prix)) {
       adhesion_magazine_prix = 0;
+    } else if (est_recurrence_mensuelle) {
+      adhesion_magazine_prix = Math.ceil(adhesion_magazine_prix / 12);
     }
+
     if (montant_adhesion !== null && !isNaN(montant_adhesion)) {
       // Depuis la v2.0.0: si adhésion à prix libre < prix magazine:
       // - on garde 1€ pour l'adhésion
@@ -339,7 +346,14 @@ function campagnodon_formulaire_adhesion_explication($form) {
       }
       let cout_adhesion = Math.round(adhesion_magazine_prix + (adhesion_sans_magazine * 0.34));
 
-      let text = explication.attr('adhesion_explication');
+      let text = explication.attr(est_recurrence_mensuelle ? 'adhesion_mensuel_explication' : 'adhesion_explication');
+      if (est_recurrence_mensuelle) {
+        // À faire en premier, car _MONTANT_ADHESION_ est inclu dans _MONTANT_ADHESION_TOTAL_, ...
+        text = text.replace(/_MONTANT_ADHESION_TOTAL_/g, montant_adhesion * 12);
+        text = text.replace(/_COUT_ADHESION_TOTAL_/g, cout_adhesion * 12);
+        text = text.replace(/_MAGAZINE_PRIX_TOTAL_/g, adhesion_magazine_prix * 12);
+        text = text.replace(/_RESTANT_ADHESION_TOTAL_/g, adhesion_sans_magazine * 12);
+      }
       text = text.replace(/_MONTANT_ADHESION_/g, montant_adhesion);
       text = text.replace(/_COUT_ADHESION_/g, cout_adhesion);
       text = text.replace(/_MAGAZINE_PRIX_/g, adhesion_magazine_prix);
