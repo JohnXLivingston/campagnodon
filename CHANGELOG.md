@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 - RC1
+## 2.0.0-RC1
 
 Attention: c'est version est à considérer comme une Release Candidate, elle pourrait ne pas être stable.
 
