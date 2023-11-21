@@ -1,16 +1,17 @@
 # Changelog
 
-## 2.0.0 (Not Released Yet)
+## 2.0.0 - RC1
 
-TODO: nouveau formulaire d'adhésion (unifié, et gestion des adhésions renouvelables).
-TODO: traiter les adhésions mensuelles
-TODO: traiter les échéances pour les adhésions
+Attention: c'est version est à considérer comme une Release Candidate, elle pourrait ne pas être stable.
+
+Cette version 2.0.0 contient des changements fonctionnels. À l'heure où elle est publiée, je n'ai connaissance
+que d'une seule structure utilisant Campagnodon, et les modifications sont faites à la demande de celle-ci.
 
 ### Nouvelles fonctionnalités, et changements majeurs
 
 * Nouveau formulaire mixte don + adhésion.
 * Adhésions à prix libre.
-* Attention: il n'est plus possible de faire on don libre en plus de l'adhésion, cela est jugé redondant avec l'adhésion à prix libre.
+* Attention: il n'est plus possible de faire un don libre en plus de l'adhésion, cela est jugé redondant avec l'adhésion à prix libre.
 * Renouvellement automatique des adhésions (mensuel ou annuel).
 * Magazine: avec les adhésions à prix libre, si le montant de l'adhésion est inférieur au prix du magazine, on garde 1€ pour l'adhésion, et le reste pour le magazine.
 
@@ -18,7 +19,7 @@ TODO: traiter les échéances pour les adhésions
 
 * Refonte complète du code du formulaire, pour simplifier les cas d'usages existants.
 * Quelques fix mineurs.
-* Nouveaux paramètres _CAMPAGNODON_ADHESION_MINIMUM et _CAMPAGNODON_ADHESION_MINIMUM
+* Nouveaux paramètres _CAMPAGNODON_ADHESION_MINIMUM et _CAMPAGNODON_ADHESION_MAXIMUM
 
 ## 1.7.0
 
