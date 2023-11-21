@@ -72,8 +72,6 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 	}
 
 	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
-		// TODO: ces valeurs doivent vérifier la conf, et éventuellement dépendre d'un argument adhesion_recurrent
-		// TODO: de plus, il faudrait un équivalent à campagnodon_don_recurrent_active()
 		$choix_recurrence_desc['adhesion'] = [
 			'unique' => [
 				'valeur' => 'unique',
@@ -82,6 +80,7 @@ function form_init_choix_recurrence($form_type, $arg_don_recurrent) {
 			]
 		];
 
+		// FIXME: remplacer par un équivalent à campagnodon_don_recurrent_active() pour les adhésions ?
 		if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
 			$recurrences = form_init_recurrences('adhesion');
 			foreach ($recurrences as $choix_recurrence) {
@@ -275,7 +274,7 @@ function form_init_liste_montants_campagne(
 			}
 
 			$_ajoute_propositions('adhesion', 'unique', $tmp);
-			// TODO: passer par un campagnodon_adhesion_recurrente_active et un $arg_adhesion_recurrente ?
+			// FIXME: remplacer par un équivalent à campagnodon_don_recurrent_active() pour les adhésions ?
 			if ($arg_don_recurrent === '1' && campagnodon_don_recurrent_active()) {
 				$recurrences = form_init_recurrences('adhesion');
 				foreach ($recurrences as $choix_recurrence) {

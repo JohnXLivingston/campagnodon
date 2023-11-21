@@ -488,7 +488,6 @@ function formulaires_campagnodon_traiter_dist(
 			}
 
 			$contributions[] = [
-				// FIXME: différencer l'adhésion avec renouvellement ??
 				'financial_type' => campagnodon_traduit_financial_type($mode_options, 'adhesion'),
 				'amount' => strval(intval($montant_total) - intval($adhesion_magazine_prix)),
 				'currency' => 'EUR',

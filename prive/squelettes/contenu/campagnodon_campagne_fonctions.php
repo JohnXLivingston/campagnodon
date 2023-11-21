@@ -56,7 +56,7 @@ function campagnodon_campagne_montants_par_defaut() {
 	}
 	if (campagnodon_campagne_don_recurrent()) {
 		$r['don_mensuel'] = implode(',', campagnodon_montants_par_defaut('don', 'mensuel'));
-		// FIXME: remplacer campagnodon_campagne_don_recurrent par un équivaleur pour les adhésions ?
+		// FIXME: remplacer par un équivalent à campagnodon_don_recurrent_active() pour les adhésions ?
 		$r['adhesion_annuel'] = implode(',', campagnodon_montants_par_defaut('adhesion', 'annuel'));
 	}
 	return json_encode($r);

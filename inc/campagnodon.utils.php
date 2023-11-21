@@ -321,7 +321,6 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 					__FUNCTION__.': on est sur une échéance d\'adhésion, on créé les contributions qui vont bien.',
 					'campagnodon'._LOG_DEBUG
 				);
-				// FIXME: pour les adhésions mensuelles, voir comment faire pour le magazine.
 
 				// Pour les adhésions avec paiement mensuel, il faudra ajouter un paramètre
 				// pour que le système distant ne renouvelle que quand nécessaire
