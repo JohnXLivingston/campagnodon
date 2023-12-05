@@ -32,6 +32,8 @@ function form_init_get_choix_type($type) {
 		$choix_type_defaut = 'don';
 	} elseif ($type === 'adhesion') {
 		$choix_type_defaut = 'adhesion';
+	} elseif ($type === 'don+adhesion') {
+		$choix_type_defaut = 'don';
 	}
 
 	return [
