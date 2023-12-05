@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0-RC2 (Not Released Yet)
+## 2.0.1-RC2 (Not Released Yet)
 
 * Fix: les "souscriptions optionnelles" optionnelles (avec un ? dans la conf) étaient mal validées. (#39)
 
