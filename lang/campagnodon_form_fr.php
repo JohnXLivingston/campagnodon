@@ -45,7 +45,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'adhesion_mensuel_magazine_explication' =>
     'L\'adhésion se fait sur l\'année civile, et le paiement sera reparti de manière égale tous les mois.'
     .' Si vous souscrivez en cours d\'année, vous ne paierez que pour les mois restants.'
-    .' Tous les mois, _MAGAZINE_PRIX_€ seront affectés aux magazine. '
+    .' Tous les mois, _MAGAZINE_PRIX_€ seront affectés au magazine. '
     .' Sur les _RESTANT_ADHESION_€/mois restants, soit _RESTANT_ADHESION_TOTAL_€/an,'
     .' cela ne vous coûte réellement que _COUT_ADHESION_€ après déduction fiscale.',
   'recu_fiscal_champs_supplementaires' => 'Ces informations sont nécessaires en vue de l\'établissement du reçu qui vous sera envoyé permettant une déduction fiscale',
