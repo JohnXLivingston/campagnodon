@@ -250,6 +250,7 @@ function formulaires_campagnodon_verifier_dist(
 				array_key_exists('pour', $souscription_optionnelle)
 				&& !empty($souscription_optionnelle['pour'])
 				&& !in_array($choix_type, $souscription_optionnelle['pour'])
+				&& !in_array($choix_type . '?', $souscription_optionnelle['pour']) // (on peut aussi avoir 'don?')
 			) {
 				$erreurs['souscription_optionnelle_'.$cle] = _T('campagnodon_form:erreur_valeur_invalide');
 			}
