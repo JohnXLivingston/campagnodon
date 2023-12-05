@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.1-RC2 (Not Released Yet)
+## 2.0.1-RC2
 
 * Fix: les "souscriptions optionnelles" optionnelles (avec un ? dans la conf) étaient mal validées. (#39)
 * Pour le formulaire don+adhésion, on active les dons par défaut. (#38)
