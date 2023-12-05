@@ -72,7 +72,14 @@
 
       [(#REM) Le choix des montants. On mix les montants pour tous les types et recurrences, c'est le javascript qui jouera sur l'affichage]
       <fieldset>
-        <legend uniquement_pour_adhesion><:campagnodon_form:j_adhere:></legend>
+        <legend uniquement_pour_adhesion
+          adhesion_legende
+          adhesion_unique_legende="<:campagnodon_form:j_adhere:>"
+          adhesion_mensuel_legende="<:campagnodon_form:j_adhere_mensuel:>"
+          adhesion_annuel_legende="<:campagnodon_form:j_adhere_annuel:>"
+        >
+          <:campagnodon_form:j_adhere:>
+        </legend>
         <div class="campagnodon-form-row">
           <div class="campagnodon-form-group campagnodon-col-md-12">
             [(#SET{erreurs, #ENV**{erreurs}|table_valeur{montant}})]

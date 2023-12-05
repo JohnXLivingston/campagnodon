@@ -351,6 +351,8 @@ Par exemple, créer un fichier `squelettes/lang/campagnodon_form_fr.php` avec po
 <?php
 $GLOBALS[$GLOBALS['idx_lang']] = array(
   'j_adhere' => "J'adhère à Attac pour l'année civile en versant un montant de :",
+  'j_adhere_mensuel' => "J'adhère à Attac en versant tous les mois un montant de :",
+  'j_adhere_annuel' => "J'adhère à Attac avec un renouvellement automatique annuel pour un montant de :",
 );
 ```
 

@@ -311,15 +311,25 @@ function campagnodon_formulaire_recu_fiscal_explication($form) {
 
 /**
  * Cette fonction met à jour le texte explicatif sur l'adhésion.
+ * On va aussi mettre à jour le texte "legend".
  * @param {jQuery} $form
  */
 function campagnodon_formulaire_adhesion_explication($form) {
   const montant_adhesion = campagnodon_lire_montant($form);
+  const choix_recurrence = $form.find('input[name=choix_recurrence]:checked:not(:disabled)').val();
+  $form.find('[adhesion_legende]').each(function () {
+    const legende = $(this);
+    let txt = legende.attr('adhesion_' + choix_recurrence + '_legende');
+    if (!txt) {
+      txt = legende.attr('adhesion_unique_legende')
+    }
+    legende.text(txt)
+  })
   $form.find('[adhesion_explication]').each(function () {
     const explication = $(this);
 
     // Cas particulier: les adhésion avec paiement mensuel...
-    const est_recurrence_mensuelle = $form.find('input[name=choix_recurrence]:checked:not(:disabled)').val() === 'mensuel';
+    const est_recurrence_mensuelle = choix_recurrence === 'mensuel';
     let adhesion_magazine_prix = parseInt(explication.attr('adhesion_magazine_prix'))
 
     if (adhesion_magazine_prix === undefined || isNaN(adhesion_magazine_prix)) {

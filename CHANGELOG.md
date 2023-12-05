@@ -5,6 +5,7 @@
 * Fix: les "souscriptions optionnelles" optionnelles (avec un ? dans la conf) étaient mal validées. (#39)
 * Pour le formulaire don+adhésion, on active les dons par défaut. (#38)
 * Fix typo "aux magazine". (#40)
+* Prises en compte des remarques sur le ticket [#41](https://code.globenet.org/attacfr/campagnodon/-/issues/41).
 
 ## 2.0.0-RC1
 
