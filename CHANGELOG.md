@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.2-RC3 (Not Released Yet)
+## 2.0.2-RC3
 
 * Déplacement et modification du message explicatif pour les dons (#42)
 * Possibilité de masquer certaines souscriptions optionnelles si pas d'adresse saisie (#45)
