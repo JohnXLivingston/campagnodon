@@ -47,7 +47,10 @@ function campagnodon_formulaire(formSelector) {
   $form.on('change', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
   $form.on('click', 'input[name=montant_libre]', () => campagnodon_formulaire_explications($form));
 
-  $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => campagnodon_formulaire_recu_fiscal($form, false));
+  $form.on('click', 'input[type=checkbox][name=recu_fiscal]', () => {
+    campagnodon_formulaire_souscriptions_optionnelles($form);
+    campagnodon_formulaire_recu_fiscal($form, false)
+  });
 
   campagnodon_formulaire_choix_type($form, true);
   campagnodon_formulaire_choix_montant($form, true);
@@ -232,18 +235,7 @@ function campagnodon_formulaire_filtre_montants($form) {
  * @param {boolean} premier_appel Si c'est le premier appel à la fonction. Si falsey, c'est un événement suite à un recalcul.
  */
 function campagnodon_formulaire_recu_fiscal($form, premier_appel = false) {
-  const $cb = $form.find('input[type=checkbox][name=recu_fiscal]');
-
-  if (!$cb.length) {
-    // Il n'y a pas de case à cocher recu_fiscal,
-    // on considère qu'il est implicitement obligatoire (c'est le cas pour les formulaire d'adhésion uniquement)
-    return;
-  }
-
-  const $radio_choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)');
-
-  // Petite particularité: on considère que la case est cochée si on est sur des adhésions.
-  const checked = $radio_choix_type.val() === 'adhesion' || $cb.is(':checked');
+  const checked = campagnodon_lire_recu_fiscal($form);
 
   if (premier_appel) {
     // On va noter tous les champs obligatoires, pour pouvoir restaurer la valeur.
@@ -289,6 +281,26 @@ function campagnodon_lire_montant($form) {
     return null;
   }
   return val;
+}
+
+/**
+ * Indique si on est dans le cas où on veut un reçu fiscal (et on demande une adresse complète)
+ * @param {jQuery} $form Conteneur jQuery du formulaire
+ */
+function campagnodon_lire_recu_fiscal($form) {
+  const $cb = $form.find('input[type=checkbox][name=recu_fiscal]');
+
+  if (!$cb.length) {
+    // Il n'y a pas de case à cocher recu_fiscal,
+    // on considère qu'il est implicitement obligatoire (c'est le cas pour les formulaire d'adhésion uniquement)
+    return true;
+  }
+
+  const $radio_choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)');
+
+  // Petite particularité: on considère que la case est cochée si on est sur des adhésions.
+  const checked = $radio_choix_type.val() === 'adhesion' || $cb.is(':checked');
+  return checked
 }
 
 /**
@@ -390,30 +402,40 @@ function campagnodon_formulaire_explications($form) {
  */
 function campagnodon_formulaire_souscriptions_optionnelles($form) {
   const choix_type = $form.find('input[name=choix_type]:checked:not(:disabled)').val();
-  $form.find('[campagnodon_souscription_pour]').each(function () {
+  $form.find('[campagnodon_souscription]').each(function () {
     const $div = $(this);
     const $cb = $div.find('input[type=checkbox]');
-    const pour_attr = $div.attr('campagnodon_souscription_pour');
-    let pour = undefined;
-    try {
-      if (pour_attr) {
-        pour = JSON.parse(pour_attr);
-        if (!Array.isArray(pour)) {
-          pour = undefined;
+    let show = true;
+
+    if ($div.is('[campagnodon_souscription_pour]')) {
+      const pour_attr = $div.attr('campagnodon_souscription_pour');
+      let pour = undefined;
+      try {
+        if (pour_attr) {
+          pour = JSON.parse(pour_attr);
+          if (!Array.isArray(pour)) {
+            pour = undefined;
+          }
+        }
+      } catch {
+        pour = undefined;
+      }
+
+      show = false;
+      if (pour === undefined) {
+        show = true;
+      } else {
+        if (choix_type) {
+          if ((pour.indexOf(choix_type) >= 0) || (pour.indexOf(choix_type + '?') >= 0)) {
+            show = true
+          }
         }
       }
-    } catch {
-      pour = undefined;
     }
 
-    let show = false;
-    if (pour === undefined) {
-      show = true;
-    } else {
-      if (choix_type) {
-        if ((pour.indexOf(choix_type) >= 0) || (pour.indexOf(choix_type + '?') >= 0)) {
-          show = true
-        }
+    if (show && $div.is('[campagnodon_souscription_besoin_adresse]')) {
+      if (!campagnodon_lire_recu_fiscal($form)) {
+        show = false;
       }
     }
 

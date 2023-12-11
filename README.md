@@ -263,13 +263,15 @@ define('_CAMPAGNODON_MODES', array(
                                 'type' => 'group', // Le type de souscription. Voir coté Campagnodon_CiviCRM ce qui est autorisé (actuellement on n'a que «group»).
                                 'cle_distante' => '42', // la clé du groupe (peut être son ID numérique, ou son label)
                                 'when' => 'completed', // Quand faire l'ajout dans le groupe. `completed` ou `init` (`init` par défaut).
-                                'pour' => ['adhesion', 'don?'] // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle. Le «?» en suffixe indique qu'elle ne sera dispo que si on l'active explicitement via la balise.
+                                'pour' => ['adhesion', 'don?'], // Clé optionnelle. Si présent, permet de spécifier pour quel(s) type(s) de formulaire proposer cette souscriptions optionnelle. Le «?» en suffixe indique qu'elle ne sera dispo que si on l'active explicitement via la balise.
+                                'besoin_adresse' => false // Clé optionnelle. A besoin qu'on ai saisi une adresse (et donc demandé un reçu fiscal)
                         ),
                         'comite_local' => array(
                                 'label' => 'Me faire connaître à mon Comité Local le plus proche',
                                 'type' => 'opt-in', // ici on est sur un opt-in (du genre accepter les démarchages)
                                 'cle_distante' => 'do_not_trade', // le nom de l'opt-in. Doit être une des valeurs codées coté CiviCRM.
                                 'when' => 'completed' // Quand faire l'ajout. `completed` ou `init` (`init` par défaut).
+                                'besoin_adresse' => true // a besoin qu'on ai saisi une adresse (et donc demandé un reçu fiscal)
                         ),
                         'participer_actions' => array(
                                 'label' => 'Je souhaite participer à des actions',

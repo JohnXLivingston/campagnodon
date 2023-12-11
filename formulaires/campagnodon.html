@@ -326,10 +326,15 @@
           #SET{nom_champ,souscription_optionnelle_#CLE}
           #SET{label_champ, #VALEUR|table_valeur{label}}
           #SET{souscription_pour, #VALEUR|table_valeur{pour}}
+          #SET{souscription_besoin_adresse, #VALEUR|table_valeur{besoin_adresse}}
           <div
             class="campagnodon-form-row"
+            campagnodon_souscription
             [(#GET{souscription_pour}|oui)
               campagnodon_souscription_pour="[(#GET{souscription_pour}|json_encode|attribut_html)]"
+            ]
+            [(#GET{souscription_besoin_adresse}|oui)
+              campagnodon_souscription_besoin_adresse
             ]
           >
             <div class="campagnodon-form-group campagnodon-col-md-12 choix">

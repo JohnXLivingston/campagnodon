@@ -3,6 +3,7 @@
 ## 2.0.2-RC3 (Not Released Yet)
 
 * Déplacement et modification du message explicatif pour les dons (#42)
+* Possibilité de masquer certaines souscriptions optionnelles si pas d'adresse saisie (#45)
 
 ## 2.0.1-RC2
 

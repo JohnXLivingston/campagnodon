@@ -244,8 +244,8 @@ function formulaires_campagnodon_verifier_dist(
 	}
 
 	foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
-		// On doit checker le 'pour' le cas échéant.
 		if (_request('souscription_optionnelle_'.$cle) == '1') {
+			// On doit checker le 'pour' le cas échéant.
 			if (
 				array_key_exists('pour', $souscription_optionnelle)
 				&& !empty($souscription_optionnelle['pour'])
@@ -253,6 +253,17 @@ function formulaires_campagnodon_verifier_dist(
 				&& !in_array($choix_type . '?', $souscription_optionnelle['pour']) // (on peut aussi avoir 'don?')
 			) {
 				$erreurs['souscription_optionnelle_'.$cle] = _T('campagnodon_form:erreur_valeur_invalide');
+				continue;
+			}
+
+			// On doit aussi checker le 'besoin_adresse' le cas échéant
+			if (
+				array_key_exists('besoin_adresse', $souscription_optionnelle)
+				&& true === $souscription_optionnelle['besoin_adresse']
+				&& !$coordonnees_completes
+			) {
+				$erreurs['souscription_optionnelle_'.$cle] = _T('campagnodon_form:erreur_valeur_invalide');
+				continue;
 			}
 		}
 	}
