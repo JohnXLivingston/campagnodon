@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2-RC3 (Not Released Yet)
+
+* Déplacement et modification du message explicatif pour les dons (#42)
+
 ## 2.0.1-RC2
 
 * Fix: les "souscriptions optionnelles" optionnelles (avec un ? dans la conf) étaient mal validées. (#39)

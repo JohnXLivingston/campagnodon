@@ -153,6 +153,13 @@
         >
         </p>
       ]
+      [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Il n'est pas utile en cas d'adhésion, car il y a «adhesion_explication».]
+      [(#ENV{_avec_don}|oui)
+        <p class="explication"
+          uniquement_pour_don
+          recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>"
+        ></p>
+      ]
 
       [(#REM) Les coordonnées personnelles:]
       <fieldset>
@@ -191,14 +198,6 @@
         ]
 
         <div si_recu_fiscal="">
-          [(#REM) Le paragraphe «recu_fiscal_explication« est rempli via JS. Il n'est pas utile en cas d'adhésion, car il y a «adhesion_explication».]
-          [(#ENV{_avec_don}|oui)
-            <p class="explication"
-              uniquement_pour_don
-              recu_fiscal_explication="<:campagnodon_form:recu_fiscal_explication:>"
-            ></p>
-          ]
-
           <p class="explication">
             <:campagnodon_form:recu_fiscal_champs_supplementaires:>
           </p>
