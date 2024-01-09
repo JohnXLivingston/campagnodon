@@ -2,7 +2,7 @@
   prefix="campagnodon"
   categorie="communication"
   version="2.0.2"
-  etat="test"
+  etat="stable"
   compatibilite="[3.2.0;4.2.*]"
   logo="campagnodon.svg"
   documentation="https://code.globenet.org/attacfr/campagnodon"

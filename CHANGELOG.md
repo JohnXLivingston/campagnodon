@@ -1,18 +1,6 @@
 # Changelog
 
-## 2.0.2-RC3
-
-* Déplacement et modification du message explicatif pour les dons (#42)
-* Possibilité de masquer certaines souscriptions optionnelles si pas d'adresse saisie (#45)
-
-## 2.0.1-RC2
-
-* Fix: les "souscriptions optionnelles" optionnelles (avec un ? dans la conf) étaient mal validées. (#39)
-* Pour le formulaire don+adhésion, on active les dons par défaut. (#38)
-* Fix typo "aux magazine". (#40)
-* Prises en compte des remarques sur le ticket [#41](https://code.globenet.org/attacfr/campagnodon/-/issues/41).
-
-## 2.0.0-RC1
+## 2.0.2
 
 Attention: c'est version est à considérer comme une Release Candidate, elle pourrait ne pas être stable.
 
@@ -32,6 +20,19 @@ que d'une seule structure utilisant Campagnodon, et les modifications sont faite
 * Refonte complète du code du formulaire, pour simplifier les cas d'usages existants.
 * Quelques fix mineurs.
 * Nouveaux paramètres _CAMPAGNODON_ADHESION_MINIMUM et _CAMPAGNODON_ADHESION_MAXIMUM
+
+### 2.0.1-RC2
+
+* Fix: les "souscriptions optionnelles" optionnelles (avec un ? dans la conf) étaient mal validées. (#39)
+* Pour le formulaire don+adhésion, on active les dons par défaut. (#38)
+* Fix typo "aux magazine". (#40)
+* Prises en compte des remarques sur le ticket [#41](https://code.globenet.org/attacfr/campagnodon/-/issues/41).
+
+
+### 2.0.2-RC3
+
+* Déplacement et modification du message explicatif pour les dons (#42)
+* Possibilité de masquer certaines souscriptions optionnelles si pas d'adresse saisie (#45)
 
 ## 1.7.0
 
