@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+
+* Fix: mise à jour de `class.api.php` (CiviCRM) pour la compatibilité php 8.2.
+
 ## 2.0.2
 
 Attention: c'est version est à considérer comme une Release Candidate, elle pourrait ne pas être stable.
