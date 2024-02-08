@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.4
+
+* Fix déclaration table spip_campagnodon_transactions
+
 ## 2.0.3
 
 * Fix: mise à jour de `class.api.php` (CiviCRM) pour la compatibilité php 8.2.

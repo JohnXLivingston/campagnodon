@@ -59,7 +59,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
 	$tables['spip_campagnodon_transactions'] = [
 		'principale' => 'oui',
 		'page' => false,
-		'type' => 'campagnodon_transactions',
+		'type' => 'campagnodon_transaction',
 		'date' => 'date_transaction',
 		'field' => [
 			'id_campagnodon_transaction' => 'bigint(21) NOT NULL',
