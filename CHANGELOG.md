@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.5
+
+* Fix déclaration table spip_campagnodon_campagnes
+
 ## 2.0.4
 
 * Fix déclaration table spip_campagnodon_transactions

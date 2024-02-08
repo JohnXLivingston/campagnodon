@@ -123,7 +123,7 @@ function campagnodon_declarer_tables_objets_sql($tables) {
 	$tables['spip_campagnodon_campagnes'] = [
 		'principale' => 'oui',
 		'page' => false,
-		'type' => 'campagnodon_campagnes',
+		'type' => 'campagnodon_campagne',
 		'titre' => "titre AS titre, '' AS lang",
 		'date' => 'date',
 		'field' => [
