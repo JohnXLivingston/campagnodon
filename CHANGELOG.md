@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.6
+
+* Synchronisation des statuts: ajout d'un watch dog pour détecter les erreurs de synchronisation.
+
 ## 2.0.5
 
 * Fix déclaration table spip_campagnodon_campagnes

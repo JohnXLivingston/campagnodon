@@ -155,6 +155,29 @@ function campagnodon_traduit_financial_type($mode_options, $type) {
 }
 
 /**
+ * Lit et normalise le statut de spip_bank.
+ */
+function campagnodon_traduit_transaction_statut($statut) {
+	// Parfois spip bank ajoute des choses derrière les statuts.
+	// Par ex «echec[fail]». Dans le doute, on applique cette règle pour tous les statuts.
+	if (strncmp($statut, 'ok', 2) == 0) {
+		return 'ok';
+	} elseif (strncmp($statut, 'echec', 5) == 0) {
+		return 'echec';
+	} elseif (strncmp($statut, 'commande', 8) == 0) {
+		return 'attente'; // FIXME: ou alors il faut différencier commande et attente coté CiviCRM ?
+	} elseif (strncmp($statut, 'attente', 7) == 0) {
+		return 'attente';
+	} elseif (strncmp($statut, 'abandon', 7) == 0) {
+		return 'abandon';
+	} elseif (strncmp($statut, 'rembourse', 8) == 0) {
+		return 'rembourse';
+	} else {
+		return null;
+	}
+}
+
+/**
  * Synchronise une transaction avec le système distant.
  * En cas d'échec (système injoignable par ex), replanifie une synchronisation.
  * @param $id_campagnodon_transaction
@@ -446,21 +469,8 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 	}
 
 	$statut = $transaction['statut'];
-	$statut_distant = null;
-	// Parfois spip bank ajoute des choses derrière les statuts. Par ex «echec[fail]». Dans le doute, on applique cette règle pour tous les statuts.
-	if (strncmp($statut, 'ok', 2) == 0) {
-		$statut_distant = 'ok';
-	} elseif (strncmp($statut, 'echec', 5) == 0) {
-		$statut_distant = 'echec';
-	} elseif (strncmp($statut, 'commande', 8) == 0) {
-		$statut_distant = 'attente'; // FIXME: ou alors il faut différencier commande et attente coté CiviCRM ?
-	} elseif (strncmp($statut, 'attente', 7) == 0) {
-		$statut_distant = 'attente';
-	} elseif (strncmp($statut, 'abandon', 7) == 0) {
-		$statut_distant = 'abandon';
-	} elseif (strncmp($statut, 'rembourse', 8) == 0) {
-		$statut_distant = 'rembourse';
-	} else {
+	$statut_distant = campagnodon_traduit_transaction_statut($statut);
+	if ($statut_distant === null) {
 		spip_log(__FUNCTION__." Je ne sais pas synchroniser le statut '".$statut."' pour spip_campagnodon_transactions=".$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
 		campagnodon_maj_sync_statut($id_campagnodon_transaction, 'echec');
 		return 0;
@@ -516,7 +526,95 @@ function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_t
 
 	spip_log(__FUNCTION__. ' Appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.', tout est ok.', 'campagnodon'._LOG_DEBUG);
 	campagnodon_maj_sync_statut($id_campagnodon_transaction, 'ok', $nouveau_statut_distant ?? '???', $nouveau_statut_recurrence_distant);
+
+	if (!campagnodon_synchroniser_transaction_watchdog($id_campagnodon_transaction)) {
+		spip_log(
+			__FUNCTION__
+				.' déclenchement du watchdog pour la transaction campagnodon spip_campagnodon_transactions='
+				.$id_campagnodon_transaction
+				.'.',
+			'campagnodon'._LOG_ERREUR
+		);
+		// Pour éviter les boucles infinies, on va incrémenter $nb_tentatives.
+		campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+		return 0;
+	}
+
 	return 1;
+}
+
+/**
+ * En fin de campagnodon_synchroniser_transaction, on appelle campagnodon_synchroniser_transaction_watchdog
+ * pour vérifier s'il n'y a pas eu d'action parallèle, et relancer une synchro si besoin.
+ *
+ * Note: en production, on a eu des cas où statut_distant = 'pending' alors que transaction.statut = 'ok'.
+ * Ces cas sont probablement dû à des éxécutions parallèles
+ * (spip bank marque la transaction ok pendant qu'on synchronise pending).
+ * On va tenter ici de détecter ces cas, et relancer une synchro le cas échéant.
+ *
+ * Retourne true si tout va bien, false sinon.
+ */
+function campagnodon_synchroniser_transaction_watchdog($id_campagnodon_transaction) {
+	spip_log(
+		__FUNCTION__
+			.' Appel id_campagnodon_transaction='.$id_campagnodon_transaction.'.',
+		'campagnodon'._LOG_DEBUG
+	);
+
+	// On recharge l'état actuel.
+	$campagnodon_transaction = sql_fetsel(
+		'*',
+		'spip_campagnodon_transactions',
+		'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction)
+	);
+	if (!$campagnodon_transaction) {
+		spip_log(
+			__FUNCTION__
+				.' spip_campagnodon_transactions introuvable lors du watchdog: spip_campagnodon_transactions='
+				.$id_campagnodon_transaction,
+			'campagnodon'._LOG_ERREUR
+		);
+		// Dans la mesure où on a déjà synchronisé plus haut... je vais juste considérer que ce n'est pas grave.
+		return true;
+	}
+	$transaction = sql_fetsel(
+		'*',
+		'spip_transactions',
+		'id_transaction=' . intval($campagnodon_transaction['id_transaction'])
+	);
+	if (!$transaction) {
+		spip_log(
+			__FUNCTION__
+				.' Transaction introuvable lors du watchdog pour spip_campagnodon_transactions='
+				.$id_campagnodon_transaction,
+			'campagnodon'._LOG_ERREUR
+		);
+		// Dans la mesure où on a déjà synchronisé plus haut... je vais juste considérer que ce n'est pas grave.
+		return true;
+	}
+
+	// FIXME: le code ci-dessous n'est pas propre...
+	//				Aujourd'hui on stock dans statut_distant la valeur brute de CiviCRM (en anglais...).
+	//				Ce qui ne permet pas un traitement uniforme quelque soit le système distant.
+	//				Le code de ce watch dog est donc trop spécifique.
+	//				De plus, on va vraiment se limiter aux cas d'erreur connus, alors que le code devrait être dans
+	//				l'autre sens (chercher les cas cohérents).
+	$statut_distant_sortie = campagnodon_traduit_transaction_statut($transaction['statut']) ?? '';
+	$statut_distant_stocke = $campagnodon_transaction['statut_distant'] ?? '';
+	if ($statut_distant_sortie === 'ok') {
+		if ($statut_distant_stocke === 'pending' || $statut_distant_stocke === null) {
+			spip_log(
+				__FUNCTION__
+					.' Declenchement du watchdog, statut distant incohérents pour spip_campagnodon_transactions='
+					.$id_campagnodon_transaction
+					.', "'.$statut_distant_sortie.'" vs "'.$statut_distant_stocke.'".',
+				'campagnodon'._LOG_ERREUR
+			);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /**
