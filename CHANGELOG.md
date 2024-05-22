@@ -1,6 +1,6 @@
 # Changelog
 
-## ??? (Not Released yet)
+## 2.1.0
 
 * Mode maintenance campagnodon
 
