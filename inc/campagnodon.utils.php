@@ -185,6 +185,12 @@ function campagnodon_traduit_transaction_statut($statut) {
 function campagnodon_synchroniser_transaction($id_campagnodon_transaction, $nb_tentatives = 0) {
 	spip_log(__FUNCTION__.' Appel id_campagnodon_transaction='.$id_campagnodon_transaction.', tentative #'.$nb_tentatives.'.', 'campagnodon'._LOG_DEBUG);
 
+	if (campagnodon_maintenance()) {
+		spip_log('Campagnodon est en maintenance, il faudra retenter de synchroniser la transaction campagnodon '.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
+		campagnodon_queue_synchronisation($id_campagnodon_transaction, $nb_tentatives + 1);
+		return 0;
+	}
+
 	$campagnodon_transaction = sql_fetsel('*', 'spip_campagnodon_transactions', 'id_campagnodon_transaction='.sql_quote($id_campagnodon_transaction));
 	if (!$campagnodon_transaction) {
 		spip_log(__FUNCTION__.' spip_campagnodon_transactions introuvable: '.$id_campagnodon_transaction, 'campagnodon'._LOG_ERREUR);
@@ -808,4 +814,8 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
 	spip_log('On vient de convertir la transaction, on doit planifier une synchronisation pour la transaction Campagnodon: "'.$id_campagnodon_transaction.'"', 'campagnodon'._LOG_DEBUG);
 	campagnodon_queue_synchronisation($id_campagnodon_transaction);
 	return true;
+}
+
+function campagnodon_maintenance() {
+	return defined('_CAMPAGNODON_MAINTENANCE') && _CAMPAGNODON_MAINTENANCE === true;
 }

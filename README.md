@@ -38,6 +38,18 @@ Puis ouvrez votre navigateur web sur le page `http://localhost:1313`.
 Pour configurer la connexion avec CiviCRM, ajouter dans le fichier
 `config/mes_options.php` de SPIP les constantes décrites ci-dessous:
 
+### _CAMPAGNODON_MAINTENANCE
+
+Vous pouvez activer un mode maintenance, qui:
+
+* bloquera les formulaires d'adhésion/don, en y affichant un message
+* si le formulaire était déjà affiché, et qu'il est soumis, il reviendra avec un message d'erreur demandant d'attendre
+* mettra les synchro en attente
+
+```php
+defined('_CAMPAGNODON_MAINTENANCE', true); // false pour désactiver le mode maintenance
+```
+
 ### _CAMPAGNODON_PAYS_DEFAULT
 
 Cette variable **optionnelle** indiquant le code ISO du pays à renseigner par défaut pour l'adresses des contacts. Si non fourni, le champs sera vide par défaut.

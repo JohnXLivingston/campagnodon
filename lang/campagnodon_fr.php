@@ -48,5 +48,7 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'label_activer_don_recurrent' => 'Permettre les dons/adhésions récurrent⋅es',
   'label_montant_perso' => 'Montants personnalisés',
   'label_montant_libre' => 'Montant libre',
-  'label_souscriptions_perso' => 'Personnaliser les souscriptions optionnelles'
+  'label_souscriptions_perso' => 'Personnaliser les souscriptions optionnelles',
+  'message_maintenance' => 'Une maintenance est en cours, merci de repasser plus tard.',
+  'erreur_maintenance' => 'Le formulaire n\'a pas pu être enregistré, une maintenance est en cours.'
 );

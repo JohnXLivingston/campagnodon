@@ -91,7 +91,7 @@ function formulaires_campagnodon_charger_dist(
 		'code_postal' => '',
 		'ville' => '',
 		'pays' => defined('_CAMPAGNODON_PAYS_DEFAULT') ? _CAMPAGNODON_PAYS_DEFAULT : '',
-		'telephone' => '',
+		'telephone' => ''
 	];
 
 	if ($form_type === 'adhesion' || $form_type === 'don+adhesion') {
@@ -112,6 +112,10 @@ function formulaires_campagnodon_charger_dist(
 		$values['souscription_optionnelle_'.$cle] = '';
 	}
 
+	if (campagnodon_maintenance()) {
+		$values['message_maintenance'] = _T('campagnodon:message_maintenance');
+	}
+
 	return $values;
 }
 
@@ -128,6 +132,11 @@ function formulaires_campagnodon_verifier_dist(
 	$verifier = charger_fonction('verifier', 'inc/');
 	include_spip('inc/campagnodon/form/init');
 	include_spip('inc/campagnodon/form/utils');
+	include_spip('inc/campagnodon.utils');
+
+	if (campagnodon_maintenance()) {
+		$erreurs['message_erreur'] = _T('campagnodon:erreur_maintenance');
+	}
 
 	$obligatoires = [];
 
@@ -137,11 +146,11 @@ function formulaires_campagnodon_verifier_dist(
 	$campagne = form_utils_get_campagne_ouverte($id_campagne);
 	if (empty($campagne)) {
 		$erreurs['message_erreur'] = _T('campagnodon:campagne_invalide');
+		return $erreurs; // ici pas la peine d'aller plus loin
 	}
 
 	$choix_type = _request('choix_type');
 
-	include_spip('inc/campagnodon.utils');
 	$mode_options = campagnodon_mode_options($campagne['origine']);
 
 	$souscriptions_optionnelles = form_init_liste_souscriptions_optionnelles(

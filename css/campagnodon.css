@@ -261,3 +261,8 @@
     max-width: 100%;
   }
 }
+
+.formulaire_campagnodon_maintenance {
+  font-size: large;
+  padding: 20px;
+}
