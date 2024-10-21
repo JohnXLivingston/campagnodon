@@ -1,3 +1,8 @@
+[(#ENV*{_use_altcha}|oui)
+	[<link rel="stylesheet" href="(#CHEMIN{javascript/altcha/altcha.css}|timestamp)" type="text/css" />]
+	[<script async defer type="module" src="(#CHEMIN{javascript/altcha/altcha.js}|timestamp)"></script>]
+	[<script async defer type="module" src="(#CHEMIN{javascript/altcha/worker.js}|timestamp)"></script>]
+]
 <div class="formulaire_spip formulaire_#FORM">
   [<p class="reponse_formulaire reponse_formulaire_erreur formulaire_campagnodon_maintenance">(#ENV*{message_maintenance})</p>]
   [<p class="reponse_formulaire reponse_formulaire_ok">(#ENV*{message_ok})</p>]
@@ -356,6 +361,22 @@
           </div>
         </BOUCLE_souscriptions_optionnelles>
       </fieldset>
+
+      [(#ENV*{_use_altcha}|oui)
+        [
+          [(#SET{erreurs, #ENV**{erreurs}|table_valeur{altcha}})]
+          <fieldset>
+            <div class="editer editer_nom obligatoire [(#GET{erreurs}|oui)erreur]">
+              <altcha-widget
+                challengeurl="(#URL_ACTION_AUTEUR{campagnodon_altcha_challenge,altcha})"
+                strings="[(#ENV{_altcha_strings}])]"
+              >
+              </altcha-widget>
+              [<span class='erreur_message'>(#GET{erreurs})</span>]
+            </div>
+          </fieldset>
+        ]
+      ]
 
       <p class="explication">
         *: <:campagnodon_form:champ_obligatoire:>

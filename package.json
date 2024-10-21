@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "mkdir -p ./javascript/altcha && cp node_modules/altcha/dist_external/* ./javascript/altcha/"
+  },
+  "devDependencies": {
+    "altcha": "^1.0.5"
+  }
+}

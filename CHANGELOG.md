@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0
+
+* Intégration de [ALTCHA](https://altcha.org).
+* Ajout d'un .htaccess pour bloquer l'accès à certains dossiers.
+
 ## 2.1.0
 
 * Mode maintenance campagnodon

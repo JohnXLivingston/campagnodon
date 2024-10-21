@@ -61,5 +61,14 @@ $GLOBALS[$GLOBALS['idx_lang']] = array(
   'titre_page_payer_don' => 'Régler votre don',
   'titre_page_payer_adhesion' => 'Régler votre adhésion',
   'titre_choix_mode_paiement' => 'Veuillez choisir votre mode de paiement',
-  'label_montant' => 'Montant'
+  'label_montant' => 'Montant',
+  'erreur_altcha' => "Merci de confirmer que vous n'êtes pas un robot",
+  "altcha_ariaLinkLabel" => "Visitez Altcha.org",
+  "altcha_error" => "Échec de la vérification. Réessayez plus tard.",
+  "altcha_expired" => "Vérification expirée. Réessayez.",
+  "altcha_footer" => "Protégé par <a href=\"https://altcha.org/\" target=\"_blank\" aria-label=\"Visitez Altcha.org\">ALTCHA</a>",
+  "altcha_label" => "Je ne suis pas un robot",
+  "altcha_verified" => "Vérifié",
+  "altcha_verifying" => "Vérification en cours...",
+  "altcha_waitAlert" => "Vérification en cours... veuillez patienter."
 );

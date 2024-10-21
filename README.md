@@ -345,6 +345,30 @@ define('_CAMPAGNODON_MODES', array(
 ));
 ```
 
+## Anti-spam
+
+Campagnodon inclue plusieurs mécanismes optionnels pour tenter de minimiser les SPAMS.
+
+### ALTCHA
+
+Campagnodon inclue la bibliothèque [ALTCHA](https://altcha.org), une alternative libre et sans cookie aux différents types de CAPTCHA.
+Cela repose sur une preuve de calcul: le navigateur va devoir effectuer un calcul complexe pour valider le formulaire.
+La majorité des bots de spam ne feront pas ces calculs, ce qui devrait limiter la quantité de spam.
+
+Pour activer ce module, il suffit de définir et personnaliser la constante suivante dans le fichier `mes_options.php`:
+
+```php
+define('_CAMPAGNODON_ALTCHA', [
+        'maxNumber' => 100000, // complexité de la solution à trouver (voir https://altcha.org/fr/docs/complexity/)
+        'hmacKey' => 'secret key', // une clé secrète À CHANGER ABSOLUMENT
+        'expires' => '5 minute' // la durée de validité d'une solution, sous forme d'une durée PHP valide
+]);
+```
+
+> Note: concernant la durée de validité de la réponse, si la personne met plus longtemps à soumettre le formulaire, ce n'est pas grave.
+> Le code prévoit de recalculer automatiquement.
+> Il ne faut toutefois pas mettre une durée trop courte, car si la personne tente de soumettre pendant un calcul, elle sera bloquée quelques instants.
+
 ## Synchroniser les données distantes
 
 Dans le cas où Campagnodon est lié à un système distant (ex: CiviCRM), il y a des données à synchroniser.

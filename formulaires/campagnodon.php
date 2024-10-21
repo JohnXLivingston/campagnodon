@@ -4,6 +4,10 @@ if (!defined('_ECRIRE_INC_VERSION')) {
 	return;
 }
 
+require_once __DIR__ . '/../vendor/autoload.php';
+use AltchaOrg\Altcha\Altcha;
+
+
 class CampagnodonException extends Exception { // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 	protected $error_label = '';
 	public function __construct($message = '', $error_label = '', $code = 0, $previous = null) {
@@ -110,6 +114,20 @@ function formulaires_campagnodon_charger_dist(
 
 	foreach ($souscriptions_optionnelles as $cle => $souscription_optionnelle) {
 		$values['souscription_optionnelle_'.$cle] = '';
+	}
+
+	if (campagnodon_altcha_configuration()) {
+		$values['_use_altcha'] = true;
+		$values['_altcha_strings'] = json_encode([
+			"ariaLinkLabel" => _T("campagnodon_form:altcha_ariaLinkLabel"),
+			"error" => _T("campagnodon_form:altcha_error"),
+			"expired" => _T("campagnodon_form:altcha_expired"),
+			"footer" => _T("campagnodon_form:altcha_footer"),
+			"label" => _T("campagnodon_form:altcha_label"),
+			"verified" => _T("campagnodon_form:altcha_verified"),
+			"verifying" => _T("campagnodon_form:altcha_verifying"),
+			"waitAlert" => _T("campagnodon_form:altcha_waitAlert")
+		]);
 	}
 
 	if (campagnodon_maintenance()) {
@@ -274,6 +292,23 @@ function formulaires_campagnodon_verifier_dist(
 				$erreurs['souscription_optionnelle_'.$cle] = _T('campagnodon_form:erreur_valeur_invalide');
 				continue;
 			}
+		}
+	}
+
+	$altcha_options = campagnodon_altcha_configuration();
+	if ($altcha_options) {
+		$payload = _request('altcha');
+		// Note: verifySolution can raison 'notices' if we just pass the string $payload.
+		// To avoid that, we will decode here:
+		$payload = json_decode(base64_decode($payload), true);
+		if (is_array($payload) && !array_key_exists('algorithm', $payload)) { $payload['algorithm'] = null; }
+		if (is_array($payload) && !array_key_exists('challenge', $payload)) { $payload['challenge'] = null; }
+		if (is_array($payload) && !array_key_exists('number', $payload)) { $payload['number'] = null; }
+		if (is_array($payload) && !array_key_exists('salt', $payload)) { $payload['salt'] = null; }
+		if (is_array($payload) && !array_key_exists('signature', $payload)) { $payload['signature'] = null; }
+
+		if (!Altcha::verifySolution($payload, $altcha_options['hmacKey'], true)) {
+			$erreurs['altcha'] = _T('campagnodon_form:erreur_altcha');
 		}
 	}
 

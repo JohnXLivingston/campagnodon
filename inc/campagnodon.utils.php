@@ -819,3 +819,14 @@ function campagnodon_converti_transaction_en($id_campagnodon_transaction, $nouve
 function campagnodon_maintenance() {
 	return defined('_CAMPAGNODON_MAINTENANCE') && _CAMPAGNODON_MAINTENANCE === true;
 }
+
+function campagnodon_altcha_configuration() {
+	if (!defined('_CAMPAGNODON_ALTCHA') || _CAMPAGNODON_ALTCHA === false) {
+		return false;
+	}
+	return [
+		'maxNumber' => _CAMPAGNODON_ALTCHA['maxNumber'] ?? 100000,
+		'hmacKey' => _CAMPAGNODON_ALTCHA['hmacKey'] ?? die("missing hmacKey in Altcha configuration"),
+		'expires' => _CAMPAGNODON_ALTCHA['expires'] ?? '5 minutes'
+	];
+}
