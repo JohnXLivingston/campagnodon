@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+
+* Changement de la compatibilité SPIP, pour accepter 4.x au lieu de 4.2.x.
+
 ## 2.2.0
 
 * Intégration de [ALTCHA](https://altcha.org).
