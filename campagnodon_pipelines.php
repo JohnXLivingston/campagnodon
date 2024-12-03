@@ -175,7 +175,7 @@ function _campagnodon_get_abo_transactions($abo_uid, $caller) {
  * @return mixed
  */
 function campagnodon_taches_generales_cron($taches_generales) {
-	$taches_generales['campagnodon_synchronisation_campagnes'] = 3600; // 1h
+	$taches_generales['campagnodon_synchronisation_campagnes'] = 900; // 15min
 	return $taches_generales;
 }
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.2
+
+* Tâche de synchronisation des campagnes: toutes les 15 minutes (au lieu de 1h).
+
 ## 2.2.1
 
 * Changement de la compatibilité SPIP, pour accepter 4.x au lieu de 4.2.x.
